@@ -1,0 +1,2 @@
+ID|NAME|COST|TYPE|POWER|TOUGHNESS|ORACLE|SET|RARITY|LANG|ARTIST|COLLNUM|TEXT|PROPERTIES
+scry_a3960d63-168d-4d08-a10b-3331194fdc36|Assassin||Token Creature - Assassin|1|1|Whenever this creature deals combat damage to a player, that player loses the game.|Duel Decks: Jace vs. Vraska Tokens|Common||Svetlin Velinov|1|Finishes: nonfoil:<br>Promos: setpromo:<br>https://scryfall.com/card/tddm/1/assassin?utm_source=api|{IMAGE_URL=https://cards.scryfall.io/normal/front/a/3/a3960d63-168d-4d08-a10b-3331194fdc36.jpg?1593142660}

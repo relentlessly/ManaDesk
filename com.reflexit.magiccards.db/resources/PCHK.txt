@@ -1,0 +1,2 @@
+ID|NAME|COST|TYPE|POWER|TOUGHNESS|ORACLE|SET|RARITY|LANG|ARTIST|COLLNUM|TEXT|PROPERTIES
+97068|Ryusei, the Falling Star|{5}{R}|Legendary Creature - Dragon Spirit|5|5|Flying<br>When Ryusei dies, it deals 5 damage to each creature without flying.|Champions of Kamigawa Promos|Rare||Nottsuo|185★|MID: 97068<br>Finishes: foil:<br>Promos: datestamped:prerelease:<br>https://scryfall.com/card/pchk/185%E2%98%85/ryusei-the-falling-star?utm_source=api|{IMAGE_URL=https://cards.scryfall.io/normal/front/d/e/ded41d44-8233-4fc5-b2c7-e9f263512c1c.jpg?1606846536}

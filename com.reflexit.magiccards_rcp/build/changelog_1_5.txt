@@ -1,0 +1,95 @@
+== changes in 1.5.2==
+* Fixed gather import
+== changes in 1.5.1.20171201==
+* Fixed currency converter
+== changes in 1.5.1.20171023==
+* Fixed cardmarket url
+* Added redirect support for other urls
+== changes in 1.5.1.20171011==
+* DeckBox import
+* Import of non-english cards
+* Db updates: Ixalan, Commander 2017
+* Magiccards.info fixes (change url to https)
+
+== changes in 1.5.1.20170807==
+Bug 584 German Amonkhet card names are English
+
+== changes in 1.5.1.20170802==
+Bug 590 HOU Lands Violate Max Repeats
+Exception in UI when clicking on Own Count field
+Fixed Commander Anthology vs Command's Arcenal abbreviation confusion
+Update to latest set July 2017 up to HOU
+
+
+== changes in 1.5.1.20170622==
+Bug 587 Importing Decks / Collections with errors
+Bug 586 List in "Instances" window does not update when add card to collection
+
+== changes in 1.5.1.20170523 ==
+Bug #582 currency convertion issues (site changed API)
+Bug #568 MagicDB total cards count increasses on every restart
+== changes in 1.5.1.20170429 ==
+* Bug 579 Basic Lands Will Not Load
+* New sets out of the box Amonkhet, Duel Decks: Mind vs. Might, Masterpiece Series: Amonkhet Invocations, Welcome Deck 2017
+== changes in 1.5.1.X ==
+* added 2 more sets Aether Revolt and Modern Masters 2017 Edition
+* Bug 574 NullPointerException in Card Info view
+* Bug 572 Aether Vial (Masterpiece)
+* Fixed patterns for gatherer parsing
+* Fixed wiki parsing for sets
+== changes in 1.5.1 ==
+* Added mana 13 symbols
+* Corrected flip card parser to adjust to gatherer changes
+* Corrected set legality parser to adjust to gatherer changes
+* Corrected price parser to adjust to marketprices site changes
+* Updated to latest Standard sets
+* Switched runtime to Neon
+* Bug 554 Group By Ownership
+* Added preferences to define custom grouping 
+== changes in 1.5.0 ==
+* ScryGlass import
+* Bug 523 Duplicate entries in Instances view
+* Show In menu in all views
+* Table headers now have its own menu to enable/disable columns
+* Added Selection view - show selected cards in gallery mode
+* Bug 488 Hidden Cards problem
+* Presentations - for deck view presentation mode: table, gallery, tree, etc 
+* Gallery view - database view that shows only card images
+* Not a user feature but building now with Tycho/Maven
+* Bug: Fixed tree paining issue on linux gtk 3.10
+* Feature: added life counter for draw/play page
+* Feature: disable some buttons if edit database activity is not enabled
+* fixed enter deck text
+* Card loading optimizations
+* Optimizing quick filter control
+* Renamed Seller Price to Online Price and Price to User Price to avoid confusion
+* Added pane mode 600x400 into screenshot tool
+* Fixed editing comment in draw tab
+* Bug 469 Special Tag not (directly) written to main.xml
+* Bug 463 Option to ignore online-only sets and purge any already added
+* Bug 479 added duplicate and remove cards into edit dialog
+* Bug 480 Filtering sets - when multiple match
+* Added import/export examples
+* Fixed backward compatibility workspace loading
+* Added edition aliases field in set editor (preferences)
+* Redid UI for import wizard
+* Added extending database wizard
+* Fixed issues with default import report type (Deck Classic)
+* Bug 474 Problem with Color Identity filtering out too many cards
+* DB updates Masters 2015 and Tempest Remastered
+* Fixed issues with fantom filter
+* Fixed some issues with virtual settings
+* Fixed race conditions when opening non-existing decks and activation
+* Updated icon for deck view when it shows collection
+* Fixed major delay on clicking in Collections or Deck view
+* Update platform to eclipse 4.5 (Mars)
+* Fixed race conditions between saving properties and loading from disk
+* Bug in export when some category of cards is missing in HTML format
+* Bug 456 Error with legality entering Dragons of Tarkir cards
+* Bug 461 Fixed feature dependencies
+* Clarified error message for commander format
+* Reduced backup size by compressing in a ZIP file
+* Added filter control into column selector
+* Bug 460 Rename 'Kiora vs. Elspeth' to 'Elspeth vs. Kiora'**
+* Fixed updating color indicator on refresh
+* Bug 458: NPE in ColorIdentity

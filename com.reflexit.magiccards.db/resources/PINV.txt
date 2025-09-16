@@ -1,0 +1,2 @@
+ID|NAME|COST|TYPE|POWER|TOUGHNESS|ORACLE|SET|RARITY|LANG|ARTIST|COLLNUM|TEXT|PROPERTIES
+97061|Raging Kavu|{1}{R}{G}|Creature - Kavu|3|1|Flash<br>Haste|Invasion Promos|Rare|Latin|Arnie Swekel|262|MID: 97061<br>Finishes: foil:<br>Promos: datestamped:prerelease:<br>https://scryfall.com/card/pinv/262/kavu-furens-(raging-kavu)?utm_source=api|{IMAGE_URL=https://cards.scryfall.io/normal/front/c/9/c9c77844-742c-48cf-9c1e-954ffe781e25.jpg?1606849734}

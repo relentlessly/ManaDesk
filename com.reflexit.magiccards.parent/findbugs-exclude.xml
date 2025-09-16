@@ -1,0 +1,28 @@
+<FindBugsFilter>
+
+<!--  
+     <Match>
+       <Bug code="DE,UrF,SIC" />
+     </Match>
+     -->
+
+     <Match>
+       <!--  All malicious access stuff -->
+       <Bug code="MS" />
+     </Match>
+
+     <Match>
+         <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION" />
+         <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+     </Match>
+
+
+     <!-- All bugs in test classes, except for JUnit-specific bugs -->
+     <Match>
+      <Class name="~.*\.*Test" />
+      <Not>
+          <Bug code="IJU" />
+      </Not>
+     </Match>
+
+</FindBugsFilter>
