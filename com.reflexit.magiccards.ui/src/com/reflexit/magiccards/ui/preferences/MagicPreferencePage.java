@@ -8,16 +8,12 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import com.reflexit.magicassistant.p2.UpdateHandlerP2;
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.MagicLogger;
 import com.reflexit.magiccards.core.seller.IPriceProvider;
@@ -101,8 +97,11 @@ public class MagicPreferencePage extends FieldEditorPreferencePage implements IW
 		});
 		addField(new BooleanFieldEditor(PreferenceConstants.CHECK_FOR_CARDS, "Check for new cards on startup",
 				inetOptions));
-		addField(new BooleanFieldEditor(PreferenceConstants.CHECK_FOR_UPDATES, "Check for software updates on startup",
-				inetOptions));
+		/*
+		 * !!! RD Disable for now addField(new
+		 * BooleanFieldEditor(PreferenceConstants.CHECK_FOR_UPDATES,
+		 * "Check for software updates on startup", inetOptions));
+		 */
 		String[][] values = getPriceProviders();
 
 		/*
@@ -139,17 +138,17 @@ public class MagicPreferencePage extends FieldEditorPreferencePage implements IW
 	}
 
 	private void createButtons(Composite fieldEditorParent) {
-		Button pressMe = new Button(fieldEditorParent, SWT.PUSH);
-		pressMe.setText("Add Software Update Site...");
-		pressMe.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				new UpdateHandlerP2().openManipulateRepositories();
-			}
-		});
-		GridData ld = new GridData();
-		ld.horizontalSpan = 2;
-		pressMe.setLayoutData(ld);
+
+		/*
+		 * !!!! RD No software update for now Button pressMe = new
+		 * Button(fieldEditorParent, SWT.PUSH);
+		 * pressMe.setText("Add Software Update Site...");
+		 * pressMe.addSelectionListener(new SelectionAdapter() {
+		 * 
+		 * @Override public void widgetSelected(SelectionEvent e) { new
+		 * UpdateHandlerP2().openManipulateRepositories(); } }); GridData ld = new
+		 * GridData(); ld.horizontalSpan = 2; pressMe.setLayoutData(ld);
+		 */
 	}
 
 	@Override

@@ -29,8 +29,8 @@ public class UpdateMagicDBDialog extends TitleAreaDialog implements IPreferenceP
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		getShell().setText("Update Magic Database...");
-		setTitle("Update MTG Database cards");
+		getShell().setText("Update Scryfall Database...");
+		setTitle("Update Scryfall Database cards");
 		setMessage("Select a set from drop down list or type in the field and press \"Update\" button to update");
 		this.updatePreference = new MagicGathererPreferencePage();
 		this.updatePreference.setContainer(this);

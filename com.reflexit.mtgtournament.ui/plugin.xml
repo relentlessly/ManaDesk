@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Magic Assistant"
+            name="Magic Fork"
             id="com.reflexit.magiccards">
       </category>
       <view

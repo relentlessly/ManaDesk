@@ -72,19 +72,6 @@ public class ParseScryFallSets extends AbstractParseJson {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 			Date d = formatter.parse(date);
 			ed.setReleaseDate(d);
-
-			// If the date is in the future, skip the set to prevent issue while parsing the
-			// cards
-			LocalDate threshold = LocalDate.now();
-
-			// Convert to LocalDate
-			LocalDate setDate = ed.getReleaseDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-			if (setDate.compareTo(threshold) > 0) {
-				// Ignore that set for now
-				return;
-			}
-
 		} catch (java.text.ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,8 +80,15 @@ public class ParseScryFallSets extends AbstractParseJson {
 		Boolean digital = getBool(elem, "digital");
 		int cardCount = getInt(elem, "card_count");
 
+		// If the date is in the future, skip the set to prevent issue while parsing the
+		// cards
+		LocalDate threshold = LocalDate.now();
+
+		// Convert to LocalDate
+		LocalDate setDate = ed.getReleaseDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
 		// RD Skip digital set and set with no card (typically future sets)
-		if (!digital && cardCount > 0) {
+		if (!digital && cardCount > 0 && setDate.compareTo(threshold) <= 0) {
 
 			Editions currentEd = Editions.getInstance();
 
@@ -107,7 +101,8 @@ public class ParseScryFallSets extends AbstractParseJson {
 				handler.handleEdition(ed);
 			}
 		} else {
-			System.err.println("Skip Set " + set + " dig:" + digital + " count:" + cardCount);
+			System.err.println(
+					"Skip Set " + set + " digital:" + digital + " count:" + cardCount + " date: " + setDate.toString());
 		}
 
 	}

@@ -45,7 +45,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.LOAD_EXTRAS, false);
 		store.setDefault(PreferenceConstants.LOAD_PRINTINGS, false);
 		store.setDefault(PreferenceConstants.SHOW_GRID, false);
-		store.setDefault(PreferenceConstants.CHECK_FOR_UPDATES, true);
+		store.setDefault(PreferenceConstants.CHECK_FOR_UPDATES, false); // !!! RD Don't check for update per default
 		store.setDefault(PreferenceConstants.CHECK_FOR_CARDS, true);
 		store.setDefault(PreferenceConstants.OWNED_COPY, false);
 		store.setDefault(PreferenceConstants.CURRENCY, "USD");

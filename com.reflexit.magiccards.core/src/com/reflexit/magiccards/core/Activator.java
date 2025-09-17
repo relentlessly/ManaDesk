@@ -51,7 +51,7 @@ public class Activator extends Plugin {
 				&& "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/profiling"));
 		MagicLogger.setTracing(TRACE_PERF);
 		MagicLogger.setDebugging(TRACE_CORE);
-		MagicLogger.info("Magic Assistant started. Version " + plugin.getBundle().getVersion());
+		MagicLogger.info("Magic Fork started. Version " + plugin.getBundle().getVersion());
 		new Thread("Loading database") {
 			@Override
 			public void run() {

@@ -48,7 +48,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	@Override
 	public void postWindowOpen() {
 		try {
-			installSoftwareUpdate();
+			// !!! RD Don't check for software update at this moment, still pointing to
+			// SourceForge
+			// installSoftwareUpdate();
 			checkForCardUpdates();
 		} catch (Throwable e) {
 			Activator.log(e);
