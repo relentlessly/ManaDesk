@@ -9,7 +9,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="Magic Fork Preferences"
+            name="Magic Assistant Preferences"
             class="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
             id="com.reflexit.magiccards.ui.preferences.MagicPreferencePage">
       </page>
@@ -79,7 +79,7 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Magic Fork"
+            name="Magic Assistant"
             id="com.reflexit.magiccards">
       </category>
       <view
@@ -357,7 +357,7 @@
          point="org.eclipse.ui.commands">
       <category
             id="com.reflexit.magiccards.ui.commands.category"
-            name="Magic Fork">
+            name="Magic Assistant">
       </category>
       <command
             categoryId="com.reflexit.magiccards.ui.commands.category"
@@ -807,7 +807,7 @@
 
 <extension point="org.eclipse.ui.themes">
 	<themeElementCategory
-		id="com.reflexit.magiccards.ui.preferences.themeElementCategory" label="Magic Fork">
+		id="com.reflexit.magiccards.ui.preferences.themeElementCategory" label="Magic Assistant">
 		<description>
 			Magic Fork fonts and colors
 		</description>

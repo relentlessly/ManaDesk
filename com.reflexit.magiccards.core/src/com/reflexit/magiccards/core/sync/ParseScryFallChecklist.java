@@ -302,22 +302,17 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		String backMultiverseString = "";
 		String cardText = "";
 
+		// Always use Scryfall ID
+		frontCard.setCardId(elem.get("id").toString());
+		backCard.setCardId("-" + elem.get("id").toString());
 		if (gids != null && gids.size() == 2) {
-			frontCard.setCardId(gids.get(0).toString());
-			backCard.setCardId("-" + frontCard.getCardId());
-
 			frontMultiverseString = "MID: " + gids.get(0).toString() + " // " + gids.get(1).toString() + "<br>";
 			backMultiverseString = "MID: " + gids.get(1).toString() + " // " + gids.get(0).toString() + "<br>";
 		} else if (gids != null && gids.size() == 1) {
-			frontCard.setCardId(gids.get(0).toString());
-			backCard.setCardId("-" + frontCard.getCardId());
-
 			frontMultiverseString = "MID: " + gids.get(0).toString() + "<br>";
 			backMultiverseString = "MID: " + gids.get(0).toString() + "<br>";
 		} else {
-			frontCard.setCardId("scry_" + elem.get("id").toString());
 			frontMultiverseString = "";
-			backCard.setCardId("-" + "scry_" + elem.get("id").toString());
 			backMultiverseString = "";
 		}
 
