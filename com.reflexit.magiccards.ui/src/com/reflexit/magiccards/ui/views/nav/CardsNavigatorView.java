@@ -388,7 +388,7 @@ public class CardsNavigatorView extends ViewPart implements ICardEventListener, 
 	}
 
 	private void showMessage(String message) {
-		MessageDialog.openInformation(getViewSite().getShell(), "Scryfall Cards", message);
+		MessageDialog.openInformation(getViewSite().getShell(), "Magic Cards", message);
 	}
 
 	/*

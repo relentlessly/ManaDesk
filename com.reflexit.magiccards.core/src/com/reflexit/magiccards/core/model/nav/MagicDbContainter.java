@@ -1,7 +1,7 @@
 package com.reflexit.magiccards.core.model.nav;
 
 /**
- * Organizer for Scryfall database
+ * Organizer for magic database
  *
  * @author Alena
  *
@@ -12,6 +12,6 @@ public class MagicDbContainter extends CardOrganizer {
 	}
 
 	public String getLabel() {
-		return "Scryfall Database";
+		return "MTG Database";
 	}
 }

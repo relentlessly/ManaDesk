@@ -17,7 +17,7 @@ public class FilterTest extends AbstractSwtBotTest {
 
 	@Test
 	public void testFilter() throws Exception {
-		bot.viewByTitle("Scryfall Database").setFocus();
+		bot.viewByTitle("MTG Database").setFocus();
 		openFilterShell();
 		bot.tree().select("Set Filter");
 		bot.treeInGroup("Select visible sets").getTreeItem("Alara Reborn").check();
@@ -28,7 +28,7 @@ public class FilterTest extends AbstractSwtBotTest {
 
 	@Test
 	public void testFilterType() throws Exception {
-		bot.viewByTitle("Scryfall Database").setFocus();
+		bot.viewByTitle("MTG Database").setFocus();
 		openFilterShell();
 		bot.tree().select("Basic Filter");
 		bot.textWithLabel("Type").setText("Artifact");
@@ -39,7 +39,7 @@ public class FilterTest extends AbstractSwtBotTest {
 
 	@Test
 	public void testFilterType2() throws Exception {
-		bot.viewByTitle("Scryfall Database").setFocus();
+		bot.viewByTitle("MTG Database").setFocus();
 		bot.table().unselect();
 		bot.tree().unselect();
 		openFilterShell();

@@ -23,7 +23,7 @@
 		<topic label="Commands" href="html/reference/commands.html" />    
 	</topic>
 	<topic label="Views"  href="html/reference/views.html">
-		<topic label="Scryfall Database" href="html/reference/views.html#viewmagicdb" />
+		<topic label="MTG Database" href="html/reference/views.html#viewmagicdb" />
 		<topic label="My Cards" href="html/reference/views.html#viewcol" />
 		<topic label="Collector" href="html/reference/views.html#viewcollector" />
 		<topic label="Deck" href="html/reference/views.html#viewdeck" /> 
