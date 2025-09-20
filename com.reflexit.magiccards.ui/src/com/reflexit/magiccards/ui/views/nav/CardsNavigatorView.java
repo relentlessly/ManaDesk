@@ -128,7 +128,7 @@ public class CardsNavigatorView extends ViewPart implements ICardEventListener, 
 	private void createTable(Composite parent) {
 		this.manager = new CardsNavigatiorManager();
 		Control control = this.manager.createContents(parent, SWT.MULTI);
-		control.setLayoutData(new GridData(GridData.FILL_BOTH));
+		((Composite) control).setLayoutData(new GridData(GridData.FILL_BOTH));
 		// ADD the JFace Viewer as a Selection Provider to the View site.
 		getSite().setSelectionProvider(this.manager.getViewer());
 	}
@@ -388,7 +388,7 @@ public class CardsNavigatorView extends ViewPart implements ICardEventListener, 
 	}
 
 	private void showMessage(String message) {
-		MessageDialog.openInformation(getViewSite().getShell(), "Scryfall Cards", message);
+		MessageDialog.openInformation(getViewSite().getShell(), "Magic Cards", message);
 	}
 
 	/*
@@ -491,7 +491,7 @@ public class CardsNavigatorView extends ViewPart implements ICardEventListener, 
 	}
 
 	protected void showSideboardFilter() {
-		Map<String, Object> prop = new HashMap<>();
+		Map<String, Object> prop = new HashMap<String, Object>();
 		boolean state = !showSideboards.isChecked();
 		prop.put(CardsNavigatorContentProvider.FILTER_SIDEBOARDS, state);
 		getViewer().setFilters(new ViewerFilter[] { CardsNavigatorContentProvider.getFilter(prop) });

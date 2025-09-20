@@ -32,7 +32,7 @@ public class EditionsPreferencePage extends PreferencePage implements IWorkbench
 	private Control link;
 
 	public EditionsPreferencePage() {
-		setTitle("Scryfall Card Sets");
+		setTitle("Magic Card Sets");
 		setDescription("You can edit set information using inline cell editor");
 	}
 
@@ -134,8 +134,8 @@ public class EditionsPreferencePage extends PreferencePage implements IWorkbench
 						ed.getName() + " has card instances, delete cards that use that set first.");
 				return;
 			}
-			MessageDialog.openInformation(getShell(), "Info",
-					ed.getName() + " is not empty, it will be hidden instead. " + "Restart Magic Fork to take effect.");
+			MessageDialog.openInformation(getShell(), "Info", ed.getName()
+					+ " is not empty, it will be hidden instead. " + "Restart Magic Assistant to take effect.");
 			ed.setHidden(true);
 		} else if (!ed.isHidden()) {
 			Editions.getInstance().remove(ed);

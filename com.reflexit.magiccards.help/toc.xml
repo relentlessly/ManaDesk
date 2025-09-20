@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Magic Fork">
+<toc label="Magic Assistant">
    <topic label="Getting Started">
- 	<topic label="Magic Fork Overview"  href="html/gettingstarted/basic_tutorial.html"> 
+ 	<topic label="Magic Assistant Overview"  href="html/gettingstarted/basic_tutorial.html"> 
 	</topic>
    </topic>
    <topic label="Tasks">
@@ -11,7 +11,7 @@
 	<topic label="Creating a new Deck"  href="html/tasks/creatingdeck.html#create_deck"/> 
 	<topic label="Populating a deck or collection manually" href="html/tasks/creatingdeck.html#populate_manual"/>
 	<topic label="Importing a deck or collection"  href="html/tasks/creatingdeck.html#import_deck"/> 
-	<topic label="Updating Scryfall card Database"  href="html/tasks/updatingdb.html"/>
+	<topic label="Updating magic card Database"  href="html/tasks/updatingdb.html"/>
 	<topic label="Loading Online Prices"  href="html/tasks/loadingprices.html"/>
 	<topic label="Cloud sync and version control"  href="html/tasks/sync.html"/>
    </topic>
@@ -23,7 +23,7 @@
 		<topic label="Commands" href="html/reference/commands.html" />    
 	</topic>
 	<topic label="Views"  href="html/reference/views.html">
-		<topic label="Scryfall Database" href="html/reference/views.html#viewmagicdb" />
+		<topic label="MTG Database" href="html/reference/views.html#viewmagicdb" />
 		<topic label="My Cards" href="html/reference/views.html#viewcol" />
 		<topic label="Collector" href="html/reference/views.html#viewcollector" />
 		<topic label="Deck" href="html/reference/views.html#viewdeck" /> 

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.reflexit.magiccards.feature.rcp"
-      label="Magic Fork Feature"
+      label="Magic Assistant Feature"
       version="1.6.0.qualifier"
       provider-name="Alena Laskavaia"
       plugin="com.reflexit.magiccards_rcp">
 
    <description url="http://mtgbrowser.sf.net">
-      Magic Fork feature
+      Magic Assistant feature
    </description>
 
    <copyright url="http://www.example.com/copyright">

@@ -10,8 +10,8 @@ DelFile APPDIR\artifacts.xml
 DelFile APPDIR\epl-v10.html
 DelFile APPDIR\magicassistant.ini
 DelFile APPDIR\notice.html
-DelShortcut -name "Magic Fork" -dir DesktopFolder
-DelShortcut -name "Magic Fork" -dir SHORTCUTDIR
+DelShortcut -name "Magic Assistant" -dir DesktopFolder
+DelShortcut -name "Magic Assistant" -dir SHORTCUTDIR
 Save
 AddFolder APPDIR &EXPORT_DIR&\MagicAssistant\configuration
 AddFolder APPDIR &EXPORT_DIR&\MagicAssistant\plugins

@@ -18,14 +18,14 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="com.reflexit.magiccards_rcp.application"
-            name="Magic Fork">
+            name="Magic Assistant">
          <property
                name="windowImages"
                value="icons/m16.gif,icons/m.gif,icons/m48.gif,icons/m256.gif">
          </property>
          <property
                name="appName"
-               value="Magic Fork">
+               value="Magic Assistant">
          </property>
          <property
                name="startupForegroundColor"
@@ -128,12 +128,12 @@
       <theme
             basestylesheeturi="css/dark.css"
             id="com.reflexit.magiccards.dark"
-            label="Magic Fork Dark">
+            label="Magic Assistant Dark">
       </theme>
       <theme
             basestylesheeturi="css/light.css"
             id="com.reflexit.magiccards.light"
-            label="Magic Fork Light">
+            label="Magic Assistant Light">
       </theme>
       
          <stylesheet
@@ -158,11 +158,11 @@
 
       <category
 
-            description="Magic Fork Activities. To Enable/Disable Features Use &quot;Advanced&quot; Button."
+            description="Magic Assistant Activities. To Enable/Disable Features Use &quot;Advanced&quot; Button."
 
             id="com.reflexit.magiccards.activity.category"
 
-            name="Magic Fork">
+            name="Magic Assistant">
 
       </category>
 
