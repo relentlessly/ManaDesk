@@ -1,4 +1,4 @@
-This is beta release of Magic Assistant 1.5.1,
+This is beta release of Magic Fork 1.5.1,
 I switched platform to eclipse 4.6 (Neon) so resulting artifacts may contain lots of bugs. Appreciate any help testing especially
 on mac os. Please backup you cards or use a different workspace to test it.
 Thanks!

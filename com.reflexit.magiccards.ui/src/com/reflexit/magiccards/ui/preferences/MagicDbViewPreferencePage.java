@@ -11,10 +11,11 @@ import com.reflexit.magiccards.ui.views.columns.MagicColumnCollection;
 
 public class MagicDbViewPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static final String PPID = MagicDbViewPreferencePage.class.getName();
+
 	public MagicDbViewPreferencePage() {
 		super(GRID);
 		setPreferenceStore(PreferenceInitializer.getMdbStore());
-		setDescription("MTG Database View Preferences");
+		setDescription("Scryfall Database View Preferences");
 	}
 
 	@Override
@@ -23,8 +24,7 @@ public class MagicDbViewPreferencePage extends FieldEditorPreferencePage impleme
 		addField(new BooleanFieldEditor(PreferenceConstants.LOCAL_SHOW_QUICKFILTER, "Show quick filter",
 				getFieldEditorParent()));
 		addField(new ColumnFieldEditor(PreferenceConstants.LOCAL_COLUMNS, "Visible Columns and Order",
-				getFieldEditorParent(),
-				columnCollection));
+				getFieldEditorParent(), columnCollection));
 	}
 
 	@Override

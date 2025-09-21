@@ -15,7 +15,7 @@ import com.reflexit.magiccards.core.model.MagicCardField;
 import com.reflexit.magiccards.core.model.abs.ICardField;
 
 /**
- * Export of magic assistant csv
+ * Export of magic fork csv
  */
 public class CsvExportDelegate extends AbstractExportDelegatePerLine<IMagicCard> {
 	@Override

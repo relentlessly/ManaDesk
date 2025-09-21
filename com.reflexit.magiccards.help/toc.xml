@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Magic Assistant">
+<toc label="Magic Fork">
    <topic label="Getting Started">
- 	<topic label="Magic Assistant Overview"  href="html/gettingstarted/basic_tutorial.html"> 
+ 	<topic label="Magic Fork Overview"  href="html/gettingstarted/basic_tutorial.html"> 
 	</topic>
    </topic>
    <topic label="Tasks">
@@ -23,7 +23,7 @@
 		<topic label="Commands" href="html/reference/commands.html" />    
 	</topic>
 	<topic label="Views"  href="html/reference/views.html">
-		<topic label="MTG Database" href="html/reference/views.html#viewmagicdb" />
+		<topic label="Scryfall Database" href="html/reference/views.html#viewmagicdb" />
 		<topic label="My Cards" href="html/reference/views.html#viewcol" />
 		<topic label="Collector" href="html/reference/views.html#viewcollector" />
 		<topic label="Deck" href="html/reference/views.html#viewdeck" /> 

@@ -128,12 +128,12 @@
       <theme
             basestylesheeturi="css/dark.css"
             id="com.reflexit.magiccards.dark"
-            label="Magic Assistant Dark">
+            label="Magic Fork Dark">
       </theme>
       <theme
             basestylesheeturi="css/light.css"
             id="com.reflexit.magiccards.light"
-            label="Magic Assistant Light">
+            label="Magic Fork Light">
       </theme>
       
          <stylesheet
@@ -158,7 +158,7 @@
 
       <category
 
-            description="Magic Assistant Activities. To Enable/Disable Features Use &quot;Advanced&quot; Button."
+            description="Magic Fork Activities. To Enable/Disable Features Use &quot;Advanced&quot; Button."
 
             id="com.reflexit.magiccards.activity.category"
 

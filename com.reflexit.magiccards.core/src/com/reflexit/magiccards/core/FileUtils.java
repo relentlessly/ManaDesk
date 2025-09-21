@@ -305,7 +305,7 @@ public class FileUtils {
 		if (str != null) {
 			return new File(str.replaceFirst("^file:", ""));
 		} else {
-			return new File(System.getProperty("user.home"), "MagicAssistant");
+			return new File(System.getProperty("user.home"), "MagicFork");
 		}
 	}
 

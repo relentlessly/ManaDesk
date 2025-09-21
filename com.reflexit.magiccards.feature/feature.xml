@@ -7,7 +7,7 @@
       plugin="com.reflexit.magiccards.ui">
 
    <description url="http://mtgbrowser.sourceforge.net/wiki/index.php/Main_Page">
-      Magic Assistance
+      Magic Fork
    </description>
 
    <copyright url="http://mtgbrowser.wiki.sourceforge.net/copyright">
@@ -28,7 +28,7 @@ http://www.eclipse.org/legal/epl-v10.html
    </license>
 
    <url>
-      <update label="Magic Assistant" url="http://mtgbrowser.sourceforge.net/update/1.5"/>
+      <update label="Magic Fork" url="http://mtgbrowser.sourceforge.net/updatefork/1.5"/>
    </url>
 
    <requires>

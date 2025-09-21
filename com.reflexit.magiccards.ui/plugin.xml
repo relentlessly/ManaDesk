@@ -9,7 +9,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="Magic Assistant Preferences"
+            name="Magic Fork Preferences"
             class="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
             id="com.reflexit.magiccards.ui.preferences.MagicPreferencePage">
       </page>
@@ -22,7 +22,7 @@
              category="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
              class="com.reflexit.magiccards.ui.preferences.MagicDbViewPreferencePage"
              id="com.reflexit.magiccards.ui.preferences.MagicDbViewPreferencePage"
-             name="View: MTG Database">
+             name="View: Scryfall Database">
        </page>
        <page
              category="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
@@ -88,7 +88,7 @@
             class="com.reflexit.magiccards.ui.views.MagicDbView"
             icon="icons/m24.gif"
             id="com.reflexit.magiccards.ui.views.MagicDbView"
-            name="MTG Database"
+            name="Scryfall Database"
             restorable="true">
       </view>
       <view
@@ -379,11 +379,13 @@
             id="com.reflexit.magiccards.ui.commands.increaseCount"
             name="Increase">
       </command>
+      <!--
       <command
             categoryId="com.reflexit.magiccards.ui.commands.category"
             id="com.reflexit.magiccards.ui.commands.sendBug"
             name="Send Bug or Feature Request">
       </command>
+      -->
       <command
             categoryId="com.reflexit.magiccards.ui.commands.category"
             id="com.reflexit.magiccards.ui.commands.updateMagicDb"
@@ -497,12 +499,12 @@
          point="org.eclipse.ui.contexts">
       <context
             id="com.reflexit.magiccards.ui.context"
-            name="Magic Assistant windows"
+            name="Magic Fork windows"
             parentId="org.eclipse.ui.contexts.window">
       </context>
       <context
             id="com.reflexit.magiccards.ui.context.search"
-            name="Magic Assistant Search Fields"
+            name="Magic Fork Search Fields"
             parentId="org.eclipse.ui.textEditorScope">
       </context>
    </extension>
@@ -652,7 +654,7 @@
              </command>
        </menuContribution>
   </extension>
-  
+      <!--
      <extension
          point="org.eclipse.ui.commands">
       <command
@@ -679,7 +681,7 @@
             </command>
       </menuContribution>
    </extension>
-  
+    -->
   
   <extension
         point="org.eclipse.ui.newWizards">
@@ -809,7 +811,7 @@
 	<themeElementCategory
 		id="com.reflexit.magiccards.ui.preferences.themeElementCategory" label="Magic Assistant">
 		<description>
-			Magic Assistant fonts and colors
+			Magic Fork fonts and colors
 		</description>
 	</themeElementCategory>
 
@@ -818,7 +820,7 @@
 		id="com.reflexit.magiccards.ui.preferences.color" label="Cards List Text Color"
 		value="COLOR_BLACK">
 		<description>
-			Color of text shown in Magic Assistant tables and trees
+			Color of text shown in Magic Fork tables and trees
         </description>
 	</colorDefinition>
 	
@@ -827,7 +829,7 @@
 		id="com.reflexit.magiccards.ui.preferences.vcard.bgcolor" label="Virtual Card Background Color"
 		value="COLOR_WIDGET_LIGHT_SHADOW">
 		<description>
-			Background color for rows of virtual cards in Magic Assistant tables and trees
+			Background color for rows of virtual cards in Magic Fork tables and trees
         </description>
 	</colorDefinition>
 	
@@ -836,7 +838,7 @@
 		id="com.reflexit.magiccards.ui.preferences.ocard.bgcolor" label="Own Card Background Color"
 		value="COLOR_LIST_BACKGROUND">
 		<description>
-			Background color for rows of own cards in Magic Assistant tables and trees
+			Background color for rows of own cards in Magic Fork tables and trees
         </description>
 	</colorDefinition>
 
@@ -845,7 +847,7 @@
 		id="com.reflexit.magiccards.ui.preferences.font" label="Cards List Font"
 		value="Arial-12">
 		<description>
-			Font of text shown in Magic Assistant tables and trees
+			Font of text shown in Magic Fork tables and trees
         </description>
 	</fontDefinition>
 

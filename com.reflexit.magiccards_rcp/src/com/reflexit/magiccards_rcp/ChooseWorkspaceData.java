@@ -105,7 +105,7 @@ public class ChooseWorkspaceData {
 	public String getInitialDefault() {
 		if (initialDefault == null) {
 			setInitialDefault(System.getProperty("user.dir") //$NON-NLS-1$
-					+ File.separator + "MagicAssistantWorkspace"); //$NON-NLS-1$
+					+ File.separator + "MagicForkWorkspace"); //$NON-NLS-1$
 		}
 		return initialDefault;
 	}

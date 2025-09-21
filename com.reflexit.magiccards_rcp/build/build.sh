@@ -72,12 +72,12 @@ fi
 if [ "$UPLOAD" -eq 1 ]; then
 	RELEASE_DIR="$EXPORT_DIR/$RELEASE"
 	rm -rf "$RELEASE_DIR"; mkdir -p "$RELEASE_DIR"
-	cp $RESULT/magicassistant*.zip $RELEASE_DIR/
-	cp $RESULT/magicassistant*.exe $RELEASE_DIR/
+	cp $RESULT/magicfork*.zip $RELEASE_DIR/
+	cp $RESULT/magicfork*.exe $RELEASE_DIR/
 	cp $MA_WORKSPACE/com.reflexit.magiccards-metadata/README.TXT $RELEASE_DIR/
 	echo "Published results at $RELEASE_DIR/"
 	echo "Uploading builds for $RELEASE..."
-	$SCP -r -v -i "$SF_PRIVATE_KEY" $RELEASE_DIR $SF_USER,mtgbrowser@frs.sourceforge.net:/home/frs/project/m/mt/mtgbrowser/Magic_Assistant/
+	$SCP -r -v -i "$SF_PRIVATE_KEY" $RELEASE_DIR $SF_USER,mtgbrowser@frs.sourceforge.net:/home/frs/project/m/mt/mtgbrowser/Magic_Fork/
 fi
 
 if [ "$UPDATE_SITE" -gt 0 ]; then

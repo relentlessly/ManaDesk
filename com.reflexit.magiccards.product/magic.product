@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Magic Assistant" uid="com.reflexit.magiccards_rcp.product" id="com.reflexit.magiccards_rcp.product" application="com.reflexit.magiccards_rcp.application" version="1.6.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Magic Fork" uid="com.reflexit.magiccards_rcp.product" id="com.reflexit.magiccards_rcp.product" application="com.reflexit.magiccards_rcp.application" version="1.6.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="splash.png"/>
@@ -33,7 +33,7 @@
       startupProgressRect="100,10,420,15"
       startupMessageRect="100,25,420,20"
       startupForegroundColor="000000" />
-   <launcher name="magicassistant">
+   <launcher name="magicfork">
       <linux icon="../com.reflexit.magiccards_rcp/icons/m48.xpm"/>
       <solaris/>
       <win useIco="false">

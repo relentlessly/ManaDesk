@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Magic Assistant
+Bundle-Name: Magic Fork
 Bundle-SymbolicName: com.reflexit.magiccards_rcp;singleton:=true
 Bundle-Version: 1.6.0.qualifier
 Bundle-Activator: com.reflexit.magiccards_rcp.Activator

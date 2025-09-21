@@ -50,12 +50,12 @@
 						<product>
 							<id>com.reflexit.magiccards_rcp.product</id>
 							<!-- optional parameters -->
-							<rootFolder>MagicAssistant</rootFolder>
+							<rootFolder>MagicFork</rootFolder>
 							<rootFolders>
-								<macosx>MagicAssistant.app</macosx>
+								<macosx>MagicFork.app</macosx>
 							</rootFolders>
 
-							<archiveFileName>magicassistant-${qualifiedVersion}</archiveFileName>
+							<archiveFileName>magicfork-${qualifiedVersion}</archiveFileName>
 						</product>
 					</products>
 				</configuration>
@@ -81,7 +81,7 @@
 								</loadfile>
 								<replaceregexp file="magic.p2.inf"
 									match="properties.0.value =.*end = end" flags="gis"
-									replace="properties.0.value = Magic Assistant ${qualifiedVersion}\\\\nSee what is new at http://www.magicassistant.ca/ChangeLog.html\\\\n\\\\${line.separator}${changeLog}${line.separator}end = end"
+									replace="properties.0.value = Magic Fork ${qualifiedVersion}\\\\nSee what is new at http://www.magicfork.ca/ChangeLog.html\\\\n\\\\${line.separator}${changeLog}${line.separator}end = end"
 									byline="false" />
 
 							</target>
@@ -98,7 +98,7 @@
 							<target>
 								<replaceregexp file="magic.p2.inf"
 									match="properties.0.value =.*end = end" flags="gis"
-									replace="properties.0.value = Magic Assistant\\\\nSee what is new at http://www.magicassistant.ca/ChangeLog.html\\\\n\\\\${line.separator}end = end"
+									replace="properties.0.value = Magic Fork\\\\nSee what is new at http://www.magicfork.ca/ChangeLog.html\\\\n\\\\${line.separator}end = end"
 									byline="false" />
 							</target>
 						</configuration>
