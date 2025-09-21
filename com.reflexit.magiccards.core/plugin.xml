@@ -9,7 +9,7 @@
             id="xml"
             importDelegate="com.reflexit.magiccards.core.exports.XmlImportDelegate"
             exportDelegate="com.reflexit.magiccards.core.exports.XmlExportDelegate"
-            label="Magic Assistant XML"
+            label="Magic Fork XML"
             xmlFormat="true">
       </deckFormat>
       <deckFormat
@@ -31,20 +31,20 @@
             extension="csv"
             id="csv"
             importDelegate="com.reflexit.magiccards.core.exports.CsvImportDelegate"
-            label="Magic Assistant CSV">
+            label="Magic Fork CSV">
       </deckFormat>
       <deckFormat
              exportDelegate="com.reflexit.magiccards.core.exports.ScsvExportDelegate"
              extension="csv"
              id="scsv"
              importDelegate="com.reflexit.magiccards.core.exports.ScsvImportDelegate"
-             label="Magic Assistant CSV Semicolon">
+             label="Magic Fork CSV Semicolon">
        </deckFormat>
       <deckFormat
             exportDelegate="com.reflexit.magiccards.core.exports.TableExportDelegate"
             id="table"
             importDelegate="com.reflexit.magiccards.core.exports.TableImportDelegate"
-            label="Magic Assistant Piped Table">
+            label="Magic Fork Piped Table">
       </deckFormat>
       <deckFormat
             id="mtgo"
@@ -72,7 +72,7 @@
            extension="html"
            id="htmlWithSymbols"
            importDelegate="com.reflexit.magiccards.core.exports.HtmlTableImportDelegate"
-           label="Magic Assistant HTML Table "
+           label="Magic Fork HTML Table "
            xmlFormat="true">
      </deckFormat>  
       <deckFormat
