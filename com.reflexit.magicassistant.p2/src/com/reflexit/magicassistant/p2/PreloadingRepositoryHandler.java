@@ -32,8 +32,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * PreloadingRepositoryHandler provides background loading of repositories
- * before executing the provisioning handler.
+ * PreloadingRepositoryHandler provides background loading of
+ * repositories before executing the provisioning handler.
  * 
  * @since 3.5
  */
@@ -49,9 +49,9 @@ abstract class PreloadingRepositoryHandler extends AbstractHandler {
 	 * Execute the command.
 	 */
 	public Object execute(ExecutionEvent event) {
-		// Look for a profile. We may not immediately need it in the
+		// Look for a profile.  We may not immediately need it in the
 		// handler, but if we don't have one, whatever we are trying to do
-		// will ultimately fail in a more subtle/low-level way. So determine
+		// will ultimately fail in a more subtle/low-level way.  So determine
 		// up front if the system is configured properly.
 		String profileId = getProvisioningUI().getProfileId();
 		IProvisioningAgent agent = getProvisioningUI().getSession().getProvisioningAgent();
@@ -65,10 +65,10 @@ abstract class PreloadingRepositoryHandler extends AbstractHandler {
 		if (profile == null) {
 			// Inform the user nicely
 			MessageDialog.openInformation(null, Messages.Handler_SDKUpdateUIMessageTitle,
-					Messages.Handler_CannotLaunchUI);
+			        Messages.Handler_CannotLaunchUI);
 			// Log the detailed message
 			StatusManager.getManager()
-					.handle(new Status(IStatus.WARNING, Activator.PLUGIN_ID, "Cannot locate profile"));
+			        .handle(new Status(IStatus.WARNING, Activator.PLUGIN_ID, "Cannot locate profile"));
 		} else {
 			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 				public void run() {
@@ -81,7 +81,7 @@ abstract class PreloadingRepositoryHandler extends AbstractHandler {
 
 	void doExecuteAndLoad() {
 		if (preloadRepositories()) {
-			// cancel any load that is already running
+			//cancel any load that is already running
 			Job.getJobManager().cancel(LoadMetadataRepositoryJob.LOAD_FAMILY);
 			final LoadMetadataRepositoryJob loadJob = new LoadMetadataRepositoryJob(getProvisioningUI()) {
 				public IStatus runModal(IProgressMonitor monitor) {
@@ -150,7 +150,6 @@ abstract class PreloadingRepositoryHandler extends AbstractHandler {
 
 	/**
 	 * Return a shell appropriate for parenting dialogs of this handler.
-	 * 
 	 * @return a Shell
 	 */
 	protected Shell getShell() {
