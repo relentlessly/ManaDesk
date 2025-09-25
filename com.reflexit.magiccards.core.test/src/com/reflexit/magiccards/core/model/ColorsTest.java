@@ -46,12 +46,14 @@ public class ColorsTest {
 		MagicCardPhysical wb = mcpCost(ManaColor.WHITE, ManaColor.BLACK);
 		MagicCardPhysical br = mcpCost(ManaColor.BLACK, ManaColor.RED);
 		MagicCardPhysical brh = mcpCost("{B/R}");
+		MagicCardPhysical bc = mcpCost(ManaColor.BLACK, ManaColor.COLORLESS);		
 		checkIdentity(b, "B");
 		checkIdentity(r, "R");
 		checkIdentity(w, "W");
 		checkIdentity(wb, "W", "B");
 		checkIdentity(br, "R", "B");
 		checkIdentity(brh, "R", "B");
+		checkIdentity(bc, "B", "C");		
 		br.set(MagicCardField.ORACLE, "{W} - do something"); // white in text
 		checkIdentity(br, "B", "R", "W");
 		br.set(MagicCardField.ORACLE, "{R} - do something"); // red
@@ -60,26 +62,36 @@ public class ColorsTest {
 		checkIdentity(br, "B", "R", "W");
 		br.set(MagicCardField.ORACLE, "Win"); // W but not cost
 		checkIdentity(br, "B", "R");
+		br.set(MagicCardField.ORACLE, "something {WP} - do something"); // W or paylife
+		checkIdentity(br, "B", "R", "W");
+		br.set(MagicCardField.ORACLE, "{2/R} - do something"); // Colorless or Red
+		checkIdentity(br, "B", "R", "C");
+		brh.set(MagicCardField.ORACLE, "{2} - do something"); // Colorless 
+		checkIdentity(br, "B", "R", "C");
 	}
 
 	@Test
 	public void testNoIdentity() {
-		MagicCardPhysical a = mcpCost("{1}");
+		MagicCardPhysical a = mcpCost("");
 		Collection<String> colorIdentity = Colors.getInstance().getColorIdentity(a);
 		assertTrue(colorIdentity.size() == 0);
 	}
 
 	@Test
 	public void testColorType() {
-		assertEquals("land", Colors.getColorType(""));
+		assertEquals("costless", Colors.getColorType(""));
 		assertEquals("colorless", Colors.getColorType("{10}"));
-		assertEquals("hybrid", Colors.getColorType("{B/R}"));
+		assertEquals("multi-hybrid", Colors.getColorType("{B/R}"));
 		assertEquals("mono", Colors.getColorType("{B}"));
 		assertEquals("mono", Colors.getColorType("{B}{1}"));
 		assertEquals("mono", Colors.getColorType("{B}{X}"));
 		assertEquals("mono", Colors.getColorType("{B}{B}{X}"));
 		assertEquals("multi", Colors.getColorType("{B}{R}"));
-		assertEquals("mono", Colors.getColorType("{RP}"));
+		assertEquals("mono-hybrid", Colors.getColorType("{RP}"));
+		assertEquals("mono-hybrid", Colors.getColorType("{2/R}"));		
+		assertEquals("mono-hybrid", Colors.getColorType("{2}{2/R}"));
+		assertEquals("multi-hybrid", Colors.getColorType("{2/W}{2/R}"));
+		assertEquals("multi", Colors.getColorType("{W}{U}{B}{R}{G}{1}"));
 	}
 
 	@Test
@@ -95,23 +107,30 @@ public class ColorsTest {
 		assertEquals(2, cs.getConvertedManaCost("{B}{R}"));
 		assertEquals(1, cs.getConvertedManaCost("{RP}"));
 		assertEquals(2, cs.getConvertedManaCost("{2/R}"));
+		assertEquals(4, cs.getConvertedManaCost("{2}{2/R}"));
+		assertEquals(4, cs.getConvertedManaCost("{2/W}{2/R}"));
+		assertEquals(6, cs.getConvertedManaCost("{W}{U}{B}{R}{G}{1}"));		
 	}
 
 	@Test
 	public void testColorName() {
 		Colors cs = Colors.getInstance();
-		assertEquals("No Cost", cs.getColorName(""));
+		assertEquals("Costless", cs.getColorName(""));
 		assertEquals("Colorless", cs.getColorName("{10}"));
 		assertEquals("Black-Red", cs.getColorName("{B/R}"));
 		assertEquals("Black", cs.getColorName("{B}"));
-		assertEquals("Black", cs.getColorName("{B}{1}"));
-		assertEquals("Black", cs.getColorName("{B}{X}"));
-		assertEquals("Black", cs.getColorName("{B}{B}{X}"));
+		assertEquals("Black-Colorless", cs.getColorName("{B}{1}"));
+		assertEquals("Black-Colorless", cs.getColorName("{B}{X}"));
+		assertEquals("Black-Colorless", cs.getColorName("{B}{B}{X}"));
 		assertEquals("Black-Red", cs.getColorName("{B}{R}"));
 		assertEquals("Red", cs.getColorName("{RP}"));
-		assertEquals("Red", cs.getColorName("{2/R}"));
+		assertEquals("Red-Colorless", cs.getColorName("{2/R}"));
+		assertEquals("Red-Colorless", cs.getColorName("{2}{2/R}"));
+		assertEquals("White-Red-Colorless", cs.getColorName("{2/W}{2/R}"));
 		assertEquals("White-Blue-Black", cs.getColorName("{W}{B}{U}"));
 		assertEquals("White-Blue-Black", cs.getColorName("{W}{U}{B}"));
 		assertEquals("White-Blue-Black", cs.getColorName("{W/B}{U}"));
+		assertEquals("White-Blue-Black-Colorless", cs.getColorName("{W/B}{U}{1}"));
+		assertEquals("White-Blue-Black-Red-Green-Colorless", cs.getColorName("{1}{G}{R}{B}{U}{W}"));
 	}
 }

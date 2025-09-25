@@ -173,31 +173,23 @@ public enum FilterField {
 				return BinaryExpr.fieldInt(ff.getField(), value);
 			case COLOR: {
 				String en;
+				// RD Review the logic to support correctly colorless, hybrid and variations 
 				if (value.equals("Multi-Color")) {
-					return fieldEquals(MagicCardField.CTYPE, "multi");
+					return fieldEquals(MagicCardField.CTYPE, "multi").or(fieldEquals(MagicCardField.CTYPE, "multi-hybrid"));
 				} else if (value.equals("Mono-Color")) {
-					return fieldEquals(MagicCardField.CTYPE, "colorless").or(fieldEquals(MagicCardField.CTYPE, "mono"));
-				} else if (value.equals("Hybrid")) {
-					return fieldEquals(MagicCardField.CTYPE, "hybrid");
-				} else if (value.equals("Colorless")) {
-					return fieldEquals(MagicCardField.CTYPE, "colorless").or(fieldEquals(MagicCardField.CTYPE, "land"));
+					return fieldEquals(MagicCardField.CTYPE, "colorless").or(fieldEquals(MagicCardField.CTYPE, "mono")).or(fieldEquals(MagicCardField.CTYPE, "mono-hybrid"));
+				} else if ((value.equals("Hybrid"))) {
+					return fieldEquals(MagicCardField.CTYPE, "multi-hybrid").or(fieldEquals(MagicCardField.CTYPE, "mono-hybrid"));
 				} else if ((en = Colors.getInstance().getEncodeByName(value)) != null) {
-					return BinaryExpr.fieldMatches(MagicCardField.COST, en);
+					return BinaryExpr.fieldMatches(MagicCardField.COLOR, en);
 				}
 				break;
 			}
 			case COLOR_IDENITY: {
 				String en;
+				// RD Filter the Identity using directly the IDENTITY value
 				if ((en = Colors.getInstance().getEncodeByName(value)) != null) {
-					if (Colors.ManaColor.COLORLESS.tag().equals(en)) {
-						return Expr.EMPTY;
-					}
-					return BinaryExpr.fieldMatches(MagicCardField.COST, en)
-							.or(BinaryExpr.fieldMatches(MagicCardField.ORACLE,
-									new TextValue(en, true, // word boundary
-											true, // case sensitive
-											false // regex
-									)));
+					return BinaryExpr.fieldMatches(MagicCardField.COLOR_IDENTITY, en);
 				}
 				break;
 			}

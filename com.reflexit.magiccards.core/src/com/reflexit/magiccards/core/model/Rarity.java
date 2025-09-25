@@ -12,7 +12,7 @@ public class Rarity implements ISearchableProperty {
 	public static final String MYTHIC_RARE = "Mythic"; // RD Don't use rarity with spaces, this causes a few side
 														// effects
 	public static final String LAND = "Land";
-	public static final String BONUS = "Bonus";
+	public static final String OTHER = "Other";
 	public static final String SPECIAL = "Special";
 
 	private Rarity() {
@@ -22,8 +22,7 @@ public class Rarity implements ISearchableProperty {
 		add(UNCOMMON);
 		add(COMMON);
 		add(LAND);
-		add(SPECIAL);
-		add(BONUS);
+		add(OTHER);
 	}
 
 	static Rarity instance = new Rarity();
@@ -83,41 +82,13 @@ public class Rarity implements ISearchableProperty {
 	public static String getMoreRare(String r) {
 		Collection values = getInstance().names.values();
 		String prev = null;
-		for (Object value : values) {
-			String v = (String) value;
+		for (Iterator iterator = values.iterator(); iterator.hasNext();) {
+			String v = (String) iterator.next();
 			if (r.equals(v)) {
 				return prev;
 			}
 			prev = v;
 		}
 		return null;
-	}
-
-	public static String resolve(String rarity) {
-		if (rarity == null)
-			return null;
-		switch (rarity) {
-		case "common":
-		case "Common":
-		case "Land":
-		case "land":
-			return Rarity.COMMON;
-		case "uncommon":
-		case "Uncommon":
-			return Rarity.UNCOMMON;
-		case "rare":
-		case "Rare":
-			return Rarity.RARE;
-		case "mythic rare":
-		case "mythic":
-		case "Mythic Rare":
-		case "Mythic":
-			return Rarity.MYTHIC_RARE;
-		case "bonus":
-		case "Bonus":
-			return Rarity.BONUS;
-		default:
-			return Rarity.SPECIAL;
-		}
 	}
 }

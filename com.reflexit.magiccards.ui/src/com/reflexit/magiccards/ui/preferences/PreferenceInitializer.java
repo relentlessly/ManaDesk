@@ -46,7 +46,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.LOAD_PRINTINGS, false);
 		store.setDefault(PreferenceConstants.SHOW_GRID, false);
 		store.setDefault(PreferenceConstants.CHECK_FOR_UPDATES, false); // !!! RD Don't check for update per default
-		store.setDefault(PreferenceConstants.CHECK_FOR_CARDS, true);
+		store.setDefault(PreferenceConstants.CHECK_FOR_CARDS, false);
 		store.setDefault(PreferenceConstants.OWNED_COPY, false);
 		store.setDefault(PreferenceConstants.CURRENCY, "USD");
 		store.setDefault(PreferenceConstants.WORK_OFFLINE, false);
@@ -57,34 +57,48 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		getMdbStore().setDefault(PreferenceConstants.LOCAL_COLUMNS,
 				"Name,-Card Id,Cost,Type,Power,Toughness,-Oracle Text,Set,-Rarity,-Color Type,-Color,-Online Price,-Artist,-Rating,-Collector's Number,-Language,-Text");
 		getMdbStore().setDefault(PreferenceConstants.LOCAL_SHOW_QUICKFILTER, true);
-		getMdbStore().setDefault(PreferenceConstants.GROUP_FIELD, GroupOrder.createGroupKey(MagicCardField.SET));
+		// !!! RD getMdbStore().setDefault(PreferenceConstants.GROUP_FIELD,
+		// GroupOrder.createGroupKey(MagicCardField.SET));
 		getMdbStore().setDefault(PreferenceConstants.SORT_ORDER, MagicCardField.NAME.name());
-		getMdbStore().setDefault(PreferenceConstants.PRESENTATION_VIEW, Presentation.SPLITTREE.key());
+		// !!! RD getMdbStore().setDefault(PreferenceConstants.PRESENTATION_VIEW,
+		// Presentation.SPLITTREE.key());
+		getMdbStore().setDefault(PreferenceConstants.PRESENTATION_VIEW, Presentation.TABLE.key());
 		// library store
 		getLibStore().setDefault(PreferenceConstants.LOCAL_COLUMNS,
 				"Name,-Card Id,Cost,Type,Power,Toughness,-Oracle Text,-Set,-Rarity,-Color Type,Count,Location,-Color,-Ownership,-Comment,-User Price,-Online Price,-Artist,-Rating,-For Trade,-Special,-Collector's Number,-Language,-Text");
 		getLibStore().setDefault(PreferenceConstants.LOCAL_SHOW_QUICKFILTER, true);
-		getLibStore().setDefault(PreferenceConstants.GROUP_FIELD, GroupOrder.createGroupKey(MagicCardField.LOCATION));
-		getLibStore().setDefault(PreferenceConstants.PRESENTATION_VIEW, Presentation.SPLITTREE.key());
+		// !!! RD getLibStore().setDefault(PreferenceConstants.GROUP_FIELD,
+		// GroupOrder.createGroupKey(MagicCardField.LOCATION));
+		// !!! RD getLibStore().setDefault(PreferenceConstants.PRESENTATION_VIEW,
+		// Presentation.SPLITTREE.key());
+		getLibStore().setDefault(PreferenceConstants.PRESENTATION_VIEW, Presentation.TABLE.key());
 		// deck store
 		getDeckStore().setDefault(PreferenceConstants.LOCAL_COLUMNS,
 				"Name,-Card Id,Cost,Type,Power,Toughness,-Oracle Text,-Set,-Rarity,-Color Type,Count,-Location,-Color,-Ownership,-Comment,-User Price,-Online Price,-Artist,-Rating,-For Trade,-Special,-Collector's Number,-Language,-Text");
 		getDeckStore().setDefault(PreferenceConstants.LOCAL_SHOW_QUICKFILTER, false);
-		getDeckStore().setDefault(PreferenceConstants.GROUP_FIELD, GroupOrder.createGroupKey(MagicCardField.CMC));
-		getDeckStore().setDefault(PreferenceConstants.PRESENTATION_VIEW, Presentation.GALLERY.key());
+		// !!! RD getDeckStore().setDefault(PreferenceConstants.GROUP_FIELD,
+		// GroupOrder.createGroupKey(MagicCardField.CMC));
+		// !!! RD getDeckStore().setDefault(PreferenceConstants.PRESENTATION_VIEW,
+		// Presentation.GALLERY.key());
+		getDeckStore().setDefault(PreferenceConstants.PRESENTATION_VIEW, Presentation.TABLE.key());
+
 		// collector store
 		getCollectorStore().setDefault(PreferenceConstants.LOCAL_COLUMNS,
 				"Group,-Name,Progress,-Progress4,-Card Id,-Cost,-Type,-Power,-Toughness,-Oracle Text,-Text,-Set,-Rarity,-Color Type,-Count,"
 						+ "Collector's Number,Artist,Location,-Color,Ownership,User Price,Online Price,-Rating,-For Trade,"
 						+ "Comment,Special,-Language");
 		getCollectorStore().setDefault(PreferenceConstants.LOCAL_SHOW_QUICKFILTER, true);
-		getCollectorStore().setDefault(PreferenceConstants.GROUP_FIELD,
-				GroupOrder.createGroupKey(CollectorListControl.DEF_GROUP));
-		getCollectorStore().setDefault(PreferenceConstants.PRESENTATION_VIEW, Presentation.TREE.key());
+		// !!! RD getCollectorStore().setDefault(PreferenceConstants.GROUP_FIELD,
+		// GroupOrder.createGroupKey(CollectorListControl.DEF_GROUP));
+		// !!! RD getCollectorStore().setDefault(PreferenceConstants.PRESENTATION_VIEW,
+		// Presentation.TREE.key());
+		getCollectorStore().setDefault(PreferenceConstants.PRESENTATION_VIEW, Presentation.TABLE.key());
+
 		// gallery
 		IPersistentPreferenceStore gallerySettings = getLocalStore(GalleryPreferencePage.getId());
 		gallerySettings.setDefault(PreferenceConstants.LOCAL_SHOW_QUICKFILTER, true);
-		gallerySettings.setDefault(PreferenceConstants.GROUP_FIELD, GroupOrder.createGroupKey(MagicCardField.SET));
+		// !!! RD gallerySettings.setDefault(PreferenceConstants.GROUP_FIELD,
+		// GroupOrder.createGroupKey(MagicCardField.SET));
 		gallerySettings.setDefault(PreferenceConstants.SORT_ORDER, MagicCardField.NAME.name());
 	}
 

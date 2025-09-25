@@ -220,7 +220,7 @@ public class DeckImportPage extends WizardDataTransferPage {
 		Integer varErrors = categorizeErrors.get(ImportError.NO_VARIANT);
 		if (varErrors != null) {
 			boolean yes = askQuestion(
-					"Local database does not contain cards variants you trying to improt (i.e. alternate land graphics) ("
+					"Local database does not contain cards variants you trying to import (i.e. alternate land graphics) ("
 							+ varErrors + " errors), do you want to load them?");
 			if (yes) {
 				fixVariantErrors(magicDb, result, submon.split(varErrors));

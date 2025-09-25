@@ -20,6 +20,7 @@ public class MagicColumnCollection extends ColumnCollection {
 		groupColumn = createGroupColumn();
 		columns.add(groupColumn);
 		columns.add(new IdColumn());
+		columns.add(new GenColumn(MagicCardField.GATHERERID, "Multiverse ID"));
 		columns.add(new CostColumn());
 		columns.add(new TypeColumn());
 		columns.add(new PowerColumn(MagicCardField.POWER, "P", "Power"));
@@ -61,6 +62,7 @@ public class MagicColumnCollection extends ColumnCollection {
 		if (MagicUIActivator.TRACE_EXPORT) {
 			columns.add(new GenColumn(MagicCardField.HASHCODE, "HashCode"));
 		}
+		columns.add(new GenColumn(MagicCardField.TCGID, "TCGplayer ID"));
 	}
 
 	protected SetColumn createSetColumn() {

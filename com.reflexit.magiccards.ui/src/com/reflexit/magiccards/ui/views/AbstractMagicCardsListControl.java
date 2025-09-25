@@ -176,6 +176,9 @@ public abstract class AbstractMagicCardsListControl extends AbstractViewPage
 		}
 		mainControl.layout(true, true);
 		refreshViewer();
+		// RD Fix context menu not working after changing presentation
+		// (tree,listview,gallery etc) (from Speedprog)
+		hookContextMenu();
 	}
 
 	public void createMainControl(Composite area) {

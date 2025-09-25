@@ -104,7 +104,7 @@ public class MagicCardFilter implements Cloneable {
 		boolean only = false;
 		if (map.containsKey(ColorTypes.IDENTITY_ID)) {
 			ff = FilterField.COLOR_IDENITY;
-			only = true;
+			// RD IDENTITY must work like color (using extra fields like and, only, etc...)
 		}
 		if (map.containsKey(ColorTypes.AND_ID)) {
 			orOp = false;
@@ -132,25 +132,38 @@ public class MagicCardFilter implements Cloneable {
 
 	private Expr createGroup(HashMap<String, String> map, ISearchableProperty sp, boolean orOp, boolean notOp,
 			FilterField ff) {
-		Expr nres = Expr.EMPTY;
-		Expr res = Expr.EMPTY;
+		Expr ands = Expr.EMPTY;
+		Expr ors = Expr.EMPTY;
+		
 		for (String id : sp.getIds()) {
 			String value = map.get(id);
 			if (value == null || value.equals("false") || value.isEmpty()) {
 				if (notOp) {
 					Expr expr = ff.valueExpr(sp.getNameById(id));
-					nres = nres.and(expr.not());
+					ands = ands.and(expr.not());
 				}
 			} else if (value.equals("true")) {
 				Expr expr = ff.valueExpr(sp.getNameById(id));
 				if (orOp)
-					res = res.or(expr);
+				{
+					ors = ors.or(expr);
+				}
 				else
-					res = res.and(expr);
+				{
+					ands = ands.and(expr);
+				}
 			} else
 				throw new IllegalArgumentException();
 		}
-		return nres.and(res);
+
+		// RD Fix color search... all the ORs must be in a gloal pair of parentheses
+		// Not twice to get that result will minimal code changes
+		Expr orsNot = Expr.EMPTY;
+		Expr orsNotNot = Expr.EMPTY;
+		orsNot = orsNot.or(ors.not());
+		ors = orsNotNot.or(orsNot.not());
+
+		return ors.and(ands);
 	}
 
 	/**

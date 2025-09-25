@@ -25,6 +25,7 @@ import com.reflexit.magiccards.ui.views.columns.LanguageColumn;
 import com.reflexit.magiccards.ui.views.columns.LocationColumn;
 import com.reflexit.magiccards.ui.views.columns.OwnershipColumn;
 import com.reflexit.magiccards.ui.views.columns.PriceColumn;
+import com.reflexit.magiccards.ui.views.columns.SellerPriceColumn;
 import com.reflexit.magiccards.ui.views.columns.SetColumn;
 import com.reflexit.magiccards.ui.views.columns.StringEditorColumn;
 
@@ -63,6 +64,7 @@ public class InstancesViewer extends ExtendedTreeViewer implements IDisposable {
 				columns.add(new StringEditorColumn(MagicCardField.SPECIAL, "Special"));
 				columns.add(new CommentColumn());
 				columns.add(new PriceColumn());
+				columns.add(new SellerPriceColumn());
 				if (MagicUIActivator.TRACE_EXPORT) {
 					columns.add(new GenColumn(MagicCardField.HASHCODE, "HashCode"));
 				}

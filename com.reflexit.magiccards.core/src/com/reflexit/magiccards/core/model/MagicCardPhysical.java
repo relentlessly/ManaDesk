@@ -15,16 +15,14 @@ import com.reflexit.magiccards.core.model.abs.ICardModifiable;
 import com.reflexit.magiccards.core.model.abs.ICardVisitor;
 import com.reflexit.magiccards.core.model.expr.TextValue;
 
-public class MagicCardPhysical extends AbstractMagicCard implements ICardModifiable, IMagicCardPhysical,
-		ICard {
+public class MagicCardPhysical extends AbstractMagicCard implements ICardModifiable, IMagicCardPhysical, ICard {
 	private MagicCard card;
 	private int count;
 	private transient Location location;
 	private boolean ownership;
 	private Date date;
 	private HashMap<ICardField, Object> properties;
-	private static SimpleDateFormat DATE_PARSER = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy",
-			Locale.US);
+	private static SimpleDateFormat DATE_PARSER = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
 
 	public MagicCardPhysical(IMagicCard card, Location location, boolean virtual) {
 		this(card, location);
@@ -50,8 +48,7 @@ public class MagicCardPhysical extends AbstractMagicCard implements ICardModifia
 			this.count = phi.getCount();
 			this.ownership = phi.ownership;
 			this.date = phi.getDate();
-			this.properties = (HashMap<ICardField, Object>) (phi.properties == null ? null : phi.properties
-					.clone());
+			this.properties = (HashMap<ICardField, Object>) (phi.properties == null ? null : phi.properties.clone());
 		}
 		this.location = location;
 		if (this.card == null)
@@ -399,8 +396,7 @@ public class MagicCardPhysical extends AbstractMagicCard implements ICardModifia
 	public boolean matches(ICardField left, TextValue right) {
 		String value = String.valueOf(get(left));
 		if (left == MagicCardField.TYPE && !right.regex) {
-			return CardTypes.getInstance().hasType(this,
-					right.getText());
+			return CardTypes.getInstance().hasType(this, right.getText());
 		}
 		return right.getPattern().matcher(value).find();
 	}
@@ -418,6 +414,11 @@ public class MagicCardPhysical extends AbstractMagicCard implements ICardModifia
 	@Override
 	public int getGathererId() {
 		return card.getGathererId();
+	}
+
+	@Override
+	public int getTcgId() {
+		return card.getTcgId();
 	}
 
 	@Override
@@ -471,6 +472,11 @@ public class MagicCardPhysical extends AbstractMagicCard implements ICardModifia
 	@Override
 	public int getCollectorNumberId() {
 		return card.getCollectorNumberId();
+	}
+
+	@Override
+	public String getCollectorId() {
+		return card.getCollectorId();
 	}
 
 	public void setProperty(ICardField key, Object value) {

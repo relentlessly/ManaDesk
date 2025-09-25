@@ -133,7 +133,7 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		assert (text != null);
 
 		String line = "";
-		if (text == null || text == "" || text == "false") {
+		if (text == null || text.isEmpty() || text.equals("false")) {
 			return line;
 		}
 		return header + text + "<br>";
@@ -205,6 +205,31 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		}
 
 		return legalitiesStr;
+	}
+
+	private String BuildPrice(JSONObject prices) {
+		String priceStr = "";
+		String foilPriceStr = "";
+
+		if (prices == null || prices.size() == 0) {
+			return "";
+		}
+
+		Object obj = prices.get("usd");
+
+		if (obj != null) {
+			priceStr = "R$ " + obj.toString() + " ";
+		}
+
+		obj = prices.get("usd_foil");
+		if (obj != null) {
+			foilPriceStr = "F$ " + obj.toString();
+		}
+
+		if (!priceStr.isEmpty() || !foilPriceStr.isEmpty()) {
+			return priceStr + foilPriceStr + "<br>";
+		}
+		return "";
 	}
 
 	private void parseRecord(JSONObject elem, ILoadCardHander handler) {
@@ -301,6 +326,7 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		String frontMultiverseString = "";
 		String backMultiverseString = "";
 		String cardText = "";
+		Object tcgId = elem.get("tcgplayer_id");
 
 		// Always use Scryfall ID
 		frontCard.setCardId(elem.get("id").toString());
@@ -319,13 +345,38 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		String languageString = BuildLanguage(elem.get("lang").toString());
 		String finishesString = BuildFinishes((JSONArray) elem.get("finishes"));
 		String legalitiesString = BuildLegalities((JSONObject) elem.get("legalities"));
-		;
-		String scryfallUriString = (String) elem.get("scryfall_uri");
+
+		String scryfallUriString = "<br>" + ((String) elem.get("scryfall_uri")) + "<br><br>";
 		String fullArtString = BuildText("FullArt: ", elem.get("full_art").toString());
 		String textlessString = BuildText("TextLess: ", elem.get("textless").toString());
 		String storySpotlightString = BuildText("StorySpotlight: ", elem.get("story_spotlight").toString());
 		String boosterString = BuildText("Booster: ", elem.get("textless").toString());
 		String promoTypesString = BuildPromos((JSONArray) elem.get("promo_types"));
+		String priceString = "";
+
+		JSONObject purchaseUri = (JSONObject) elem.get("purchase_uris");
+		String tcgUriString = "";
+
+		if (purchaseUri != null && purchaseUri.size() > 0) {
+			Object tcg = purchaseUri.get("tcgplayer");
+			if (tcg != null) {
+				tcgUriString = ((String) tcg) + "<br><br>";
+			}
+		}
+
+		JSONObject relatedUri = (JSONObject) elem.get("related_uris");
+		String gathererUriString = "";
+
+		if (relatedUri != null && relatedUri.size() > 0) {
+			Object gatherer = relatedUri.get("gatherer");
+			if (gatherer != null) {
+				gathererUriString = (String) gatherer;
+			}
+		}
+
+		if (!generateFlat) {
+			BuildPrice((JSONObject) elem.get("prices"));
+		}
 
 		JSONObject image_uris = (JSONObject) elem.get("image_uris");
 
@@ -358,10 +409,10 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 
 				if (images != null) {
 					// We select the "normal" format, this is the best fit
-					Object image = images.get("normal").toString();
+					String image = images.get("normal").toString();
 
-					if (image == null || image == "") {
-						image = images.get(0);
+					if (image == null || image.isEmpty()) {
+						image = images.get(0).toString();
 					}
 					if (image != null && !(image.toString().contains("errors.scryfall"))) {
 						frontCard.set(MagicCardField.IMAGE_URL, image);
@@ -371,8 +422,9 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 
 			// Useful information for collectors
 			// We will use the Text field to store and display that information
-			cardText = frontMultiverseString + finishesString + fullArtString + textlessString + boosterString
-					+ storySpotlightString + promoTypesString + scryfallUriString;
+			cardText = priceString + frontMultiverseString + finishesString + fullArtString + textlessString
+					+ boosterString + storySpotlightString + promoTypesString + scryfallUriString + tcgUriString
+					+ gathererUriString;
 
 			frontCard.setText(cardText);
 			frontCard.setLanguage(languageString);
@@ -381,6 +433,11 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			if (!generateFlat) {
 				frontCard.set(MagicCardField.LEGALITY, legalitiesString);
 			}
+			if (gids != null && gids.size() > 0) {
+				frontCard.set(MagicCardField.GATHERERID, gids.get(0).toString());
+			}
+			frontCard.set(MagicCardField.TCGID, tcgId);
+
 			handler.handleCard(frontCard);
 			break;
 
@@ -438,10 +495,10 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 					}
 
 					if (images != null) {
-						Object image = images.get("normal").toString();
+						String image = images.get("normal").toString();
 
-						if (image == null || image == "") {
-							image = images.get(0);
+						if (image == null || image.isEmpty()) {
+							image = images.get(0).toString();
 						}
 						if (image != null && !(image.toString().contains("errors.scryfall"))) {
 							frontCard.set(MagicCardField.IMAGE_URL, image);
@@ -453,10 +510,10 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 					}
 
 					if (images != null) {
-						Object image = images.get("normal").toString();
+						String image = images.get("normal").toString();
 
-						if (image == null || image == "") {
-							image = images.get(0);
+						if (image == null || image.isEmpty()) {
+							image = images.get(0).toString();
 						}
 						if (image != null && !(image.toString().contains("errors.scryfall"))) {
 							backCard.set(MagicCardField.IMAGE_URL, image);
@@ -472,10 +529,10 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 					}
 
 					if (images != null) {
-						Object image = images.get("normal").toString();
+						String image = images.get("normal").toString();
 
-						if (image == null || image == "") {
-							image = images.get(0);
+						if (image == null || image.isEmpty()) {
+							image = images.get(0).toString();
 						}
 						if (image != null && !(image.toString().contains("errors.scryfall"))) {
 							frontCard.set(MagicCardField.IMAGE_URL, image);
@@ -487,9 +544,9 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 
 			// Useful for collectors
 			cardText = finishesString + fullArtString + textlessString + boosterString + storySpotlightString
-					+ promoTypesString + scryfallUriString;
+					+ promoTypesString + scryfallUriString + tcgUriString + gathererUriString;
 
-			frontCard.setText(frontMultiverseString + cardText);
+			frontCard.setText(priceString + frontMultiverseString + cardText);
 			backCard.setText(backMultiverseString + cardText);
 
 			if (!generateFlat) {
@@ -499,6 +556,13 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 
 			frontCard.set(MagicCardField.FLIPID, backCard.getCardId());
 			backCard.set(MagicCardField.FLIPID, frontCard.getCardId());
+
+			if (gids != null && gids.size() > 0) {
+				frontCard.set(MagicCardField.GATHERERID, gids.get(0).toString());
+			}
+
+			frontCard.set(MagicCardField.TCGID, tcgId);
+			backCard.set(MagicCardField.TCGID, tcgId);
 
 			handler.handleCard(frontCard);
 			handler.handleCard(backCard);

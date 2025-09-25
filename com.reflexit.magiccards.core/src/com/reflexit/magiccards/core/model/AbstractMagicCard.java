@@ -175,8 +175,40 @@ public abstract class AbstractMagicCard implements ICard, ICardModifiable, IMagi
 	}
 
 	@Override
+	public String getGathererCardId() {
+		return getString(MagicCardField.GATHERERID);
+	}
+
+	@Override
+	public String getTcgCardId() {
+		return getString(MagicCardField.TCGID);
+	}
+
+	@Override
 	public int getGathererId() {
-		String sid = getCardId();
+		String sid = getGathererCardId();
+		if (sid == null)
+			return 0;
+		if (sid.isEmpty())
+			return 0;
+		char c = sid.charAt(0);
+		if (Character.isAlphabetic(c)) {
+			return 0;
+		}
+		try {
+			int id = Integer.parseInt(sid);
+			if (id > 0)
+				return id;
+			if (id < 0 && (id & (1 << 30)) != 0)
+				return -id;
+		} catch (Exception e) {
+		}
+		return 0;
+	}
+
+	@Override
+	public int getTcgId() {
+		String sid = getTcgCardId();
 		if (sid == null)
 			return 0;
 		if (sid.isEmpty())
@@ -305,6 +337,11 @@ public abstract class AbstractMagicCard implements ICard, ICardModifiable, IMagi
 	}
 
 	@Override
+	public String getCollectorId() {
+		return getString(MagicCardField.COLLNUM);
+	}
+
+	@Override
 	public int getCollectorNumberId() {
 		String num = getString(MagicCardField.COLLNUM);
 		if (num == null || num.isEmpty())
@@ -315,7 +352,8 @@ public abstract class AbstractMagicCard implements ICard, ICardModifiable, IMagi
 			return Integer.parseInt(num);
 		} catch (NumberFormatException e) {
 			try {
-				return Integer.parseInt(num.substring(0, num.length() - 1));
+				// RD remove all non numeric char at the end
+				return Integer.parseInt(num.replaceAll("[^\\d.]+$", ""));
 			} catch (Exception e1) {
 				return 0;
 			}

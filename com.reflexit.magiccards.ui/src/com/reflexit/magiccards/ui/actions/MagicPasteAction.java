@@ -1,6 +1,12 @@
 package com.reflexit.magiccards.ui.actions;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.Collection;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -19,6 +25,19 @@ import com.reflexit.magiccards.ui.dnd.MagicCardTransfer;
 import com.reflexit.magiccards.ui.utils.MagicAdapterFactory;
 
 public class MagicPasteAction extends AbstractMagicAction {
+
+// RD New paste implementation
+	public Object readClipboard() {
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		try {
+			String result = (String) clipboard.getData(DataFlavor.stringFlavor);
+			return result;
+		} catch (UnsupportedFlavorException | IOException e) {
+			System.err.println("Error: " + e.getMessage());
+			return "";
+		}
+	}
+
 	public MagicPasteAction(ISelectionProvider provider) {
 		super(provider, "Paste");
 		setActionDefinitionId(ActionFactory.PASTE.getCommandId());
@@ -44,8 +63,14 @@ public class MagicPasteAction extends AbstractMagicAction {
 			else
 				DM.copyCards(DM.resolve((Collection) contents), cardStore);
 		} else if (contents == null) {
-			// sad
-			MessageDialog.openError(getShell(), "Error", "Nothing is in the clipboard");
+			Object retry = readClipboard();
+			if (retry == null) {
+				MessageDialog.openError(getShell(), "Error", "Nothing is in the clipboard");
+			} else {
+				Control fc = getDisplay().getFocusControl();
+				CopySupport.runPaste(fc);
+			}
+
 		} else {
 			Control fc = getDisplay().getFocusControl();
 			CopySupport.runPaste(fc);

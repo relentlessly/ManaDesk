@@ -32,7 +32,7 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 	private String rulings;
 	private String text;
 	private float rating;
-	private transient String colorType = "land";
+	private transient String colorType = "costless";
 	private transient int cmc = 0;
 	private LinkedHashMap<ICardField, Object> properties;
 
@@ -107,7 +107,7 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 	}
 
 	public void setRarity(String rarity) {
-		this.rarity = Rarity.resolve(rarity);
+		this.rarity = rarity; // !!! RD To reimplement.... Rarity.resolve(rarity);
 	}
 
 	@Override
@@ -149,10 +149,9 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 	@Override
 	public synchronized String getColorType() {
 		if (colorType == null) {
+			// RD Costless value is land, tokens, arts, etc...
 			if (cost == null || cost.isEmpty()) {
-				if (!isLand()) {
-					return "colorless";
-				}
+				return "costless";
 			}
 			colorType = Colors.getInstance().getColorType(cost);
 		}
@@ -491,6 +490,26 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 		if (gid != null)
 			return gid;
 		return super.getGathererId();
+	}
+
+	@Override
+	public int getTcgId() {
+		Integer gid = (Integer) getProperty(MagicCardField.TCGID);
+		if (gid != null)
+			return gid;
+		return super.getTcgId();
+	}
+
+	@Override
+	public String getGathererCardId() {
+		Object id = getProperty(MagicCardField.GATHERERID);
+
+		return (String) id;
+	}
+
+	@Override
+	public String getTcgCardId() {
+		return (String) getProperty(MagicCardField.TCGID);
 	}
 
 	public String getPart() {

@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.MagicCard;
+import com.reflexit.magiccards.core.model.MagicCardField;
 import com.reflexit.magiccards.core.monitor.ICoreProgressMonitor;
 import com.reflexit.magiccards.core.sync.ParseScryFallChecklist;
 import com.reflexit.magiccards.core.sync.ParseScryFallChecklist.SortedOutputHanlder;
@@ -68,10 +69,6 @@ public class ScrtFallImportTest extends AbstarctImportTest {
 		for(IMagicCard m: list) {
 			if (id.equals(m.getCardId())) return m;
 		}
-		for (IMagicCard m : list) {
-			if (m.getCardId().endsWith(id))
-				return m;
-		}
 		return null;
 	}
 
@@ -82,15 +79,12 @@ public class ScrtFallImportTest extends AbstarctImportTest {
 		List<MagicCard> list = handler.getPrimary();
 		assertEquals(682, list.size());
 		IMagicCard will = findById("406a3ae5-f57e-40ff-8eac-a01781f2329f", (Collection) list);
-		if (will == null)
-			will = findById("567555", (Collection) list);
 		IMagicCard rowan = findById("bcf0514e-63b3-4695-93ae-527524d48c25", (Collection) list);
-		if (rowan == null)
-			rowan = findById("567622", (Collection) list);
 		assertNotNull(rowan);
 		assertNotNull(will);
-		//		assertEquals(will.getCardId(), rowan.get(MagicCardField.FLIPID));
-		//		assertEquals(rowan.getCardId(), will.get(MagicCardField.FLIPID));
-
+		assertEquals(will.getCardId(), rowan.get(MagicCardField.FLIPID));
+		assertEquals(rowan.getCardId(), will.get(MagicCardField.FLIPID));
+		assertEquals(567555, will.get(MagicCardField.GATHERERID));
+		assertEquals(567622, rowan.get(MagicCardField.GATHERERID));
 	}
 }

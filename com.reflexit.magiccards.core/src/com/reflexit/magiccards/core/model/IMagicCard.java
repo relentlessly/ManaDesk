@@ -13,7 +13,13 @@ public interface IMagicCard extends ICard {
 
 	public abstract String getCardId();
 
+	public abstract String getGathererCardId();
+
+	public abstract String getTcgCardId();
+
 	public abstract int getGathererId();
+
+	public abstract int getTcgId();
 
 	@Override
 	public abstract String getName();
@@ -60,6 +66,8 @@ public interface IMagicCard extends ICard {
 	public int getUniqueCount();
 
 	public abstract int getSide();
+
+	public abstract String getCollectorId();
 
 	public abstract int getCollectorNumberId();
 

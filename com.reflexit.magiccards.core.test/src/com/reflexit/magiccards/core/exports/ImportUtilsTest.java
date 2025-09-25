@@ -143,8 +143,8 @@ public class ImportUtilsTest extends AbstarctImportTest {
 	public void testPerformPreview() throws InvocationTargetException, InterruptedException {
 		addLine("NAME|SET|COUNT");
 		addLine("Counterspell|Bla|2");
-		ImportData improtData = new ImportData(virtual, Location.createLocation("test"), line);
-		ImportData performPreview = ImportUtils.performPreImport(tableImport, improtData, monitor);
+		ImportData importData = new ImportData(virtual, Location.createLocation("test"), line);
+		ImportData performPreview = ImportUtils.performPreImport(tableImport, importData, monitor);
 		List values = performPreview.getList();
 		if (resolve) {
 			ImportUtils.resolve(values);

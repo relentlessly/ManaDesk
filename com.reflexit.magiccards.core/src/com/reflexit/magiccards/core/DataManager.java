@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.reflexit.magiccards.core.exports.ImportUtils;
 import com.reflexit.magiccards.core.model.CardGroup;
 import com.reflexit.magiccards.core.model.ICardHandler;
 import com.reflexit.magiccards.core.model.IMagicCard;
@@ -145,7 +146,8 @@ public class DataManager {
 	}
 
 	/**
-	 * Using card representation create proper link to base or find actuall base card to replace fake one
+	 * Using card representation create proper link to base or find actuall base
+	 * card to replace fake one
 	 *
 	 * @param input
 	 * @return
@@ -398,6 +400,7 @@ public class DataManager {
 		cardStore.updateList(null, fieldSet);
 		reconcile(cardStore);
 	}
+
 	public void update(IMagicCard card, Set<? extends ICardField> fieldSet) {
 		if (card instanceof MagicCard) {
 			updateMC((MagicCard) card, fieldSet);
@@ -487,7 +490,8 @@ public class DataManager {
 	}
 
 	/**
-	 * Repairs back link between base cards and physical cards, expensive since it reads whole database
+	 * Repairs back link between base cards and physical cards, expensive since it
+	 * reads whole database
 	 */
 	public void reconcile() {
 		links.clear();
@@ -530,7 +534,21 @@ public class DataManager {
 		if (base != null) {
 			mcp.setMagicCard(base);
 		} else {
-			MagicLogger.log("Cannot reconsile " + mcp);
+
+			// RD To allow automatic "link" for collections and decks using different ids
+			// This is not "updating" the source file, just linking them
+			ImportUtils.updateCardReference((MagicCardPhysical) mcp);
+
+			id = mcp.getCardId();
+			if (id == null)
+				return;
+			base = (MagicCard) db.getCard(id);
+			if (base != null) {
+				mcp.setMagicCard(base);
+			} else {
+				MagicLogger.log("Cannot reconsile after retry " + mcp);
+			}
+
 		}
 		CardGroup realcards = new CardGroup(MagicCardField.ID, mcp.getName());
 		realcards.addAll(library.getCards(id));

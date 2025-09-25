@@ -16,7 +16,7 @@ import com.reflexit.magiccards.core.model.Rarity;
 
 /**
  * @author Alena
- *
+ * 
  */
 public class CardGenerator {
 	static int id = 33;
@@ -50,7 +50,7 @@ public class CardGenerator {
 		String setName = "set " + (id % 20);
 		Edition ed = Editions.getInstance().getEditionByName(setName);
 		if (ed == null) {
-			Editions.getInstance().addEdition(setName, setName.replace(" ", ""));
+			Editions.getInstance().addEdition(setName, setName);
 		}
 		card.setSet(setName);
 		card.setText("bla <br> bla " + id);
@@ -84,7 +84,7 @@ public class CardGenerator {
 		MagicCardPhysical phi = new MagicCardPhysical(card, null);
 		phi.setCount((id % 10) + 1);
 		phi.setComment("comment " + id);
-		phi.setOwn((id % 2 == 0) == true);
+		phi.setOwn(id % 2 == 0 ? true : false);
 		phi.setSpecialTag("foil");
 		return phi;
 	}

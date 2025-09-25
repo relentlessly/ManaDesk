@@ -95,15 +95,21 @@ public class MagicCardComparator implements Comparator {
 				generic = false;
 				switch ((MagicCardField) sort) {
 				case COST: {
-					int i1 = Colors.getColorSort((String) a1);
-					int i2 = Colors.getColorSort((String) a2);
-					d = i1 - i2;
+					// RD Sort by "cost" directly to provide a more useful sorting
+					String ct1 = (String) a1;
+					String ct2 = (String) a2;
+					d = ct1.compareTo(ct2);
 					break;
 				}
 				case COLOR: {
-					d = compare(c1, c2, MagicCardField.CTYPE);
+					// RD Sort color like Color Identity
+					String co1 = (String) a1;
+					String co2 = (String) a2;
+					d = Colors.getColorType((String) a1).compareTo(Colors.getColorType((String) a2));
 					if (d == 0) {
-						d = compare(c1, c2, MagicCardField.COST);
+						int i1 = Colors.getColorSort(co1);
+						int i2 = Colors.getColorSort(co2);
+						d = i1 - i2;
 					}
 					break;
 				}
@@ -114,9 +120,6 @@ public class MagicCardComparator implements Comparator {
 						a1 = String.valueOf(a1);
 						a2 = String.valueOf(a2);
 						d = ((Comparable) a1).compareTo(a2);
-					}
-					if (d == 0) {
-						d = compare(c1, c2, MagicCardField.CTYPE);
 					}
 					if (d == 0) {
 						d = compare(c1, c2, MagicCardField.COST);
@@ -130,9 +133,9 @@ public class MagicCardComparator implements Comparator {
 					String ct2 = (String) a2;
 					d = ct1.compareTo(ct2);
 					if (d != 0) {
-						if (ct1.equals("land"))
+						if (ct1.equals("costless")) // RD Costless are not just lands
 							d = -1;
-						else if (ct2.equals("land"))
+						else if (ct2.equals("costless"))
 							d = 1;
 					}
 					break;
@@ -189,9 +192,7 @@ public class MagicCardComparator implements Comparator {
 			}
 			if (a1 != a2 && d == 0) {
 				if (generic) {
-					if (c1.getClass() != c2.getClass())
-						d = c1.getClass().getName().compareTo(c2.getClass().getName());
-					else if (a1 instanceof Comparable) {
+					if (a1 instanceof Comparable) {
 						d = ((Comparable) a1).compareTo(a2);
 					}
 				}

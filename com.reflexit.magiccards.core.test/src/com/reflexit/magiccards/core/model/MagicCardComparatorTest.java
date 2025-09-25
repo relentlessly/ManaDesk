@@ -1,20 +1,20 @@
 package com.reflexit.magiccards.core.model;
 
-import static org.mockito.Mockito.when;
-
 import java.util.HashMap;
+
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import static org.mockito.Mockito.when;
 
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.model.abs.ICardField;
 import com.reflexit.magiccards.core.model.abs.ICardModifiable;
 import com.reflexit.magiccards.core.model.storage.IDbCardStore;
 import com.reflexit.unittesting.CardGenerator;
-
-import junit.framework.TestCase;
 
 public class MagicCardComparatorTest extends TestCase {
 	private MagicCardComparator acc;
@@ -33,7 +33,7 @@ public class MagicCardComparatorTest extends TestCase {
 
 	public static void main(String[] args) {
 		// check p/t
-		HashMap<String, Integer> pmap = new HashMap<>();
+		HashMap<String, Integer> pmap = new HashMap<String, Integer>();
 		IDbCardStore<IMagicCard> magicDBStore = DataManager.getInstance().getMagicDBStore();
 		magicDBStore.initialize();
 		for (IMagicCard card : magicDBStore) {
@@ -213,7 +213,8 @@ public class MagicCardComparatorTest extends TestCase {
 	}
 
 	public void testRarity() {
-		compareMcEqual(MagicCardField.RARITY, Rarity.LAND, Rarity.COMMON);
+		compareMcLess(MagicCardField.RARITY, Rarity.OTHER, Rarity.LAND);
+		compareMcLess(MagicCardField.RARITY, Rarity.LAND, Rarity.COMMON);
 		compareMcLess(MagicCardField.RARITY, Rarity.COMMON, Rarity.UNCOMMON);
 		compareMcLess(MagicCardField.RARITY, Rarity.UNCOMMON, Rarity.RARE);
 		compareMcLess(MagicCardField.RARITY, Rarity.RARE, Rarity.MYTHIC_RARE);

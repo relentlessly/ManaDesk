@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Date;
 
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ import com.reflexit.magiccards.db.DbActivator;
 import junit.framework.TestCase;
 
 public class EditionsTest extends TestCase {
-	private static final int EDITIONS_SIZE = 935;
+	private static final int EDITIONS_SIZE = 974;
 	private static final String EDITIONS_FILE = Editions.EDITIONS_FILE;
 	protected Editions editions;
 
@@ -53,7 +54,7 @@ public class EditionsTest extends TestCase {
 	@Test
 	public void testGetNameByAbbr() {
 		String abbr = editions.getNameByAbbr("EVG");
-		assertEquals("Duel Decks Anthology: Elves vs. Goblins", abbr);
+		assertEquals("Duel Decks: Elves vs. Goblins", abbr);
 	}
 
 	@Test
@@ -97,7 +98,7 @@ public class EditionsTest extends TestCase {
 
 	@Test
 	public void testGetAbbrByName() {
-		String abbr = editions.getAbbrByName("Duel Decks Anthology: Elves vs. Goblins");
+		String abbr = editions.getAbbrByName("Duel Decks: Elves vs. Goblins");
 		assertEquals("EVG", abbr);
 	}
 
@@ -157,11 +158,29 @@ public class EditionsTest extends TestCase {
 			String type = edition.getType();
 			assertNotNull(type);
 			assertFalse(type.isEmpty());
-			if (editions.getEditionByAbbr(edition.getMainAbbreviation()) != edition) {
-				assertNotNull("Duplicated main abbreviation " + edition);
-			}
-			assertTrue("Expected type but was " + type + " in " + edition, !type.equals("?") && !type.isEmpty());
+			String dd = "Duel Decks";
+			String ftv = "From the Vault";
+			if (edition.getName().startsWith(dd)) {
+				assertTrue("Expected " + dd + " but was " + block, block.equals(dd));
+				assertTrue("Expected " + ftv + " but was " + type + " in " + edition,
+						type.equals("Starter"));
+			} else if (edition.getName().startsWith(ftv)) {
+				assertTrue("Expected " + ftv + " but was " + block + " in " + edition, block.equals(ftv));
+				assertTrue("Expected " + ftv + " but was " + type + " in " + edition,
+						type.equals("Starter"));
+			} else
+				assertTrue("Expected type but was " + type + " in " + edition, type.equals("Core")
+						|| type.equals("Expansion")
+						|| type.equals("Reprint")
+						|| type.equals("Starter")
+						|| type.equals("Online")
+						|| type.equals("Modifiers")
+						|| type.equals("Un_set")
+				//
+				);
 			assertNotNull("Bad date " + edition, edition.getReleaseDate());
+			Date now = new Date();
+			assertFalse("Release date in future " + edition, now.before(edition.getReleaseDate()));
 		}
 	}
 }

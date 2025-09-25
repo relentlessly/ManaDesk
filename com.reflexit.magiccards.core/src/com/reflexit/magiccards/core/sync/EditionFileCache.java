@@ -100,7 +100,9 @@ public class EditionFileCache {
 		if ("Land".equals(rarity))
 			rarity = "Common";
 		File loc = FileUtils.getStateLocationFile();
-		String name = edition.getBaseFileName() + "-" + rarity;
+		
+		// RD Modification to use the common "icon" set for special sets like Arts, Tokens, Promos, etc
+		String name = edition.getIconBaseFileName() + "-" + rarity;
 		String part = "Sets/" + name + ".png";
 		String file = new File(loc, part).getPath();
 		return file;

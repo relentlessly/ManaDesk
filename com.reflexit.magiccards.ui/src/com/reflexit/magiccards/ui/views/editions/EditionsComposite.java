@@ -171,7 +171,7 @@ public class EditionsComposite extends Composite {
 	}
 
 	private void createColumnLabelProviders() {
-		columns = new ArrayList<>();
+		columns = new ArrayList<AbstractEditionColumn>();
 		columns.add(new EditionNameColumn());
 		columns.add(new AbbrColumn());
 		columns.add(new DateColumn());
@@ -268,7 +268,7 @@ public class EditionsComposite extends Composite {
 	public void initialize() {
 		this.treeViewer.setInput(Editions.getInstance());
 		Collection<Edition> names = Editions.getInstance().getEditions();
-		ArrayList<Edition> sel = new ArrayList<>();
+		ArrayList<Edition> sel = new ArrayList<Edition>();
 		for (Iterator<Edition> iterator = names.iterator(); iterator.hasNext();) {
 			Edition ed = iterator.next();
 			String abbr = ed.getMainAbbreviation();
@@ -354,7 +354,7 @@ public class EditionsComposite extends Composite {
 
 	private String[] getIds() {
 		Collection<String> names = Editions.getInstance().getNames();
-		ArrayList<String> res = new ArrayList<>();
+		ArrayList<String> res = new ArrayList<String>();
 		for (Iterator<String> iterator = names.iterator(); iterator.hasNext();) {
 			String ed = iterator.next();
 			String abbr = Editions.getInstance().getAbbrByName(ed);

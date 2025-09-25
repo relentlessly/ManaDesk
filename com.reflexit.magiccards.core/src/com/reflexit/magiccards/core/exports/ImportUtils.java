@@ -43,6 +43,8 @@ import com.reflexit.magiccards.core.model.nav.CollectionsContainer;
 import com.reflexit.magiccards.core.model.nav.LocationPath;
 import com.reflexit.magiccards.core.model.nav.ModelRoot;
 import com.reflexit.magiccards.core.model.storage.ICardStore;
+import com.reflexit.magiccards.core.model.storage.IStorage;
+import com.reflexit.magiccards.core.model.xml.DbMultiFileCardStore;
 import com.reflexit.magiccards.core.monitor.ICoreProgressMonitor;
 import com.reflexit.magiccards.core.sync.TextPrinter;
 import com.reflexit.magiccards.core.sync.UpdateCardsFromWeb;
@@ -202,11 +204,12 @@ public class ImportUtils {
 			return base;
 		}
 		MagicCard ref = findRef(base, lookupStore);
+
 		if (ref != null) {
 			if (originalSet == null || ref.getSet().equals(originalSet)) {
 
-				if (base.getCollectorNumberId() != 0 && ref.getCollectorNumberId()!=0) {
-					if (ref.getCollectorNumberId() != base.getCollectorNumberId()) {
+				if (!base.getCollectorId().isEmpty() && !ref.getCollectorId().isEmpty()) {
+					if (!ref.getCollectorId().equals(base.getCollectorId())) {
 						base.setEmptyFromCard(ref);
 
 						card.setError(ImportError.NO_VARIANT);
@@ -279,16 +282,18 @@ public class ImportUtils {
 
 	public static long matchRating(IMagicCard base, IMagicCard candidate) {
 		long result = 0;
-		long m = 1000*1000;
+		long m = 1000 * 1000;
 		int gathererId = base.getGathererId();
 		if (gathererId > 0) {
 			if (gathererId == candidate.getGathererId()) {
-				result = 1*100*1000*1000;
+				result = 1 * 100 * 1000 * 1000;
 				return result;
 			}
 
 		}
+
 		result += candidate.getGathererId();
+		String collectorId = base.getCollectorId();
 		int collectorNumberId = base.getCollectorNumberId();
 		String candName = candidate.getName();
 		String name = base.getName();
@@ -298,52 +303,106 @@ public class ImportUtils {
 		boolean namematched = false;
 		if (name != null) {
 			if (name.equalsIgnoreCase(candName)) {
-				result += 24*m;
+				result += 26 * m;
 				essential++;
 				namematched = true;
 			} else if (candName != null && candName.startsWith(name)) {
-				result += 20*m;
+				result += 22 * m;
 				essential++;
 			}
 		}
 		if (set != null && set.equals(candidate.getSet())) {
-			result += 25*m;
-			essential++;
-		}
-		if (collectorNumberId != 0 &&  candidate.getCollectorNumberId() == collectorNumberId) {
-			result += 30*m;
+			result += 25 * m;
 			essential++;
 		}
 
-		if (essential<2 && !namematched) return 0;
+		// Prefer a string collectorId match
+		if (!collectorId.isEmpty() && candidate.getCollectorId().equals(collectorId)) {
+			result += 28 * m;
+			essential++;
+		} else if (collectorNumberId != 0 && candidate.getCollectorNumberId() == collectorNumberId) {
+			// Partial match must not exceed the threshold because the right card is
+			// probably just after in the list
+			result += 5 * m;
+			essential++;
+		}
+
+		if (essential < 2 && !namematched)
+			return 0;
 
 		String lang = base.getLanguage();
 
 		if (lang != null) {
 			if (lang.equals(candidate.getLanguage())) {
-				result += 25*m;
+				result += 25 * m;
 			}
-		} else if (candidate.getLanguage()==null) {
-			result += 25*m;
+		} else if (candidate.getLanguage() == null) {
+			result += 25 * m;
 		}
 
-		if (result>100*m) result=100*m;
+		if (result > 100 * m)
+			result = 100 * m;
 		return result;
 	}
 
 	public static MagicCard findRef(MagicCard base, ICardStore lookupStore) {
 		// System.err.println("*** LOOKING FOR " + base);
 		MagicCard ref = null;
-		// by id
+
+		// by Scryfall id (new reference)
 		if (base.getCardId() != null) {
 			ref = (MagicCard) lookupStore.getCard(base.getCardId());
 		}
-		if (ref!=null) return ref;
+		if (ref != null)
+			return ref;
 
-		// by rank
-		if (ref == null) {
-			long maxRank = 0;
-			long threashold = 80*1000*1000;
+		// by MA Scryfall id (with scry_ prefix)
+		if (base.getCardId() != null) {
+			ref = (MagicCard) lookupStore.getCard(base.getCardId().replace("scry_", ""));
+		}
+		if (ref != null)
+			return ref;
+
+		// Do a ranking search to find the best matching card
+		long maxRank = 0;
+		long threashold = 80 * 1000 * 1000;
+
+		// First, search right away for the matching set
+		DbMultiFileCardStore dbM = DbMultiFileCardStore.getInstance();
+
+		Location set = Location.valueOf(base.getSet().replaceAll("[\\W]", "_"));
+
+		if (set != Location.NO_WHERE) {
+			ICardStore setStore = dbM.getStore(set);
+
+			if (setStore != null) {
+				IStorage storage = setStore.getStorage();
+
+				// Search within the right set
+				for (Object element : storage) {
+					MagicCard a = (MagicCard) element;
+
+					// Check for perfect match first
+					if (String.valueOf(a.getGathererId()).compareTo(base.getCardId()) == 0) {
+						ref = a;
+						break;
+					}
+
+					// Else, iterate the cards to find the best fit
+					long rank = matchRating(base, a);
+					if (rank > maxRank && rank != 0) {
+						ref = a;
+						maxRank = rank;
+
+						if (rank > threashold)
+							break;
+					}
+				}
+			}
+		}
+		// Do Full Search across all the cards (more than 100k) as before, but this is
+		// very long
+		if (maxRank == 0) {
 			for (Object element : lookupStore) {
 				MagicCard a = (MagicCard) element;
 				long rank = matchRating(base, a);
@@ -351,17 +410,15 @@ public class ImportUtils {
 					ref = a;
 					maxRank = rank;
 
-					if (rank>threashold)
+					if (rank > threashold)
 						break;
 				}
 			}
-			//System.err.println(base+"  ----> "+ref+"  ---> "+maxRank);
-
+			// System.err.println(base+" ----> "+ref+" ---> "+maxRank);
 		}
 
 		return ref;
 	}
-
 
 	public static class LookupHash {
 		private static String ALL = "All";

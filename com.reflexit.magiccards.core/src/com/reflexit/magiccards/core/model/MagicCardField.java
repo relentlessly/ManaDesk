@@ -292,6 +292,22 @@ public enum MagicCardField implements ICardField {
 			return card.getGathererId();
 		};
 	},
+	TCGID(null) {
+		@Override
+		public ICardVisitor getAggregator() {
+			return new CollisionAggregator(this, 0);
+		}
+
+		@Override
+		public void setM(MagicCard card, Object value) {
+			card.setPropertyInteger(this, value);
+		}
+
+		@Override
+		public Object get(IMagicCard card) {
+			return card.getTcgId();
+		};
+	},
 	NOUPDATE(null) {
 		@Override
 		public void setM(MagicCard card, Object value) {
@@ -454,7 +470,8 @@ public enum MagicCardField implements ICardField {
 	COLOR(null) {
 		@Override
 		public Object get(IMagicCard card) {
-			return card.getCost();
+			// RD Return the Color, not the cost
+			return Colors.getInstance().getColorAsCost(card);
 		};
 
 		@Override
@@ -864,6 +881,7 @@ public enum MagicCardField implements ICardField {
 	},
 	// end of fields
 	;
+
 	private final String tag;
 	private final String property;
 	private final boolean phys;
