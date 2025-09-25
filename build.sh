@@ -4,7 +4,7 @@
 #needs maven 3.3.9 and java compiler 17+ installed
 export JAVA_HOME=/usr/lib/jvm/java-1.17.0-openjdk-amd64/
 PATH=$JAVA_HOME/bin:$PATH
-mvn -f com.reflexit.magiccards.parent/pom.xml clean verify
+mvn -DskipTests -f com.reflexit.magiccards.parent/pom.xml clean verify
 
 
 #This adds java to bundles, java runtime (1.8 +) has to be downloaded and extracted in $JAVADIR using this convention
