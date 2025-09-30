@@ -96,9 +96,15 @@ public class MagicCardComparator implements Comparator {
 				switch ((MagicCardField) sort) {
 				case COST: {
 					// RD Sort by "cost" directly to provide a more useful sorting
-					String ct1 = (String) a1;
-					String ct2 = (String) a2;
-					d = ct1.compareTo(ct2);
+					/*
+					 * !!! rD String ct1 = (String) a1; String ct2 = (String) a2; d =
+					 * ct1.compareTo(ct2);
+					 */
+
+					/* !!! RD Original code, new code provide completly different result */
+					int i1 = Colors.getColorSort((String) a1);
+					int i2 = Colors.getColorSort((String) a2);
+					d = i1 - i2;
 					break;
 				}
 				case COLOR: {

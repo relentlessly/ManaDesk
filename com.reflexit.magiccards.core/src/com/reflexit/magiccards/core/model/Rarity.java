@@ -11,9 +11,8 @@ public class Rarity implements ISearchableProperty {
 	public static final String RARE = "Rare";
 	public static final String MYTHIC_RARE = "Mythic"; // RD Don't use rarity with spaces, this causes a few side
 														// effects
-	public static final String LAND = "Land";
-	public static final String OTHER = "Other";
 	public static final String SPECIAL = "Special";
+	public static final String OTHER = "Other";
 
 	private Rarity() {
 		this.names = new LinkedHashMap();
@@ -21,7 +20,7 @@ public class Rarity implements ISearchableProperty {
 		add(RARE);
 		add(UNCOMMON);
 		add(COMMON);
-		add(LAND);
+		add(SPECIAL);
 		add(OTHER);
 	}
 
@@ -90,5 +89,30 @@ public class Rarity implements ISearchableProperty {
 			prev = v;
 		}
 		return null;
+	}
+
+	public static String resolve(String rarity) {
+		if (rarity == null)
+			return null;
+		switch (rarity) {
+		case "common":
+		case "Common":
+			return Rarity.COMMON;
+		case "uncommon":
+		case "Uncommon":
+			return Rarity.UNCOMMON;
+		case "rare":
+		case "Rare":
+			return Rarity.RARE;
+		case "mythic rare":
+		case "mythic":
+		case Rarity.MYTHIC_RARE:
+			return Rarity.MYTHIC_RARE;
+		case "special":
+		case "Special":
+			return Rarity.SPECIAL;
+		default:
+			return Rarity.OTHER;
+		}
 	}
 }

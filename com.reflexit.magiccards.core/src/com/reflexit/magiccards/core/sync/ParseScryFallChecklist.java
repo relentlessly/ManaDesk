@@ -346,7 +346,7 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		String finishesString = BuildFinishes((JSONArray) elem.get("finishes"));
 		String legalitiesString = BuildLegalities((JSONObject) elem.get("legalities"));
 
-		String scryfallUriString = "<br>" + ((String) elem.get("scryfall_uri")) + "<br><br>";
+		String scryfallUriString = "<br><a href=\"" + ((String) elem.get("scryfall_uri")) + "\">Scryfall</a>";
 		String fullArtString = BuildText("FullArt: ", elem.get("full_art").toString());
 		String textlessString = BuildText("TextLess: ", elem.get("textless").toString());
 		String storySpotlightString = BuildText("StorySpotlight: ", elem.get("story_spotlight").toString());
@@ -357,11 +357,15 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		JSONObject purchaseUri = (JSONObject) elem.get("purchase_uris");
 		String tcgUriString = "";
 
-		if (purchaseUri != null && purchaseUri.size() > 0) {
-			Object tcg = purchaseUri.get("tcgplayer");
-			if (tcg != null) {
-				tcgUriString = ((String) tcg) + "<br><br>";
+		if (!generateFlat) {
+			if (purchaseUri != null && purchaseUri.size() > 0) {
+				Object tcg = purchaseUri.get("tcgplayer");
+				if (tcg != null) {
+					tcgUriString = "   <a href=\"" + ((String) tcg) + "\">TcgPlayer</a>";
+				}
 			}
+
+			BuildPrice((JSONObject) elem.get("prices"));
 		}
 
 		JSONObject relatedUri = (JSONObject) elem.get("related_uris");
@@ -370,12 +374,8 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		if (relatedUri != null && relatedUri.size() > 0) {
 			Object gatherer = relatedUri.get("gatherer");
 			if (gatherer != null) {
-				gathererUriString = (String) gatherer;
+				gathererUriString = "   <a href=\"" + ((String) gatherer) + "\">Gatherer</a>";
 			}
-		}
-
-		if (!generateFlat) {
-			BuildPrice((JSONObject) elem.get("prices"));
 		}
 
 		JSONObject image_uris = (JSONObject) elem.get("image_uris");
@@ -423,8 +423,8 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			// Useful information for collectors
 			// We will use the Text field to store and display that information
 			cardText = priceString + frontMultiverseString + finishesString + fullArtString + textlessString
-					+ boosterString + storySpotlightString + promoTypesString + scryfallUriString + tcgUriString
-					+ gathererUriString;
+					+ boosterString + storySpotlightString + promoTypesString + scryfallUriString + gathererUriString
+					+ tcgUriString;
 
 			frontCard.setText(cardText);
 			frontCard.setLanguage(languageString);
@@ -436,7 +436,10 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			if (gids != null && gids.size() > 0) {
 				frontCard.set(MagicCardField.GATHERERID, gids.get(0).toString());
 			}
-			frontCard.set(MagicCardField.TCGID, tcgId);
+
+			if (!generateFlat) {
+				frontCard.set(MagicCardField.TCGID, tcgId);
+			}
 
 			handler.handleCard(frontCard);
 			break;
@@ -544,7 +547,7 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 
 			// Useful for collectors
 			cardText = finishesString + fullArtString + textlessString + boosterString + storySpotlightString
-					+ promoTypesString + scryfallUriString + tcgUriString + gathererUriString;
+					+ promoTypesString + scryfallUriString + gathererUriString + tcgUriString;
 
 			frontCard.setText(priceString + frontMultiverseString + cardText);
 			backCard.setText(backMultiverseString + cardText);
@@ -561,8 +564,9 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 				frontCard.set(MagicCardField.GATHERERID, gids.get(0).toString());
 			}
 
-			frontCard.set(MagicCardField.TCGID, tcgId);
-			backCard.set(MagicCardField.TCGID, tcgId);
+			if (!generateFlat) {
+				frontCard.set(MagicCardField.TCGID, tcgId);
+			}
 
 			handler.handleCard(frontCard);
 			handler.handleCard(backCard);

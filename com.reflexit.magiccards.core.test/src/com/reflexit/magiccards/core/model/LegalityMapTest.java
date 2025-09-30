@@ -2,12 +2,12 @@ package com.reflexit.magiccards.core.model;
 
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.reflexit.magiccards.core.legality.Format;
+
+import junit.framework.TestCase;
 
 public class LegalityMapTest extends TestCase {
 	private static final Format STANDARD = Format.STANDARD;
@@ -46,7 +46,7 @@ public class LegalityMapTest extends TestCase {
 	public void testToExternalTwo() {
 		map = map.put(STANDARD, Legality.LEGAL);
 		map = map.put(BLA_BLA, Legality.RESTRICTED);
-		String expected = "Standard|Bla Bla1";
+		String expected = "Standard;Bla Bla1";
 		assertEquals(expected, map.toExternal());
 		roundCheck();
 	}

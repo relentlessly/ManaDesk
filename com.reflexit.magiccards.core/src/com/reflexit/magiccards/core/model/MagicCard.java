@@ -107,7 +107,7 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 	}
 
 	public void setRarity(String rarity) {
-		this.rarity = rarity; // !!! RD To reimplement.... Rarity.resolve(rarity);
+		this.rarity = Rarity.resolve(rarity);
 	}
 
 	@Override

@@ -33,7 +33,8 @@ public class CardGenerator {
 
 	static public MagicCard generateCardWithValues() {
 		try {
-			return genMagicCard(id);
+			MagicCard genCard = genMagicCard(id);
+			return genCard;
 		} finally {
 			id++;
 		}
@@ -47,7 +48,7 @@ public class CardGenerator {
 		card.setType("type " + id % 100);
 		card.setCost("{" + (id % 7) + "}");
 		card.setOracleText("bla " + id);
-		String setName = "set " + (id % 20);
+		String setName = "set" + (id % 20);
 		Edition ed = Editions.getInstance().getEditionByName(setName);
 		if (ed == null) {
 			Editions.getInstance().addEdition(setName, setName);
@@ -70,7 +71,8 @@ public class CardGenerator {
 
 	static public MagicCardPhysical generatePhysicalCardWithValues(IMagicCard card) {
 		try {
-			return genMagicCardPhysical(card, id);
+			MagicCardPhysical genCard = genMagicCardPhysical(card, id);
+			return genCard;
 		} finally {
 			id++;
 		}

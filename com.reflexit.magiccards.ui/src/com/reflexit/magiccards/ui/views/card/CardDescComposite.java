@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.browser.IWebBrowser;
 
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.MagicLogger;
@@ -30,6 +32,7 @@ import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.MagicCardField;
 import com.reflexit.magiccards.core.model.storage.ICardStore;
 import com.reflexit.magiccards.core.sync.GatherHelper;
+import com.reflexit.magiccards.core.sync.WebUtils;
 import com.reflexit.magiccards.ui.MagicUIActivator;
 import com.reflexit.magiccards.ui.utils.ImageCreator;
 import com.reflexit.magiccards.ui.utils.StoredSelectionProvider;
@@ -85,17 +88,31 @@ class CardDescComposite extends Composite {
 					if (location.equals("about:blank"))
 						return;
 					try {
-						String cardId = GatherHelper.extractCardIdFromURL(new URL(location));
-						if (cardId != null) {
+						if (location.contains("https:")) {
+							if (WebUtils.isWorkOffline())
+								return;
+							IWebBrowser browser = new CardDescView().getBrowser();
+							browser.openURL(new URL(location));
+
+							// Nothing else to do
 							event.doit = false;
-							ICardStore<IMagicCard> magicDBStore = DataManager.getCardHandler().getMagicDBStore();
-							IMagicCard card2 = magicDBStore.getCard(cardId);
-							if (card2 != null) {
-								cardDescView.setSelection(new StructuredSelection(card2));
+						} else {
+
+							String cardId = GatherHelper.extractCardIdFromURL(new URL(location));
+							if (cardId != null) {
+								event.doit = false;
+								ICardStore<IMagicCard> magicDBStore = DataManager.getCardHandler().getMagicDBStore();
+								IMagicCard card2 = magicDBStore.getCard(cardId);
+								if (card2 != null) {
+									cardDescView.setSelection(new StructuredSelection(card2));
+								}
 							}
 						}
 					} catch (MalformedURLException e) {
 						MagicLogger.log(e);
+					} catch (PartInitException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
 			});

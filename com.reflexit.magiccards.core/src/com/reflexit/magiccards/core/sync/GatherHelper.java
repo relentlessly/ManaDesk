@@ -29,7 +29,9 @@ public abstract class GatherHelper extends ParserHtmlHelper {
 		manaMap.put("\\Q{untap}", "{Q}");
 	}
 
-	public static final String GATHERER_URL_BASE = "https://gatherer.wizards.com/";
+	// !!! RD This is not used anymore... so I force http instead of http just for
+	// investigating links support
+	public static final String GATHERER_URL_BASE = "http://gatherer.wizards.com/";
 
 	public GatherHelper() {
 		super();
