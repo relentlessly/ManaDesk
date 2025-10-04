@@ -104,57 +104,46 @@ public class ExtendedTreeViewer extends TreeViewer implements IMagicColumnViewer
 		Menu menu = new Menu(getControl());
 		String name = column.getText();
 		if (!name.isEmpty()) {
-			final MenuItem itemHide = new MenuItem(menu, SWT.PUSH);
-			itemHide.setText("Hide Column: " + name);
-			itemHide.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					hide(column);
-				}
-			});
-			final MenuItem showColumn = new MenuItem(menu, SWT.CASCADE);
-			showColumn.setText("Show Column");
-			Menu smenu = new Menu(menu);
-			TreeColumn[] columns = getTControl().getColumns();
-			for (int i = 0; i < columns.length; i++) {
-				TreeColumn tcolumn = columns[i];
-				AbstractColumn man = (AbstractColumn) tcolumn.getData("man");
-				if (man == null)
-					continue;
-				final MenuItem itemShow = new MenuItem(smenu, SWT.PUSH);
-				itemShow.setText(man.getColumnFullName());
-				itemShow.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						show(tcolumn, man.getUserWidth());
-					}
-				});
-			}
-			showColumn.setMenu(smenu);
-			final MenuItem itemSort = new MenuItem(menu, SWT.PUSH);
-			itemSort.setText("Sort Accending: " + name);
-			itemSort.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					manager.callSortAction(index, 1);
-				}
-			});
-			final MenuItem itemSortD = new MenuItem(menu, SWT.PUSH);
-			itemSortD.setText("Sort Descending: " + name);
-			itemSortD.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					manager.callSortAction(index, -1);
-				}
-			});
-			final MenuItem itemSortUnsort = new MenuItem(menu, SWT.PUSH);
-			itemSortUnsort.setText("Unsort");
-			itemSortUnsort.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					manager.callSortAction(-1, 0);
-				}
-			});
+			/*
+			 * !!! RD final MenuItem itemHide = new MenuItem(menu, SWT.PUSH);
+			 * itemHide.setText("Hide Column: " + name); itemHide.addSelectionListener(new
+			 * SelectionAdapter() {
+			 * 
+			 * @Override public void widgetSelected(SelectionEvent e) { hide(column); } });
+			 */
+			/*
+			 * !!! RD final MenuItem showColumn = new MenuItem(menu, SWT.CASCADE);
+			 * showColumn.setText("Show Column"); Menu smenu = new Menu(menu); TreeColumn[]
+			 * columns = getTControl().getColumns(); for (int i = 0; i < columns.length;
+			 * i++) { TreeColumn tcolumn = columns[i]; AbstractColumn man = (AbstractColumn)
+			 * tcolumn.getData("man"); if (man == null) continue; final MenuItem itemShow =
+			 * new MenuItem(smenu, SWT.PUSH); itemShow.setText(man.getColumnFullName());
+			 * itemShow.addSelectionListener(new SelectionAdapter() {
+			 * 
+			 * @Override public void widgetSelected(SelectionEvent e) { show(tcolumn,
+			 * man.getUserWidth()); } }); } showColumn.setMenu(smenu);
+			 */
+			/*
+			 * !!! RD final MenuItem itemSort = new MenuItem(menu, SWT.PUSH);
+			 * itemSort.setText("Sort Accending: " + name);
+			 * itemSort.addSelectionListener(new SelectionAdapter() {
+			 * 
+			 * @Override public void widgetSelected(SelectionEvent e) {
+			 * manager.callSortAction(index, 1); } }); final MenuItem itemSortD = new
+			 * MenuItem(menu, SWT.PUSH); itemSortD.setText("Sort Descending: " + name);
+			 * itemSortD.addSelectionListener(new SelectionAdapter() {
+			 * 
+			 * @Override public void widgetSelected(SelectionEvent e) {
+			 * manager.callSortAction(index, -1); } });
+			 */
+			/*
+			 * !! RD final MenuItem itemSortUnsort = new MenuItem(menu, SWT.PUSH);
+			 * itemSortUnsort.setText("Unsort"); itemSortUnsort.addSelectionListener(new
+			 * SelectionAdapter() {
+			 * 
+			 * @Override public void widgetSelected(SelectionEvent e) {
+			 * manager.callSortAction(-1, 0); } });
+			 */
 			final MenuItem itemShow = new MenuItem(menu, SWT.PUSH);
 			itemShow.setText("Column Preferences... ");
 			itemShow.addSelectionListener(new SelectionAdapter() {

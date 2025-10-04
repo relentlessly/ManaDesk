@@ -23,7 +23,6 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 import com.reflexit.magiccards.ui.PerspectiveFactoryMagic;
-import com.reflexit.mtgtournament.ui.tour.PerspectiveFactoryTournament;
 
 /**
  * An action bar advisor is responsible for creating, adding, and disposing of
@@ -107,7 +106,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 			try {
 				workbench.showPerspective(perspectiveId, window, ResourcesPlugin.getWorkspace());
 			} catch (WorkbenchException e) {
-				ErrorDialog.openError(new Shell(), WorkbenchMessages.ChangeToPerspectiveMenu_errorTitle, e.getMessage(), e.getStatus());
+				ErrorDialog.openError(new Shell(), WorkbenchMessages.ChangeToPerspectiveMenu_errorTitle, e.getMessage(),
+						e.getStatus());
 			}
 		}
 	}
@@ -124,7 +124,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		menuBar.add(helpMenu);
 		// windows
 		winMenu.add(new OpenPerspectiveAction(PerspectiveFactoryMagic.PERSPECTIVE_ID, "Cards Organizer"));
-		winMenu.add(new OpenPerspectiveAction(PerspectiveFactoryTournament.PERSPECTIVE_ID, "Tournament Organizer"));
+		// !!! RD winMenu.add(new
+		// OpenPerspectiveAction(PerspectiveFactoryTournament.PERSPECTIVE_ID,
+		// "Tournament Organizer"));
 		winMenu.add(new Separator());
 
 		showViewMenuMgr.add(showViewItem);

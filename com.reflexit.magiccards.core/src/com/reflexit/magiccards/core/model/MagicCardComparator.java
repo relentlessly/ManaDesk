@@ -128,6 +128,9 @@ public class MagicCardComparator implements Comparator {
 						d = ((Comparable) a1).compareTo(a2);
 					}
 					if (d == 0) {
+						d = compare(c1, c2, MagicCardField.CTYPE);
+					}
+					if (d == 0) {
 						d = compare(c1, c2, MagicCardField.COST);
 					}
 					// System.err.println("cms sort " + c1 + ":" + a1 + " vs " +
@@ -139,7 +142,7 @@ public class MagicCardComparator implements Comparator {
 					String ct2 = (String) a2;
 					d = ct1.compareTo(ct2);
 					if (d != 0) {
-						if (ct1.equals("costless")) // RD Costless are not just lands
+						if (ct1.equals("costless")) // RD Costless are now just lands
 							d = -1;
 						else if (ct2.equals("costless"))
 							d = 1;

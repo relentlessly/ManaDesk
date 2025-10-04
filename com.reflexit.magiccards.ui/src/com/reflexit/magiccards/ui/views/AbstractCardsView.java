@@ -63,7 +63,7 @@ public abstract class AbstractCardsView extends ViewPart implements IShowInTarge
 	protected Action loadExtras;
 	protected Action actionRefresh;
 	protected Action actionCopy;
-	protected Action buyCards;
+// !!! RD	protected Action buyCards;
 	private HashMap<String, IHandlerActivation> activations = new HashMap<>();
 
 	/**
@@ -217,12 +217,11 @@ public abstract class AbstractCardsView extends ViewPart implements IShowInTarge
 				runLoadExtras();
 			}
 		};
-		this.buyCards = new Action("Buy cards...") {
-			@Override
-			public void run() {
-				runBuyCards();
-			}
-		};
+		/*
+		 * !!! RD this.buyCards = new Action("Buy cards...") {
+		 * 
+		 * @Override public void run() { runBuyCards(); } };
+		 */
 		this.actionRefresh = new RefreshAction(() -> {
 			// this should force refresh update
 			getFilteredStore().getCardStore().updateList(null, null);

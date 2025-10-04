@@ -327,6 +327,7 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		String backMultiverseString = "";
 		String cardText = "";
 		Object tcgId = elem.get("tcgplayer_id");
+		Object tcgEtchedId = elem.get("tcgplayer_etched_id");
 
 		// Always use Scryfall ID
 		frontCard.setCardId(elem.get("id").toString());
@@ -438,7 +439,11 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			}
 
 			if (!generateFlat) {
-				frontCard.set(MagicCardField.TCGID, tcgId);
+				if (tcgId != null) {
+					frontCard.set(MagicCardField.TCGID, tcgId);
+				} else if (tcgEtchedId != null) {
+					frontCard.set(MagicCardField.TCGID, tcgEtchedId);
+				}
 			}
 
 			handler.handleCard(frontCard);
@@ -565,13 +570,18 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			}
 
 			if (!generateFlat) {
-				frontCard.set(MagicCardField.TCGID, tcgId);
+				if (tcgId != null) {
+					frontCard.set(MagicCardField.TCGID, tcgId);
+				} else if (tcgEtchedId != null) {
+					frontCard.set(MagicCardField.TCGID, tcgEtchedId);
+				}
 			}
 
 			handler.handleCard(frontCard);
 			handler.handleCard(backCard);
 			break;
 		}
+
 	}
 
 	@Override

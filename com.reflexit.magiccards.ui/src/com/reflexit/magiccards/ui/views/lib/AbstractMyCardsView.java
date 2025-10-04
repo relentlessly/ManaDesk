@@ -271,7 +271,7 @@ public abstract class AbstractMyCardsView extends AbstractGroupPageCardsView imp
 		manager.add(this.addToDeck);
 		manager.add(this.split);
 // !!! RD		manager.add(this.edit);
-		manager.add(this.buyCards);
+// !!! RD		manager.add(this.buyCards);
 	}
 
 	@Override
