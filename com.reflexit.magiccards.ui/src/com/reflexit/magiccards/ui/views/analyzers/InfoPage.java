@@ -60,8 +60,11 @@ public class InfoPage extends AbstractDeckPage implements IDeckPage {
 	@Override
 	public void createPageContents(Composite parent) {
 		createTextArea().setLayoutData(GridDataFactory.fillDefaults().grab(true, true).minSize(-1, 40).create());
-		createEditButton(getArea())
-				.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.END).create());
+		/*
+		 * !!! RD createEditButton(getArea())
+		 * .setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING,
+		 * SWT.END).create());
+		 */
 		createStatsArea(getArea())
 				.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.FILL).grab(false, true).create());
 	}

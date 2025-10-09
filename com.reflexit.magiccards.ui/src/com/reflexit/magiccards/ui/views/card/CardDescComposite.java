@@ -3,7 +3,11 @@
  */
 package com.reflexit.magiccards.ui.views.card;
 
+import java.awt.Desktop;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.jface.layout.GridDataFactory;
@@ -23,8 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.browser.IWebBrowser;
 
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.MagicLogger;
@@ -91,8 +93,12 @@ class CardDescComposite extends Composite {
 						if (location.contains("https:")) {
 							if (WebUtils.isWorkOffline())
 								return;
-							IWebBrowser browser = new CardDescView().getBrowser();
-							browser.openURL(new URL(location));
+
+							if (Desktop.isDesktopSupported()
+									&& Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+								URI url = new URI(location);
+								Desktop.getDesktop().browse(url);
+							}
 
 							// Nothing else to do
 							event.doit = false;
@@ -110,7 +116,10 @@ class CardDescComposite extends Composite {
 						}
 					} catch (MalformedURLException e) {
 						MagicLogger.log(e);
-					} catch (PartInitException e) {
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (URISyntaxException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}

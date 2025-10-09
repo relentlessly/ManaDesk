@@ -37,7 +37,7 @@ public class MagicDbView extends AbstractSingleControlCardsView {
 	protected MenuManager addToDeck;
 	protected IDeckAction copyToDeck;
 	protected Action exportDatabase;
-	protected Action edit;
+// !!! RD	protected Action edit;
 
 	public MagicDbView() {
 	}
@@ -113,12 +113,11 @@ public class MagicDbView extends AbstractSingleControlCardsView {
 				exportDatabase();
 			}
 		};
-		edit = new Action("Edit...") {
-			@Override
-			public void run() {
-				editCard();
-			}
-		};
+		/*
+		 * !!! RD edit = new Action("Edit...") {
+		 * 
+		 * @Override public void run() { editCard(); } };
+		 */
 	}
 
 	protected void editCard() {
@@ -193,7 +192,7 @@ public class MagicDbView extends AbstractSingleControlCardsView {
 		super.fillContextMenu(manager);
 		manager.add(this.addToDeck);
 		manager.add(this.actionCopy);
-		manager.add(this.edit);
+// !!! RD		manager.add(this.edit);
 	}
 
 	@Override

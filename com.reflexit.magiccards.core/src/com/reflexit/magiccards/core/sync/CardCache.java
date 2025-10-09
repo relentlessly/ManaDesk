@@ -42,7 +42,9 @@ public class CardCache {
 		Edition edition = Editions.getInstance().getEditionByName(editionName);
 		if (edition == null)
 			return null;
-		return edition.getImageFiles().getLocalURL(rarity, upload);
+		return null; /*
+						 * !!! RD Disable for now edition.getImageFiles().getLocalURL(rarity, upload);
+						 */
 	}
 
 	public static URL createRemoteImageURL(IMagicCard card) throws MalformedURLException {

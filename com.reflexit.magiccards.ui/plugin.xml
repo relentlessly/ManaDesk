@@ -714,6 +714,7 @@
            id="com.reflexit.magiccards.ui.wizards.NewCollectionContainerWizard"
            name="Container">
      </wizard>
+           <!--
                <wizard
                      canFinishEarly="true"
                      category="com.reflexit.magiccards.ui"
@@ -734,6 +735,7 @@
                      id="com.reflexit.magiccards.ui.wizards.BoosterGeneratorCollectionWizard"
                      name="Booster Pack from Collection">
                </wizard>
+               !-->
   </extension>
   <extension
         point="org.eclipse.ui.exportWizards">
