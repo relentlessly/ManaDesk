@@ -27,7 +27,7 @@ http://www.eclipse.org/legal/epl-v10.html
    </license>
 
    <url>
-      <update label="Magic Fork Software Update" url="http://mtgbrowser.sourceforge.net/update/1.5"/>
+	   <update label="Magic Fork Software Update" url="https://maven.pkg.github.com/BKurler/MAFork"/>
    </url>
 
    <requires>
