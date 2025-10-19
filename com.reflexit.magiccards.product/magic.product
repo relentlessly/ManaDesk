@@ -86,8 +86,8 @@
    </configurations>
 
    <repositories>
-      <repository location="http://mtgbrowser.sourceforge.net/update/1.5-beta" enabled="false" />
-      <repository location="http://mtgbrowser.sourceforge.net/update/1.5" enabled="true" />
+	   <repository location="https://maven.pkg.github.com/BKurler/MAFork" enabled="false" />
+	   <repository location="https://maven.pkg.github.com/BKurler/MAFork" enabled="true" />
    </repositories>
 
 </product>

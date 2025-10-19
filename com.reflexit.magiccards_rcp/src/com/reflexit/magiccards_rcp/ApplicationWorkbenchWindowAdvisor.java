@@ -50,7 +50,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		try {
 			// RD Don't check for software update at this moment, still pointing to
 			// SourceForge
-			// installSoftwareUpdate();
+			installSoftwareUpdate();
 			checkForCardUpdates();
 		} catch (Throwable e) {
 			Activator.log(e);
