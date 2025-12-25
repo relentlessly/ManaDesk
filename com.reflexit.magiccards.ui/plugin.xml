@@ -9,7 +9,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="Magic Fork Preferences"
+            name="ManaDesk Preferences"
             class="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
             id="com.reflexit.magiccards.ui.preferences.MagicPreferencePage">
       </page>
@@ -79,7 +79,7 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Magic Fork"
+            name="ManaDesk"
             id="com.reflexit.magiccards">
       </category>
       <view
@@ -357,7 +357,7 @@
          point="org.eclipse.ui.commands">
       <category
             id="com.reflexit.magiccards.ui.commands.category"
-            name="Magic Fork">
+            name="ManaDesk">
       </category>
       <command
             categoryId="com.reflexit.magiccards.ui.commands.category"
@@ -499,12 +499,12 @@
          point="org.eclipse.ui.contexts">
       <context
             id="com.reflexit.magiccards.ui.context"
-            name="Magic Fork windows"
+            name="ManaDesk windows"
             parentId="org.eclipse.ui.contexts.window">
       </context>
       <context
             id="com.reflexit.magiccards.ui.context.search"
-            name="Magic Fork Search Fields"
+            name="ManaDesk Search Fields"
             parentId="org.eclipse.ui.textEditorScope">
       </context>
    </extension>
@@ -811,9 +811,9 @@
 
 <extension point="org.eclipse.ui.themes">
 	<themeElementCategory
-		id="com.reflexit.magiccards.ui.preferences.themeElementCategory" label="Magic Fork">
+		id="com.reflexit.magiccards.ui.preferences.themeElementCategory" label="ManaDesk">
 		<description>
-			Magic Fork fonts and colors
+			ManaDesk fonts and colors
 		</description>
 	</themeElementCategory>
 
@@ -822,7 +822,7 @@
 		id="com.reflexit.magiccards.ui.preferences.color" label="Cards List Text Color"
 		value="COLOR_BLACK">
 		<description>
-			Color of text shown in Magic Fork tables and trees
+			Color of text shown in ManaDesk tables and trees
         </description>
 	</colorDefinition>
 	
@@ -831,7 +831,7 @@
 		id="com.reflexit.magiccards.ui.preferences.vcard.bgcolor" label="Virtual Card Background Color"
 		value="COLOR_WIDGET_LIGHT_SHADOW">
 		<description>
-			Background color for rows of virtual cards in Magic Fork tables and trees
+			Background color for rows of virtual cards in ManaDesk tables and trees
         </description>
 	</colorDefinition>
 	
@@ -840,7 +840,7 @@
 		id="com.reflexit.magiccards.ui.preferences.ocard.bgcolor" label="Own Card Background Color"
 		value="COLOR_LIST_BACKGROUND">
 		<description>
-			Background color for rows of own cards in Magic Fork tables and trees
+			Background color for rows of own cards in ManaDesk tables and trees
         </description>
 	</colorDefinition>
 
@@ -849,7 +849,7 @@
 		id="com.reflexit.magiccards.ui.preferences.font" label="Cards List Font"
 		value="Arial-12">
 		<description>
-			Font of text shown in Magic Fork tables and trees
+			Font of text shown in ManaDesk tables and trees
         </description>
 	</fontDefinition>
 

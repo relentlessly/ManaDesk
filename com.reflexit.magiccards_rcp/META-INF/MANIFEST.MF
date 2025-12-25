@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Automatic-Module-Name: com.reflexit.magiccards.rcp
-Bundle-Name: Magic Fork
+Bundle-Name: ManaDesk
 Bundle-SymbolicName: com.reflexit.magiccards_rcp;singleton:=true
 Bundle-Version: 0.5.0.qualifier
 Bundle-Activator: com.reflexit.magiccards_rcp.Activator

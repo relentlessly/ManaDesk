@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Magic Fork">
+<toc label="ManaDesk">
    <topic label="Getting Started">
- 	<topic label="Magic Fork Overview"  href="html/gettingstarted/basic_tutorial.html"> 
+ 	<topic label="ManaDesk Overview"  href="html/gettingstarted/basic_tutorial.html"> 
 	</topic>
    </topic>
    <topic label="Tasks">

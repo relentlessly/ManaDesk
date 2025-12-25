@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Magic Fork Core Test
+Bundle-Name: ManaDesk Core Test
 Bundle-SymbolicName: com.reflexit.magiccards.core.test
 Automatic-Module-Name: com.reflexit.magiccards.core.test
 Bundle-Version: 1.0.0
