@@ -22,7 +22,6 @@
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=30000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=3
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=15000
---add-modules=ALL-SYSTEM
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
