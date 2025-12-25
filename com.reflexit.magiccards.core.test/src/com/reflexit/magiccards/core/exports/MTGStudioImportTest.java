@@ -64,19 +64,19 @@ public class MTGStudioImportTest extends AbstarctImportTest {
 		addLine("Name,Edition,Qty");
 		addLine("Pendelhaven,TSP,1");
 		parse();
-		assertEquals("Time Spiral \"Timeshifted\"", card1.getSet());
+		assertEquals("Time Spiral Timeshifted", card1.getSet());
 		assertNull(((MagicCardPhysical) card1).getError());
 	}
 
 	@Test
 	public void testPR() {
 		addLine("Name,Qty,Edition");
-		addLine("Sewers of Estark [Harper Prism],2,PPR");
-		addLine("\"Glissa, the Traitor [Pre 30 Jan 2011 Foil]\",1,PPR");
+		addLine("Sewers of Estark [Harper Prism],2,PPRO");
+		addLine("\"Glissa, the Traitor [Pre 30 Jan 2011 Foil]\",1,PMBS");
 		parse();
 		assertEquals(2, resSize);
-		assertEquals("Promo set for Gatherer", card1.getSet());
-		assertEquals("Promo set for Gatherer", card2.getSet());
+		assertEquals("Pro Tour Promos", card1.getSet());
+		assertEquals("Pro Tour Promos", card2.getSet());
 		assertNull(((MagicCardPhysical) card1).getError());
 	}
 
@@ -85,7 +85,7 @@ public class MTGStudioImportTest extends AbstarctImportTest {
 		parseLine("Life/Death,2,DDJ");
 		assertEquals("Duel Decks: Izzet vs. Golgari", card1.getSet());
 		assertNull(((MagicCardPhysical) card1).getError());
-		assertEquals("Life // Death (Death)", card1.getName());
+		assertEquals("Life // Death", card1.getName());
 	}
 
 	@Test

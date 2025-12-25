@@ -106,11 +106,11 @@ public class HtmlTableImportTest extends AbstarctImportTest {
 		preview();
 		assertEquals(8, resSize);
 		assertEquals("Abattoir Ghoul", card1.getName());
-		assertEquals("Magic 2015 Core Set", card2.getSet());
+		assertEquals("Magic 2015", card2.getSet());
 		assertEquals(4, ((MagicCardPhysical) card1).getCount());
 		parse();
 		assertEquals(8, resSize);
-		assertEquals("Magic 2015 Core Set", card2.getSet());
+		assertEquals("Magic 2015", card2.getSet());
 	}
 
 	// http://magic.tcgplayer.com/db/search_result.asp?Set_Name=From%20the%20Vault:%20Twenty

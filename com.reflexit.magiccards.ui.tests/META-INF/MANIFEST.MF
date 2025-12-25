@@ -5,5 +5,5 @@ Bundle-SymbolicName: com.reflexit.magiccards.ui.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: REFLEXIT
 Fragment-Host: com.reflexit.magiccards.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: com.reflexit.unittesting

@@ -1,20 +1,17 @@
 package com.reflexit.magiccards.core.model;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.reflexit.magiccards.core.legality.Format;
 import com.reflexit.magiccards.core.model.storage.IDbCardStore;
 import com.reflexit.magiccards.core.sync.TextPrinter;
 import com.reflexit.unittesting.CardGenerator;
+
+
+import static org.mockito.Mockito.*; 
+import static org.mockito.ArgumentMatchers.*;
 
 import junit.framework.TestCase;
 
@@ -22,9 +19,10 @@ public class MagicCardTest extends TestCase {
 	MagicCard card;
 	String original;
 
+
 	private MagicCard mockRealCards(MagicCardPhysical... mcps) {
 		MagicCard card = mcps[0].getBase();
-		if (!Mockito.mockingDetails(card).isSpy())
+		if (!mockingDetails(card).isSpy())
 			card = spy(card);
 		CardGroup realcards = new CardGroup(MagicCardField.ID, mcps[0].getName());
 		for (MagicCardPhysical mcp : mcps) {

@@ -78,7 +78,7 @@ public class MagicXmlHandlerTest extends TestCase {
 	  <card>
 	    <id>-37</id>
 	    <name>name 37</name>
-	    <edition>set 17</edition>
+	    <edition>set17</edition>
 	  </card>
 	  <count>1</count>
 	  <comment>comment 38</comment>
@@ -109,7 +109,7 @@ public class MagicXmlHandlerTest extends TestCase {
 	  <card>
 	    <id>-37</id>
 	    <name>name 37</name>
-	    <edition>set 17</edition>
+	    <edition>set17</edition>
 	  </card>
 	  <count>5</count>
 	  <comment>comment 38</comment>
@@ -179,7 +179,7 @@ public class MagicXmlHandlerTest extends TestCase {
 	      <card>
 	        <id>-39</id>
 	        <name>name 39</name>
-	        <edition>set 39</edition>
+	        <edition>set39</edition>
 	      </card>
 	      <count>5</count>
 	      <price>2.1</price>
@@ -197,7 +197,7 @@ public class MagicXmlHandlerTest extends TestCase {
 		MagicCardPhysical phi = new MagicCardPhysical(new MagicCard(), null);
 		phi.getBase().setCardId(-39);
 		phi.getBase().setName("name 39");
-		phi.getBase().setSet("set 39");
+		phi.getBase().setSet("set39");
 		phi.setCount(5);
 		phi.setSpecial("foil,c=mint");
 		phi.setComment("comment 40");
@@ -222,7 +222,7 @@ public class MagicXmlHandlerTest extends TestCase {
 	  <card>
 	    <id>-39</id>
 	    <name>name 39</name>
-	    <edition>set 19</edition>
+	    <edition>set19</edition>
 	  </card>
 	  <count>5</count>
 	  <price>2.1</price>
@@ -245,7 +245,7 @@ public class MagicXmlHandlerTest extends TestCase {
 		MagicCardPhysical p = (MagicCardPhysical) object.list.get(0);
 		assertEquals("-39", p.getCardId());
 		assertEquals("name 39", p.getName());
-		assertEquals("set 19", p.getSet());
+		assertEquals("set19", p.getSet());
 		assertEquals(5, p.getCount());
 		assertEquals(2.1f, p.getPrice());
 		assertEquals("comment 40", p.getComment());
@@ -270,7 +270,7 @@ public class MagicXmlHandlerTest extends TestCase {
       <power>4</power>
       <toughness>*</toughness>
       <oracleText>bla 39</oracleText>
-      <edition>set 19</edition>
+      <edition>set19</edition>
       <rarity>Common</rarity>
       <lang>Russian</lang>
       <rating>2.39</rating>
@@ -284,7 +284,7 @@ public class MagicXmlHandlerTest extends TestCase {
         </entry>
         <entry>
           <string>LEGALITY</string>
-          <string>Standard1|Modern</string>
+          <string>Standard1;Modern</string>
         </entry>
       </properties>
     </mc>
@@ -373,7 +373,7 @@ public class MagicXmlHandlerTest extends TestCase {
 	      <power>4</power>
 	      <toughness>*</toughness>
 	      <oracleText>bla 39</oracleText>
-	      <edition>set 19</edition>
+	      <edition>set19</edition>
 	      <rarity>Common</rarity>
 	      <lang>Russian</lang>
 	      <rating>2.39</rating>
@@ -387,7 +387,7 @@ public class MagicXmlHandlerTest extends TestCase {
 	        </entry>
 	        <entry>
 	          <string>LEGALITY</string>
-	          <string>Standard1|Modern</string>
+	          <string>Standard1;Modern</string>
 	        </entry>
 	      </properties>
 	    </mc>

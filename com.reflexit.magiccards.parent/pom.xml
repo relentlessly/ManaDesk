@@ -8,12 +8,14 @@
 	<artifactId>com.reflexit.magiccards.parent</artifactId>
 	<version>0.5.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>3.0.5</tycho.version>
-		<maven.compiler.target>1.8</maven.compiler.target>
-    	<maven.compiler.source>1.8</maven.compiler.source>
-	</properties>
+    <tycho.version>3.0.5</tycho.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+</properties>
+	
 	<distributionManagement>
 		<repository>
 		<id>github</id>
@@ -38,10 +40,11 @@
 
 	<modules>
 		<module>../com.reflexit.magiccards.target</module>
+		<module>../com.reflexit.magiccards.db</module>
+		
 		<module>../com.reflexit.magiccards.core</module>
 		<module>../com.reflexit.magiccards.core.nl1</module>
 		<module>../com.reflexit.magicassistant.p2</module>
-		<module>../com.reflexit.magiccards.db</module>
 		<module>../com.reflexit.magiccards.help</module>
 		<module>../com.reflexit.magiccards.ui</module>
 		<module>../com.reflexit.magiccards.ui.chart</module>
@@ -58,7 +61,6 @@
 
 		<module>../com.reflexit.unittesting</module>
 		<module>../com.reflexit.magiccards.core.test</module>
-
 		<module>../com.reflexit.magicassistant.ui.tests</module>
 		<module>../com.reflexit.mtgtournament.core.tests</module>
 		<module>../com.reflexit.magiccards.product</module>
@@ -84,6 +86,7 @@
 							<version>0.5.0-SNAPSHOT</version>
 						</artifact>
 					</target>
+					    <executionEnvironment>JavaSE-17</executionEnvironment>
 					<environments>
 						<environment>
 							<os>linux</os>
@@ -101,6 +104,10 @@
 							<arch>x86_64</arch>
 						</environment>
 					</environments>
+					
+					    <dependency-resolution>
+
+    </dependency-resolution>
 				</configuration>
 			</plugin>
 			<plugin>

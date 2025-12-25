@@ -8,8 +8,12 @@ Bundle-Vendor: Alena Laskavaia
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  com.reflexit.mtgtournament.core,
- com.reflexit.unittesting
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+ com.reflexit.unittesting,
+ org.mockito.mockito-core;bundle-version="4.8.0",
+ net.bytebuddy.byte-buddy;bundle-version="1.12.0",
+ net.bytebuddy.byte-buddy-agent;bundle-version="1.12.0",
+ org.objenesis;bundle-version="3.2.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  src,

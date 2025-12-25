@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Magic Fork" uid="com.reflexit.magiccards_rcp.product" id="com.reflexit.magiccards_rcp.product" application="com.reflexit.magiccards_rcp.application" version="0.5.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Magic Fork" uid="com.reflexit.magiccards_rcp.product" id="com.reflexit.magiccards_rcp.product" application="com.reflexit.magiccards_rcp.application" version="0.5.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="splash.png"/>
@@ -15,12 +15,14 @@
 
    <launcherArgs>
       <vmArgs>-Dfile.encoding=utf-8
+-Dosgi.requiredJavaVersion=18
 -Dorg.eclipse.ecf.provider.filetransfer.httpclient.retrieve.connectTimeout=120000
 -Dorg.eclipse.ecf.provider.filetransfer.httpclient.retrieve.readTimeout=120000
 -Dsun.net.client.defaultReadTimeout=60000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=30000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=3
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=15000
+--add-modules=ALL-SYSTEM
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
@@ -35,7 +37,6 @@
       startupForegroundColor="000000" />
    <launcher name="magicfork">
       <linux icon="../com.reflexit.magiccards_rcp/icons/m48.xpm"/>
-      <solaris/>
       <win useIco="false">
          <bmp
             winSmallHigh="../com.reflexit.magiccards_rcp/icons/m16.bmp"
@@ -48,12 +49,11 @@
       </win>
    </launcher>
 
-
    <vm>
-      <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
-      <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
-      <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</solaris>
-      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
+      <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</linux>
+      <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</macos>
+      <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-18</solaris>
+      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</windows>
    </vm>
 
    <license>
@@ -86,8 +86,8 @@
    </configurations>
 
    <repositories>
-      <repository location="http://mtgbrowser.sourceforge.net/update/1.5-beta" enabled="false" />
-      <repository location="http://mtgbrowser.sourceforge.net/update/1.5" enabled="true" />
+      <repository location="http://mtgbrowser.sourceforge.net/update/1.5-beta" name="" enabled="false" />
+      <repository location="http://mtgbrowser.sourceforge.net/update/1.5" name="" enabled="true" />
    </repositories>
 
 </product>

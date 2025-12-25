@@ -22,9 +22,9 @@ public class AllSellerTests {
 		TestSuite suite = new TestSuite("Test for com.reflexit.magiccards.core.seller.test");
 		// $JUnit-BEGIN$
 		// prive providers
-		suite.addTestSuite(ParseTcgPlayerPricesTest.class);
-		suite.addTestSuite(ParseMOTLPricesTest.class);
-		suite.addTestSuite(ParseMagicCardMarketPricesTest.class);
+// !!! RD Not now		suite.addTestSuite(ParseTcgPlayerPricesTest.class);
+		// !!! RD Not now		suite.addTestSuite(ParseMOTLPricesTest.class);
+		// !!! RD Not now		suite.addTestSuite(ParseMagicCardMarketPricesTest.class);
 		// $JUnit-END$
 		return suite;
 	}

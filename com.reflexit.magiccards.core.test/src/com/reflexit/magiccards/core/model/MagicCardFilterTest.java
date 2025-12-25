@@ -375,16 +375,16 @@ public class MagicCardFilterTest extends TestCase {
 		checkFound(b);
 		checkFound(r);
 		checkNotFound(w);
-		checkNotFound(wb);
+		checkFound(wb);
 		checkFound(br);
-		b.set(MagicCardField.ORACLE, "{W} - do something"); // white in text
-		checkNotFound(b);
-		b.set(MagicCardField.ORACLE, "{R} - do something"); // red
-		checkFound(b);
-		b.set(MagicCardField.ORACLE, "{W/R} - do something"); // combined cost
-		checkNotFound(b);
-		b.set(MagicCardField.ORACLE, "Win"); // W but not cost
-		checkFound(b);
+		w.set(MagicCardField.ORACLE, "{W} - do something"); // white in text
+		checkNotFound(w);
+		w.set(MagicCardField.ORACLE, "{R} - do something"); // red
+		checkFound(w);
+		w.set(MagicCardField.ORACLE, "{W/R} - do something"); // combined cost
+		checkFound(w);
+		w.set(MagicCardField.ORACLE, "Red"); // W but not cost
+		checkNotFound(w);
 	}
 
 	public void testColorBlackAndRedIdentity() {
@@ -401,14 +401,14 @@ public class MagicCardFilterTest extends TestCase {
 		checkNotFound(wb);
 		checkFound(br);
 		checkFound(brh);
-		br.set(MagicCardField.ORACLE, "{W} - do something"); // white in text
-		checkNotFound(br);
-		br.set(MagicCardField.ORACLE, "{R} - do something"); // red
-		checkFound(br);
-		br.set(MagicCardField.ORACLE, "{W/R} - do something"); // combined cost
-		checkNotFound(br);
-		br.set(MagicCardField.ORACLE, "Win"); // W but not cost
-		checkFound(br);
+		b.set(MagicCardField.ORACLE, "{W} - do something"); // white in text
+		checkNotFound(b);
+		wb.set(MagicCardField.ORACLE, "{R} - do something"); // red
+		checkFound(wb);
+		b.set(MagicCardField.ORACLE, "{W/R} - do something"); // combined cost
+		checkFound(b);
+		wb.set(MagicCardField.ORACLE, "Win"); // W but not cost
+		checkNotFound(wb);
 	}
 
 	public void testColorBlackOnly() {
@@ -444,11 +444,13 @@ public class MagicCardFilterTest extends TestCase {
 		MagicCardPhysical c1 = mcpCost("{1}");
 		MagicCardPhysical c0 = mcpCost("");
 		MagicCardPhysical wc = mcpCost("{W}{1}");
-		String colorless_id = Colors.getInstance().getPrefConstant(Colors.getColorName("{1}"));
+		MagicCardPhysical w = mcpCost("{W}");		
+		String colorless_id = Colors.getInstance().getPrefConstant(Colors.getColorName("{C}"));
 		setFilterTrue(colorless_id, ColorTypes.IDENTITY_ID);
 		checkFound(c2);
 		checkFound(c1);
-		checkFound(c0);
-		checkNotFound(wc);
+		checkNotFound(c0);
+		checkFound(wc);
+		checkNotFound(w);		
 	}
 }

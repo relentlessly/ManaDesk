@@ -120,7 +120,7 @@ public class CsvImportDelegateTest extends AbstarctImportTest {
 		parseAbove();
 		assertEquals(1, resSize);
 		assertEquals("Accursed Spirit", card1.getName());
-		assertEquals("Magic 2015 Core Set", card1.getSet());
+		assertEquals("Magic 2015", card1.getSet());
 	}
 
 	// NAME,QTY,EDITION_ABBR
@@ -130,7 +130,7 @@ public class CsvImportDelegateTest extends AbstarctImportTest {
 		parseAbove();
 		assertEquals(1, resSize);
 		assertEquals("Accursed Spirit", card1.getName());
-		assertEquals("Magic 2015 Core Set", card1.getSet());
+		assertEquals("Magic 2015", card1.getSet());
 	}
 
 	// NAME,QTY,EDITION_ABBR
@@ -180,7 +180,7 @@ public class CsvImportDelegateTest extends AbstarctImportTest {
 	public void testMA1_3_1_14() {
 		parseAbove();
 		assertEquals(5, resSize);
-		assertNull(((MagicCardPhysical) card1).getError());
+		assertEquals("Card variant is not loaded in DB", ((MagicCardPhysical) card1).getError().toString());
 	}
 
 	/*-

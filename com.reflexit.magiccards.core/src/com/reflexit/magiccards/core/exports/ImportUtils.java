@@ -370,7 +370,13 @@ public class ImportUtils {
 		// First, search right away for the matching set
 		DbMultiFileCardStore dbM = DbMultiFileCardStore.getInstance();
 
-		Location set = Location.valueOf(base.getSet().replaceAll("[\\W]", "_"));
+		String locBase = base.getSet();
+		if (base.getSet() != null)
+		{
+			locBase = locBase.replaceAll("[\\W]", "_");
+		}
+		
+		Location set = Location.valueOf(locBase);
 
 		if (set != Location.NO_WHERE) {
 			ICardStore setStore = dbM.getStore(set);
@@ -382,8 +388,9 @@ public class ImportUtils {
 				for (Object element : storage) {
 					MagicCard a = (MagicCard) element;
 
-					// Check for perfect match first
-					if (String.valueOf(a.getGathererId()).compareTo(base.getCardId()) == 0) {
+					// Check for perfect match first, if a card id as been provided
+					if (base.getCardId() != null &&
+						String.valueOf(a.getGathererId()).compareTo(base.getCardId()) == 0) {
 						ref = a;
 						break;
 					}

@@ -366,7 +366,7 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 				}
 			}
 
-			BuildPrice((JSONObject) elem.get("prices"));
+			priceString = BuildPrice((JSONObject) elem.get("prices"));
 		}
 
 		JSONObject relatedUri = (JSONObject) elem.get("related_uris");

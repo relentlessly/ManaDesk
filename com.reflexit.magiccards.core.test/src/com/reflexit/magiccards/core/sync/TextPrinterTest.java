@@ -12,7 +12,7 @@ public class TextPrinterTest extends AbstractMagicTest {
 	public void testMCHeader() {
 		String string = TextPrinter.getHeader();
 		assertEquals(
-				"ID|NAME|COST|TYPE|POWER|TOUGHNESS|ORACLE|SET|RARITY|ARTIST|COLLNUM|TEXT|PROPERTIES",
+				"ID|NAME|COST|TYPE|POWER|TOUGHNESS|ORACLE|SET|RARITY|LANG|ARTIST|COLLNUM|TEXT|PROPERTIES",
 				string);
 	}
 
@@ -21,7 +21,7 @@ public class TextPrinterTest extends AbstractMagicTest {
 		MagicCard card = CardGenerator.genMagicCard(39);
 		card.setRating(2);
 		String string = TextPrinter.getString(card);
-		assertEquals("-39|name 39|{4}|type 39|4|*|bla 39|set 19|Common|Elena 39|39a|bla <br> bla 39|",
+		assertEquals("-39|name 39|{4}|type 39|4|*|bla 39|set19|Common|Russian|Elena 39|39a|bla <br> bla 39|",
 				string);
 	}
 
@@ -31,7 +31,7 @@ public class TextPrinterTest extends AbstractMagicTest {
 		card.set(MagicCardField.IMAGE_URL, "some");
 		String string = TextPrinter.getString(card);
 		assertEquals(
-				"-39|name 39|{4}|type 39|4|*|bla 39|set 19|Common|Elena 39|39a|bla <br> bla 39|{IMAGE_URL=some}",
+				"-39|name 39|{4}|type 39|4|*|bla 39|set19|Common|Russian|Elena 39|39a|bla <br> bla 39|{IMAGE_URL=some}",
 				string);
 	}
 }
