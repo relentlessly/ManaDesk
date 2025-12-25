@@ -15,7 +15,7 @@
 
    <launcherArgs>
       <vmArgs>-Dfile.encoding=utf-8
--Dosgi.requiredJavaVersion=18
+-Dosgi.requiredJavaVersion=17
 -Dorg.eclipse.ecf.provider.filetransfer.httpclient.retrieve.connectTimeout=120000
 -Dorg.eclipse.ecf.provider.filetransfer.httpclient.retrieve.readTimeout=120000
 -Dsun.net.client.defaultReadTimeout=60000
@@ -74,35 +74,14 @@
 
    <features>
       <feature id="com.reflexit.magiccards.feature.rcp" version="0.5.0.qualifier"/>
-      
-         <!-- Jetty + HTTP service pour l'aide Eclipse -->
-   <plugin id="org.eclipse.equinox.http.jetty" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.http.servlet" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.http.registry" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-
-   <plugin id="org.eclipse.jetty.server" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.servlet" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.util" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.http" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.io" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.security" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.xml" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-
-   <plugin id="org.eclipse.jetty.websocket.core.server" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.websocket.core.common" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.websocket.core.client" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-
-   <plugin id="org.eclipse.jetty.annotations" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.apache-jsp" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.jetty.jsp" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-      
    </features>
 
    <configurations>
-      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.http.jetty" autoStart="true" startLevel="3" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
    </configurations>
