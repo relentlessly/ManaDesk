@@ -27,7 +27,7 @@ http://www.eclipse.org/legal/epl-v10.html
    </license>
 
    <url>
-	   <update label="Magic Fork Software Update" url="https://maven.pkg.github.com/BKurler/MAFork"/>
+	   <update label="Magic Fork Software Update" url="https://github.com/BKurler/MAFork/raw/software-update/updates/noused"/>
    </url>
 
    <requires>

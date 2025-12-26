@@ -62,7 +62,7 @@ public class P2Util {
 		try {
 			String url = System.getProperty("ma.repo");
 			if (url == null)
-				url = "https://maven.pkg.github.com/BKurler/MAFork";
+				url = "https://github.com/BKurler/MAFork/raw/software-update/updates/noused"; // not used
 			URI repoLocation = new URI(url);
 			// Load repository manager
 			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent

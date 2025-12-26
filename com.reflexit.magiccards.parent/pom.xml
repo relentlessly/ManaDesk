@@ -18,7 +18,7 @@
 		<repository>
 		<id>github</id>
 		<name>GitHub Packages</name>
-		<url>https://maven.pkg.github.com/BKurler/MAFork</url>
+		<url>https://github.com/BKurler/MAFork/raw/software-update/updates/noused</url> <!-- not used-->
 		</repository>
 	</distributionManagement>
 	<!--	<repositories>
