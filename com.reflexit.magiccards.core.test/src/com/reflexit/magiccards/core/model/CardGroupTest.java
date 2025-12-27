@@ -1,14 +1,13 @@
 package com.reflexit.magiccards.core.model;
 
+import static org.mockito.Mockito.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.reflexit.magiccards.core.model.abs.ICard;
 import com.reflexit.magiccards.core.model.abs.ICardField;
@@ -16,6 +15,8 @@ import com.reflexit.magiccards.core.model.abs.ICardGroup;
 import com.reflexit.magiccards.core.model.abs.ICardModifiable;
 import com.reflexit.magiccards.core.model.utils.CardStoreUtils;
 import com.reflexit.unittesting.CardGenerator;
+
+import junit.framework.TestCase;
 
 public class CardGroupTest extends TestCase {
 	private CardGroup group;
@@ -469,8 +470,7 @@ public class CardGroupTest extends TestCase {
 			for (int i = 0; i < level; i++) {
 				System.err.print("--");
 			}
-			System.err.println(o.getCardId() + ": " + o.getName() + " x " + o.getCount() + " $"
-					+ o.getDbPrice());
+			System.err.println(o.getCardId() + ": " + o.getName() + " x " + o.getCount() + " $" + o.getDbPrice());
 			if (o instanceof ICardGroup) {
 				printTree((CardGroup) o, level + 1);
 			}
@@ -489,17 +489,17 @@ public class CardGroupTest extends TestCase {
 		ArrayList<IMagicCard> acards = new ArrayList<IMagicCard>(Arrays.asList(cards));
 		group = CardStoreUtils.buildTypeGroups(acards);
 		group.setFilter(new MagicCardFilter());
-		//	group.removeEmptyChildren();
+		// group.removeEmptyChildren();
 		// printTree(group, 0);
 		// checkConsistency(MagicCardField.POWER, group.getPower(), "6.0");
 		checkAllConsistency();
 	}
 
 	public void testNameGroup() {
-		MagicCard m = Mockito.spy((MagicCard) generateCard());
+		MagicCard m = spy((MagicCard) generateCard());
 		group = new CardGroup(MagicCardField.NAME, m.getName());
 		CardGroup realcards = new CardGroup(MagicCardField.ID, m.getName());
-		Mockito.when(m.getRealCards()).thenReturn(realcards);
+		when(m.getRealCards()).thenReturn(realcards);
 		Location loc = Location.createLocation("xxx");
 		for (int j = 0; j < cards.length; j++) {
 			cards[j] = CardGenerator.generatePhysicalCardWithValues(m);
@@ -513,7 +513,7 @@ public class CardGroupTest extends TestCase {
 		assertEquals(loc, group.getLocation());
 		assertEquals(true, group.isOwn());
 	}
-
+	
 	public void testNameGroupPhy() {
 		MagicCard m = (MagicCard) generateCard();
 		group = new CardGroup(MagicCardField.NAME, m.getName());

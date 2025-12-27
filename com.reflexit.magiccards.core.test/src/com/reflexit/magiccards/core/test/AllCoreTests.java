@@ -36,13 +36,13 @@ public class AllCoreTests {
 		// $JUnit-BEGIN$
 		suite.addTest(AllLocalTests.suite());
 		// gatherer
-		suite.addTestSuite(ParseGathererCardLanguagesTest.class);
-		suite.addTestSuite(ParseGathererSetsTest.class);
-		suite.addTestSuite(ParseGathererLegalityTest.class);
-		suite.addTestSuite(ParseGathererOracleTest.class);
-		suite.addTestSuite(ParseGathererPrintedTest.class);
-		suite.addTestSuite(ParseGathererSearchStandardTest.class);
-		suite.addTestSuite(ParseGathererSearchChecklistTest.class);
+// !!! RD Not used anymore		suite.addTestSuite(ParseGathererCardLanguagesTest.class);
+		// !!! RD Not used anymore		suite.addTestSuite(ParseGathererSetsTest.class);
+		// !!! RD Not used anymore		suite.addTestSuite(ParseGathererLegalityTest.class);
+		// !!! RD Not used anymore		suite.addTestSuite(ParseGathererOracleTest.class);
+		// !!! RD Not used anymore		suite.addTestSuite(ParseGathererPrintedTest.class);
+		// !!! RD Not used anymore		suite.addTestSuite(ParseGathererSearchStandardTest.class);
+		// !!! RD Not used anymore		suite.addTestSuite(ParseGathererSearchChecklistTest.class);
 		suite.addTestSuite(CurrencyConvertorTest.class);
 		suite.addTestSuite(PerformanceFilteringTest.class);
 		// online import

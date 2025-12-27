@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Magic Fork Card Organizer
+Bundle-Name: ManaDesk Card Organizer
 Bundle-SymbolicName: com.reflexit.magiccards.ui;singleton:=true
 Bundle-Version: 0.5.0.qualifier
 Bundle-Activator: com.reflexit.magiccards.ui.MagicUIActivator
@@ -50,4 +50,4 @@ Export-Package: com.reflexit.magiccards.ui,
  com.reflexit.magiccards.ui.wizards
 Bundle-ClassPath: .,
  imagetransfer.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17

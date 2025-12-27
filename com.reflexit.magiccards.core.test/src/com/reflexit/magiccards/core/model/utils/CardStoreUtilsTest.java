@@ -73,14 +73,14 @@ public class CardStoreUtilsTest {
 		cards.add(mcpCost(ManaColor.COLORLESS));
 		cards.add(mcpCost(ManaColor.RED));
 		String buildColors = CardStoreUtils.buildColors(cards);
-		assertEquals("{R}{1}", buildColors);
+		assertEquals("{R}{C}", buildColors);
 	}
 
 	@Test
 	public void testBuildColorsClessOnly() {
 		cards.add(mcpCost(ManaColor.COLORLESS));
 		String buildColors = CardStoreUtils.buildColors(cards);
-		assertEquals("{1}", buildColors);
+		assertEquals("{C}", buildColors);
 	}
 
 	@Test

@@ -6,7 +6,7 @@ Bundle-Version: 0.5.0.qualifier
 Bundle-Activator: com.reflexit.magiccards.db.DbActivator
 Bundle-Vendor: Alena Laskavaia
 Require-Bundle: org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Export-Package: com.reflexit.magiccards.db
 Bundle-ClassPath: .,

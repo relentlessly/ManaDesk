@@ -63,6 +63,15 @@ Assassin's Creed Tokens|TACR||July 2024|Token|Assassin's Creed Tokens||
 Avacyn Restored|AVR||May 2012|Expansion|Innistrad||
 Avacyn Restored Promos|PAVR||April 2012|Promo|Innistrad||
 Avacyn Restored Tokens|TAVR||May 2012|Token|Innistrad||
+Avatar: The Last Airbender|TLA||November 2025|Expansion|Avatar: The Last Airbender||
+Avatar: the Last Airbender Art Cards|ATLA||November 2025|Other|Avatar: the Last Airbender Art Cards||
+Avatar: The Last Airbender Beginner Box Front Cards|FTLA||November 2025|Other|Avatar: The Last Airbender Beginner Box Front Cards||
+Avatar: The Last Airbender Eternal|TLE||November 2025|Other|Avatar: The Last Airbender Eternal||
+Avatar: the Last Airbender Eternal Art Cards|ATLE||November 2025|Other|Avatar: the Last Airbender Eternal Art Cards||
+Avatar: The Last Airbender Eternal Tokens|TTLE||November 2025|Token|Avatar: The Last Airbender Eternal Tokens||
+Avatar: The Last Airbender Jumpstart Front Cards|JTLA||November 2025|Other|Avatar: The Last Airbender Jumpstart Front Cards||
+Avatar: The Last Airbender Promos|PTLA||November 2025|Promo|Avatar: The Last Airbender Promos||
+Avatar: The Last Airbender Tokens|TTLA||November 2025|Token|Avatar: The Last Airbender Tokens||
 Battle for Baldur's Gate Art Series|ACLB||June 2022|Other|Battle for Baldur's Gate Art Series||
 Battle for Baldur's Gate Oversized Cards|OCLB||June 2022|Other|Battle for Baldur's Gate Oversized Cards||
 Battle for Baldur's Gate Promos|PCLB||June 2022|Promo|Battle for Baldur's Gate Promos||
@@ -79,6 +88,7 @@ Beatdown Box Set|BTD|BD|October 2000|Other|Beatdown Box Set||
 Betrayers of Kamigawa|BOK||February 2005|Expansion|Kamigawa||
 Betrayers of Kamigawa Promos|PBOK||February 2005|Promo|Kamigawa||
 BFZ Standard Series|PSS1||October 2015|Promo|Battle for Zendikar||
+Black Lotus Unknown Planechase|PUNK||February 2024|Other|Black Lotus Unknown Planechase||
 Bloomburrow|BLB||August 2024|Expansion|Bloomburrow||
 Bloomburrow Art Series|ABLB||August 2024|Other|Bloomburrow Art Series||
 Bloomburrow Commander|BLC||August 2024|Other|Commander||
@@ -300,6 +310,7 @@ Fate Reforged Tokens|TFRF||January 2015|Token|Khans of Tarkir||
 Fifth Dawn|5DN||June 2004|Expansion|Mirrodin||
 Fifth Dawn Promos|P5DN||June 2004|Promo|Mirrodin||
 Fifth Edition|5ED|5E|March 1997|Core|Core Set||
+FIN Asia WPN Promo Tokens|WFIN||June 2025|Token|FIN Asia WPN Promo Tokens||
 FIN Standard Showdown|PSS5||June 2025|Promo|FIN Standard Showdown||
 Final Fantasy|FIN||June 2025|Expansion|Final Fantasy||
 Final Fantasy Art Series|AFIN||June 2025|Other|Final Fantasy Art Series||
@@ -549,7 +560,7 @@ MagicFest 2019|PF19||January 2019|Promo|MagicFest 2019||
 MagicFest 2020|PF20||January 2020|Promo|MagicFest 2020||
 MagicFest 2023|PF23||July 2023|Promo|MagicFest 2023||
 MagicFest 2024|PF24||January 2024|Promo|MagicFest 2024||
-MagicFest 2025|PF25||February 2025|Promo|MagicFest 2025||
+MagicFest 2025|PF25||January 2025|Promo|MagicFest 2025||
 March of the Machine|MOM||April 2023|Expansion|March of the Machine||
 March of the Machine Art Series|AMOM||April 2023|Other|March of the Machine Art Series||
 March of the Machine Commander|MOC||April 2023|Other|Commander||
@@ -560,6 +571,12 @@ March of the Machine Substitute Cards|SMOM||April 2023|Token|March of the Machin
 March of the Machine Tokens|TMOM||April 2023|Token|March of the Machine Tokens||
 March of the Machine: The Aftermath|MAT||May 2023|Expansion|March of the Machine: The Aftermath||
 March of the Machine: The Aftermath Promos|PMAT||November 2023|Promo|March of the Machine: The Aftermath Promos||
+Marvel Legends Series Inserts|LMAR||September 2025|Promo|Marvel Legends Series Inserts||
+Marvel Universe|MAR||September 2025|Other|Marvel Universe||
+Marvel's Spider-Man|SPM||September 2025|Expansion|Marvel's Spider-Man||
+Marvel's Spider-Man Eternal|SPE||September 2025|Other|Marvel's Spider-Man Eternal||
+Marvel's Spider-Man Promos|PSPM||September 2025|Promo|Marvel's Spider-Man Promos||
+Marvel's Spider-Man Tokens|TSPM||September 2025|Token|Marvel's Spider-Man Tokens||
 Masters 25|A25||March 2018|Other|Masters 25||
 Masters 25 Tokens|TA25||March 2018|Token|Masters 25 Tokens||
 Media and Collaboration Promos|PMEI||January 1995|Promo|Media and Collaboration Promos||
@@ -580,15 +597,15 @@ MKM Japanese Promo Tokens|WMKM||February 2024|Token|MKM Japanese Promo Tokens||
 MKM Standard Showdown|PSS4||February 2024|Promo|MKM Standard Showdown||
 Modern Event Deck 2014|MD1||May 2014|Other|Modern Event Deck 2014||
 Modern Event Deck 2014 Tokens|TMD1||May 2014|Token|Modern Event Deck 2014 Tokens||
-Modern Horizons|MH1||June 2019|Other|Modern Horizons||
+Modern Horizons|MH1||June 2019|Other|Modern Horizons Block||
 Modern Horizons 1 Timeshifts|H1R||June 2021|Other|Modern Horizons 1 Timeshifts||
-Modern Horizons 2|MH2||June 2021|Other|Modern Horizons 2||
+Modern Horizons 2|MH2||June 2021|Other|Modern Horizons Block||
 Modern Horizons 2 Art Series|AMH2||June 2021|Other|Modern Horizons 2 Art Series||
 Modern Horizons 2 Minigames|MMH2||June 2021|Other|Modern Horizons 2 Minigames||
 Modern Horizons 2 Promos|PMH2||June 2021|Promo|Modern Horizons 2 Promos||
 Modern Horizons 2 Timeshifts|H2R||June 2024|Other|Modern Horizons 2 Timeshifts||
 Modern Horizons 2 Tokens|TMH2||June 2021|Token|Modern Horizons 2 Tokens||
-Modern Horizons 3|MH3||June 2024|Other|Modern Horizons 3||
+Modern Horizons 3|MH3||June 2024|Other|Modern Horizons Block||
 Modern Horizons 3 Art Series|AMH3||June 2024|Other|Modern Horizons 3 Art Series||
 Modern Horizons 3 Commander|M3C||June 2024|Other|Commander||
 Modern Horizons 3 Commander Tokens|TM3C||June 2024|Token|Modern Horizons 3 Commander Tokens||
@@ -669,7 +686,7 @@ Planechase|HOP||September 2009|Other|Planechase||
 Planechase 2012|PC2||June 2012|Other|Planechase 2012||
 Planechase 2012 Planes|OPC2||June 2012|Other|Planechase 2012 Planes||
 Planechase Anthology|PCA||November 2016|Other|Planechase Anthology||
-Planechase Anthology Planes|OPCA||December 2018|Other|Planechase Anthology Planes||
+Planechase Anthology Planes|OPCA||November 2016|Other|Planechase Anthology Planes||
 Planechase Anthology Tokens|TPCA||November 2016|Token|Planechase Anthology Tokens||
 Planechase Planes|OHOP||September 2009|Other|Planechase Planes||
 Planechase Promos|PHOP||September 2009|Promo|Planechase Promos||
@@ -732,10 +749,10 @@ Scars of Mirrodin Promos|PSOM||September 2010|Promo|Scars of Mirrodin||
 Scars of Mirrodin Tokens|TSOM||October 2010|Token|Scars of Mirrodin||
 Scourge|SCG||May 2003|Expansion|Onslaught||
 Scourge Promos|PSCG||May 2003|Promo|Onslaught||
-Secret Lair 30th Anniversary Countdown Kit|SLC||November 2022|Other|Secret Lair 30th Anniversary Countdown Kit||
+Secret Lair Countdown|SLC||November 2022|Other|Secret Lair Countdown||
 Secret Lair Drop|SLD||December 2019|Other|Secret Lair Drop||
+Secret Lair Promo|SLP||February 2023|Promo|Secret Lair Promo||
 Secret Lair Showcase Planes|PSSC||February 2025|Other|Secret Lair Showcase Planes||
-Secret Lair Showdown|SLP||February 2023|Promo|Secret Lair Showdown||
 Secret Lair: Ultimate Edition|SLU||May 2020|Other|Secret Lair: Ultimate Edition||
 Seventh Edition|7ED|7E|April 2001|Core|Core Set||
 Shadowmoor|SHM||May 2008|Expansion|Shadowmoor||
@@ -898,7 +915,7 @@ World Championship Decks 1998|WC98||August 1998|Other|World Championship Decks 1
 World Championship Decks 1999|WC99||August 1999|Other|World Championship Decks 1999||
 World Championship Decks 2000|WC00||August 2000|Other|World Championship Decks 2000||
 World Championship Decks 2001|WC01||August 2001|Other|World Championship Decks 2001||
-World Championship Decks 2002|WC02||August 2002|Other|World Championship Decks 2002||
+World Championship Decks 2002|WC02||December 2002|Other|World Championship Decks 2002||
 World Championship Decks 2003|WC03||August 2003|Other|World Championship Decks 2003||
 World Championship Decks 2004|WC04||September 2004|Other|World Championship Decks 2004||
 World Championship Promos|PWOR||August 1999|Promo|World Championship Promos||

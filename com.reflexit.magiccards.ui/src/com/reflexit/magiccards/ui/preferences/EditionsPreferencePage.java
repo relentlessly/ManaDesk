@@ -135,7 +135,7 @@ public class EditionsPreferencePage extends PreferencePage implements IWorkbench
 				return;
 			}
 			MessageDialog.openInformation(getShell(), "Info",
-					ed.getName() + " is not empty, it will be hidden instead. " + "Restart Magic Fork to take effect.");
+					ed.getName() + " is not empty, it will be hidden instead. " + "Restart ManaDesk to take effect.");
 			ed.setHidden(true);
 		} else if (!ed.isHidden()) {
 			Editions.getInstance().remove(ed);

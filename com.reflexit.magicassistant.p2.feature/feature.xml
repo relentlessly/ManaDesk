@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.reflexit.magicassistant.p2.feature"
-      label="Magic Fork Software Update"
+      label="ManaDesk Software Update"
       version="0.5.0.qualifier"
       provider-name="Reflex IT">
 
    <description url="http://mtgbrowser.sf.net">
-      Magic Fork Update feature
+      ManaDesk Update feature
    </description>
 
    <copyright url="http://mtgbrowser.wiki.sourceforge.net/copyright">

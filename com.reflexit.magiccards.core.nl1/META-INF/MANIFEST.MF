@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Magic Fork Localization Pack
+Bundle-Name: ManaDesk Localization Pack
 Bundle-SymbolicName: com.reflexit.magiccards.core.nl1
 Bundle-Version: 0.5.0.qualifier
 Bundle-Vendor: Alena Laskavaia
 Fragment-Host: com.reflexit.magiccards.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ClassPath: $nl$,
  .
 Export-Package: com.reflexit.magiccards.core.locale

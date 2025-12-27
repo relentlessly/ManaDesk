@@ -36,8 +36,8 @@ public class ScryGlassImportDelegateTest extends AbstarctImportTest {
 		parseAbove();
 		assertEquals("Library of Lat-Nam", card1.getName());
 		assertEquals("Endrek Sahr, Master Breeder", card2.getName());
-		assertEquals("Modern Masters 2015 Edition", card2.getSet());
-		assertEquals("Hide // Seek (Hide)", cardN.getName());
+		assertEquals("Modern Masters 2015", card2.getSet());
+		assertEquals("Hide // Seek", cardN.getName());
 		assertEquals("Dissension", cardN.getSet());
 		IMagicCard card9 = result.get(9);
 		assertEquals("Commander 2015", card9.getSet());
