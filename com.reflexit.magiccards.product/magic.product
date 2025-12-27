@@ -86,7 +86,7 @@
    </configurations>
 
    <repositories>
-	   <repository location="https://raw.githubusercontent.com/BKurler/MAFork/refs/heads/software-update/updates/" enabled="true" />
-	   <repository location="https://raw.githubusercontent.com/relentlessly/p2_software_update_test/refs/heads/master/" enabled="false" />
+	   <repository location="https://raw.githubusercontent.com/BKurler/MAFork/refs/heads/software-update/updates/" enabled="false" />
+	   <repository location="https://raw.githubusercontent.com/relentlessly/p2_software_update_test/refs/heads/master/" enabled="true" />
    </repositories>
 </product>
