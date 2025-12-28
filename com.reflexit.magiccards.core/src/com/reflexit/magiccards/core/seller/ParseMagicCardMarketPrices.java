@@ -194,7 +194,7 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 	 *
 	 * @param url
 	 *            URL where sets could be found
-	 * @return A map where its keys are magic fork set names and keys
+	 * @return A map where its keys are ManaDesk set names and keys
 	 *         its associated online MCM set id.
 	 * @throws IOException
 	 */

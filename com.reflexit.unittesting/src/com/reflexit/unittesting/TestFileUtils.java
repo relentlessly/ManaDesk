@@ -35,6 +35,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.FileUtils;
 
@@ -137,30 +141,48 @@ public class TestFileUtils {
 	 * @throws SecurityException
 	 * @throws NoSuchMethodException
 	 */
-	public static StringBuilder[] getContentsForTest(String srcRoot, Class clazz, final String testName, int numSections)
-			throws IOException, NoSuchMethodException, SecurityException {
-		// Walk up the class inheritance chain until we find the test method.
-		while (clazz.getMethod(testName).getDeclaringClass() != clazz) {
-			clazz = clazz.getSuperclass();
-		}
-		while (true) {
-			// Find and open the .java file for the class clazz.
-			String fqn = clazz.getName().replace('.', '/');
-			fqn = fqn.indexOf("$") == -1 ? fqn : fqn.substring(0, fqn.indexOf("$"));
-			String classFile = fqn + ".java";
-			Class superclass = clazz.getSuperclass();
-			InputStream in = clazz.getResourceAsStream('/' + classFile);
-			if (in == null) {
-				throw new IOException(classFile + " is not found");
-			}
-			StringBuilder[] comments = extractComments(testName, numSections, in);
-			if (comments != null)
-				return comments;
-			if (superclass == null || !superclass.getPackage().equals(clazz.getPackage())) {
-				throw new IOException("Test data not found for " + clazz.getName() + "." + testName);
-			}
-			clazz = superclass;
-		}
+	public static StringBuilder[] getContentsForTest(
+	        String srcRoot,
+	        Class<?> clazz,
+	        String testName,
+	        int numSections
+	) throws IOException, NoSuchMethodException {
+
+	    // 1. Trouver la classe qui déclare réellement la méthode de test
+	    while (clazz.getMethod(testName).getDeclaringClass() != clazz) {
+	        clazz = clazz.getSuperclass();
+	    }
+
+	    while (true) {
+	        // 2. Construire le chemin vers le fichier source .java
+	        String fqn = clazz.getName().replace('.', '/');
+	        int dollar = fqn.indexOf('$');
+	        if (dollar != -1) {
+	            fqn = fqn.substring(0, dollar); // enlever les classes internes
+	        }
+
+	        Path path = Paths.get(srcRoot, fqn + ".java");
+
+	        if (!Files.exists(path)) {
+	            throw new IOException("Source not found: " + path);
+	        }
+
+	        // 3. Lire le fichier source
+	        try (InputStream in = Files.newInputStream(path)) {
+	            StringBuilder[] comments = extractComments(testName, numSections, in);
+	            if (comments != null) {
+	                return comments;
+	            }
+	        }
+
+	        // 4. Remonter dans la hiérarchie si nécessaire
+	        Class<?> superclass = clazz.getSuperclass();
+	        if (superclass == null || !superclass.getPackage().equals(clazz.getPackage())) {
+	            throw new IOException("Test data not found for " + clazz.getName() + "." + testName);
+	        }
+
+	        clazz = superclass;
+	    }
 	}
 
 	public static StringBuilder[] extractComments(final String testName, int numSections, InputStream in) throws IOException {

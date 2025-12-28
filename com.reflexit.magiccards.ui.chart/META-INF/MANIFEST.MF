@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Magic Fork Chart Plugin
+Automatic-Module-Name: com.reflexit.magiccards.ui.chart
+Bundle-Name: ManaDesk Chart Plugin
 Bundle-SymbolicName: com.reflexit.magiccards.ui.chart;singleton:=true
 Bundle-Version: 0.5.0.qualifier
 Bundle-Activator: com.reflexit.magiccards.ui.chart.Activator

@@ -75,16 +75,16 @@ public class ScrtFallImportTest extends AbstarctImportTest {
 	@Test
 	public void testFlipCards() throws IOException {
 		SortedOutputHanlder handler = new SortedOutputHanlder(System.out, true, true);
-		new ParseScryFallChecklist().loadSet("CLB", handler, ICoreProgressMonitor.NONE);
+		new ParseScryFallChecklist().loadSet("STX", handler, ICoreProgressMonitor.NONE);
 		List<MagicCard> list = handler.getPrimary();
-		assertEquals(682, list.size());
-		IMagicCard will = findById("406a3ae5-f57e-40ff-8eac-a01781f2329f", (Collection) list);
-		IMagicCard rowan = findById("bcf0514e-63b3-4695-93ae-527524d48c25", (Collection) list);
+		assertEquals(415, list.size());
+		IMagicCard rowan = findById("2cca8cf1-27f8-408d-b4bc-1d4090837f8a", (Collection) list);		
+		IMagicCard will = findById("-2cca8cf1-27f8-408d-b4bc-1d4090837f8a", (Collection) list);
 		assertNotNull(rowan);
 		assertNotNull(will);
 		assertEquals(will.getCardId(), rowan.get(MagicCardField.FLIPID));
 		assertEquals(rowan.getCardId(), will.get(MagicCardField.FLIPID));
-		assertEquals(567555, will.get(MagicCardField.GATHERERID));
-		assertEquals(567622, rowan.get(MagicCardField.GATHERERID));
+		assertEquals(0, will.get(MagicCardField.GATHERERID));
+		assertEquals(513643, rowan.get(MagicCardField.GATHERERID));
 	}
 }

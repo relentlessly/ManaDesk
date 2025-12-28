@@ -45,10 +45,10 @@ public class ImportExportFactory {
 		types = new LinkedHashMap<String, ReportType>();
 		loadExtensions();
 		loadCustom();
-		XML = getByLabel("Magic Fork XML");
-		CSV = getByLabel("Magic Fork CSV");
+		XML = getByLabel("ManaDesk XML");
+		CSV = getByLabel("ManaDesk CSV");
 		TEXT_DECK_CLASSIC = getByLabel("Deck Classic Text: 1 x Name");
-		TABLE_PIPED = getByLabel("Magic Fork Piped Table");
+		TABLE_PIPED = getByLabel("ManaDesk Piped Table");
 	}
 
 	private static void loadCustom() {

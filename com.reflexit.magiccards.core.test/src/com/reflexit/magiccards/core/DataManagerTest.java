@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 @FixMethodOrder(MethodSorters.JVM)
 public class DataManagerTest extends TestCase {
 	private DataManager dm;
-	static final String CARD_ID_MYSTICDECREE = "2952";
+	static final String CARD_ID_MYSTICDECREE = "8b069e6a-2c0e-4fc9-8e19-08bf1245a6c0";
 	private MagicCardPhysical card;
 	private CardCollection deck2;
 	private CardCollection deck1;

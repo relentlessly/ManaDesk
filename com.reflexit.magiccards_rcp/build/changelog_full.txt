@@ -233,7 +233,7 @@ changes in  1.2.10.1 (19 Nov 2013)
 
 == 1.2.8.35 (16 June 2013) ==
 * Bug 245 Filter unusual application to both collection and deck
-* Ability to create customized card export format (Window->Preferences->Magic Fork->Manage Deck Exporters)
+* Ability to create customized card export format (Window->Preferences->ManaDesk->Manage Deck Exporters)
 * Bug 256 Fixed issues on Linux that was preventing program startup
 
 == 1.2.7.22 (Update Site - 21 Feb 2013) ==

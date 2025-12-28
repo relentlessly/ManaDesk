@@ -12,5 +12,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.nebula.widgets.gallery,
  org.eclipse.jface,
  org.eclipse.swt
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
