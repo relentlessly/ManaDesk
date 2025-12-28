@@ -1,5 +1,5 @@
 instructions.configure=\
-   addRepository(name:Magic Fork Update Site,type:0,location:https${#58}//raw.githubusercontent.com/relentlessly/p2_software_update_test/refs/heads/master/);\
+   addRepository(name:Magic Fork Update Site,type:0,location:https${#58}//raw.githubusercontent.com/BKurler/MAFork/refs/heads/master/updates/);\
    setProgramProperty(propName:osgi.instance.area.default,propValue:@user.home/MagicForkWorkspace);
 properties.0.name = org.eclipse.equinox.p2.description
 properties.0.value = Magic Fork\nSee what is new at http://www.magicfork.ca/ChangeLog.html\n\
