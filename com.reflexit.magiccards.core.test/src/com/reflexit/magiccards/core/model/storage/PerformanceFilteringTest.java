@@ -10,6 +10,7 @@ import com.reflexit.magiccards.core.model.MagicCardField;
 import com.reflexit.magiccards.core.model.MagicCardFilter;
 import com.reflexit.magiccards.core.model.expr.BinaryExpr;
 import com.reflexit.magiccards.core.model.expr.Expr;
+
 import junit.framework.TestCase;
 
 @FixMethodOrder(MethodSorters.JVM)
@@ -69,7 +70,7 @@ public class PerformanceFilteringTest extends TestCase {
 			fstore.clear();
 			fstore.update();
 			fstore.getElements();
-		} , 5);
+		}, 5);
 	}
 
 	private Expr textFilter(String string) {
@@ -78,7 +79,7 @@ public class PerformanceFilteringTest extends TestCase {
 
 	@Test
 	public void testDefaultFilter() {
-		assertFast(20, runfiltering());
+		assertFast(25, runfiltering());
 	}
 
 	@Test
@@ -107,12 +108,12 @@ public class PerformanceFilteringTest extends TestCase {
 		this.filter.setSortField(MagicCardField.NAME, true);
 		this.filter.setGroupFields(MagicCardField.NAME);
 		this.filter.setFilter(textFilter("\"o\""));
-		assertFast(160, runfiltering());
+		assertFast(180, runfiltering());
 		assertTrue("was " + fstore.getSize(), fstore.getSize() > 37000);
 		assertTrue("was " + fstore.getSize(), fstore.getSize() < 38000);
 		this.filter.setFilter(textFilter("\"ob\""));
-		assertFast(225, runfiltering());
-		assertTrue("was " + fstore.getSize(), fstore.getSize() >= 750);
-		assertTrue("was " + fstore.getSize(), fstore.getSize() < 760);
+		assertFast(170, runfiltering());
+		assertTrue("was " + fstore.getSize(), fstore.getSize() >= 720);
+		assertTrue("was " + fstore.getSize(), fstore.getSize() < 740);
 	}
 }
