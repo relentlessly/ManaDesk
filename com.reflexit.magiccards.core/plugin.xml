@@ -4,6 +4,8 @@
    <extension-point id="deckFormat" name="Deck Format" schema="schema/deckFormat.exsd"/>
    <extension
          point="com.reflexit.magiccards.core.deckFormat">
+         
+        <!-- !!! RD 
       <deckFormat
             extension="xml"
             id="xml"
@@ -26,26 +28,65 @@
             importDelegate="com.reflexit.magiccards.core.exports.ClassicImportDelegate"
             label="Deck Classic Text: 2 Name">
       </deckFormat>
+      -->
       <deckFormat
             exportDelegate="com.reflexit.magiccards.core.exports.CsvExportDelegate"
             extension="csv"
-            id="csv"
-            importDelegate="com.reflexit.magiccards.core.exports.CsvImportDelegate"
-            label="ManaDesk CSV">
+            id="fcsv"
+            label="ManaDesk Full CSV">
       </deckFormat>
       <deckFormat
              exportDelegate="com.reflexit.magiccards.core.exports.ScsvExportDelegate"
              extension="csv"
-             id="scsv"
-             importDelegate="com.reflexit.magiccards.core.exports.ScsvImportDelegate"
-             label="ManaDesk CSV Semicolon">
+             id="fscsv"
+             label="ManaDesk Full CSV Semicolon">
        </deckFormat>
+      <deckFormat
+            exportDelegate="com.reflexit.magiccards.core.exports.MinimumCsvExportDelegate"
+            extension="csv"
+            id="csv"
+            importDelegate="com.reflexit.magiccards.core.exports.MinimumCsvImportDelegate"
+            label="ManaDesk Minimum CSV">
+      </deckFormat>
+      <deckFormat
+            exportDelegate="com.reflexit.magiccards.core.exports.MinimumScsvExportDelegate"
+            extension="csv"
+            id="scsv"
+            label="ManaDesk Minimum CSV Semicolon">
+      </deckFormat>
+      <deckFormat
+            extension="csv"
+            id="macsv"
+            importDelegate="com.reflexit.magiccards.core.exports.MagicAssistantCsvImportDelegate"
+            label="Magic Assistant CSV">
+      </deckFormat>
+
+<!-- !!! RD
       <deckFormat
             exportDelegate="com.reflexit.magiccards.core.exports.TableExportDelegate"
             id="table"
             importDelegate="com.reflexit.magiccards.core.exports.TableImportDelegate"
-            label="ManaDesk Piped Table">
+            label="ManaDesk Full Piped Table">
       </deckFormat>
+
+
+      <deckFormat
+             exportDelegate="com.reflexit.magiccards.core.exports.MinScsvExportDelegate"
+             extension="csv"
+             id="scsv"
+             label="ManaDesk Minimal CSV Semicolon">
+       </deckFormat>
+       
+       
+      <deckFormat
+            id="csv"
+            importDelegate="com.reflexit.magiccards.core.exports.MACsvImportDelegate"
+            label="Magic Assistant CSV"
+            xmlFormat="false">
+      </deckFormat>      
+      -->
+      <!-- !!! RD 
+
       <deckFormat
             id="mtgo"
             importDelegate="com.reflexit.magiccards.core.exports.MtgoImportDelegate"
@@ -110,6 +151,7 @@
             label="MTG Studio CSV"
             xmlFormat="false">
       </deckFormat>
+
       <deckFormat
              exportDelegate="com.reflexit.magiccards.core.exports.PrintProxyHtmlExportDelegate"
              extension="html"
@@ -117,13 +159,15 @@
              label="Print Proxies HTML"
              xmlFormat="true">
        </deckFormat>
-             <deckFormat
+      -->       
+       <deckFormat
              exportDelegate="com.reflexit.magiccards.core.exports.PrintProxyHtmlExporMobileDelegate"
              extension="html"
              id="htmlProxyMobile"
              label="Print Proxies HTML Mobile"
              xmlFormat="true">
        </deckFormat>
+              <!-- !!! RD       
        <deckFormat
              exportDelegate="com.reflexit.magiccards.core.exports.CompactHtmlExportDelegate"
              extension="html"
@@ -131,6 +175,7 @@
              label="Compact HTML"
              xmlFormat="true">
        </deckFormat>
+
        <deckFormat
              exportDelegate="com.reflexit.magiccards.core.exports.CompactPlusHtmlExportDelegate"
              extension="html"
@@ -138,6 +183,7 @@
              label="Compact Plus HTML"
              xmlFormat="true">
        </deckFormat>
+
       <deckFormat
             exportDelegate="com.reflexit.magiccards.core.exports.DeckBoxExportDelegate"
             extension="csv"
@@ -175,5 +221,6 @@
             label="Scry Glass: 4 Name [Set]"
             xmlFormat="false">
       </deckFormat>
+      -->
    </extension>
 </plugin>

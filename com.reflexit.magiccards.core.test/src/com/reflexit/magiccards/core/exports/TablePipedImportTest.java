@@ -124,8 +124,8 @@ public class TablePipedImportTest extends AbstarctImportTest {
 		assertNotNull(((MagicCardPhysical) card1).getError());
 	}
 
-	//	ID|NAME|COST|TYPE|POWER|TOUGHNESS|ORACLE|SET|RARITY|DBPRICE|LANG|RATING|ARTIST|COLLNUM|RULINGS|TEXT|ENID|PROPERTIES|COUNT|PRICE|COMMENT|LOCATION|CUSTOM|OWNERSHIP|SPECIAL|DATE
-	//	-39|name 39|{4}|type 39|4|*|bla 39|set 19|Common|1.2256411|Russian|2.39|Elena 39|39a||bla <br> bla 39|0||5|2.1|comment 40|mem||true|foil,c=mint|Sun Jan 11 22:37:54 EST 2015
+	// ID|NAME|COST|TYPE|POWER|TOUGHNESS|ORACLE|SET|RARITY|DBPRICE|LANG|RATING|ARTIST|COLLNUM|RULINGS|TEXT|ENID|PROPERTIES|COUNT|PRICE|COMMENT|LOCATION|CUSTOM|OWNERSHIP|SPECIAL|DATE
+	// -39|name 39|{4}|type 39|4|*|bla 39|set 19|Common|1.2256411|Russian|2.39|Elena 39|39a||bla <br> bla 39|0||5|2.1|comment 40|mem||true|foil,c=mint|Sun Jan 11 22:37:54 EST 2015
 	@Test
 	public void testFull() {
 		String lines = getAboveComment();
@@ -161,8 +161,8 @@ public class TablePipedImportTest extends AbstarctImportTest {
 		}
 	}
 
-	//ID|NAME|COST|TYPE|POWER|TOUGHNESS|ORACLE|SET|RARITY|DBPRICE|LANG|RATING|ARTIST|COLLNUM|RULINGS|TEXT|ENID|PROPERTIES
-	//X27166|Fire // Ice (Ice)|{1}{U}|Instant|||Tap target permanent.<br>Draw a card.|Apocalypse|Uncommon|0.0||4.488|Franz Vohwinkel|128||Tap target permanent.<br>Draw a card.|0|{PART=Ice, OTHER_PART=Fire, FLIPID=X27165, NOUPDATE=true}
+	// ID|NAME|COST|TYPE|POWER|TOUGHNESS|ORACLE|SET|RARITY|DBPRICE|LANG|RATING|ARTIST|COLLNUM|RULINGS|TEXT|ENID|PROPERTIES 
+	// X27166|Fire // Ice (Ice)|{1}{U}|Instant|||Tap target permanent.<br>Draw a card.|Apocalypse|Uncommon|0.0||4.488|Franz Vohwinkel|128||Tap target permanent.<br>Draw a card.|0|{PART=Ice, OTHER_PART=Fire, FLIPID=X27165, NOUPDATE=true, GATHERERID=27166}
 	@Test
 	public void testParts() {
 		String lines = getAboveComment();
@@ -180,5 +180,6 @@ public class TablePipedImportTest extends AbstarctImportTest {
 		assertEquals(true, (boolean) base.getProperty(MagicCardField.NOUPDATE));
 		assertEquals("Ice", base.getPart());
 		assertEquals("X27165", base.getFlipId());
+		assertEquals("27166", base.getGathererCardId());
 	}
 }

@@ -59,6 +59,11 @@ public class ExportersPreferencePage extends FieldEditorPreferencePage implement
 			}
 
 			@Override
+			protected String editElement(String string) {
+				return editType(string);
+			}
+
+			@Override
 			protected void editElements(String[] selection) {
 				if (selection.length == 0)
 					return;
@@ -195,9 +200,9 @@ public class ExportersPreferencePage extends FieldEditorPreferencePage implement
 		Location xxx = Location.createLocation("xxx");
 		store.setLocation(xxx);
 		IDbCardStore<IMagicCard> db = DataManager.getInstance().getMagicDBStore();
-		IMagicCard card = db.getCard("151097");
-		IMagicCard card2 = db.getCard("83035");
-		IMagicCard card3 = db.getCard("83002");
+		IMagicCard card = db.getCard("942cf220-472c-48f6-8f60-993939ea5ab8");
+		IMagicCard card2 = db.getCard("a78ab8fe-4499-4860-87d3-f8707398c00c");
+		IMagicCard card3 = db.getCard("f9349fdc-3d9c-4fa9-88b6-a7bc782bfd44");
 		store.getCardStore().add(new MagicCardPhysical(card, xxx));
 		MagicCardPhysical mcp = new MagicCardPhysical(card2, xxx);
 		mcp.setCount(4);

@@ -50,12 +50,14 @@
             category="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
             >
       </page>
+      <!-- !!! RD 
        <page
              category="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
              class="com.reflexit.magiccards.ui.preferences.EditionsPreferencePage"
              id="com.reflexit.magiccards.ui.preferences.EditionsPreferencePage"
              name="Card Sets">
        </page>
+       -->
        <page
              category="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
              class="com.reflexit.magiccards.ui.preferences.FileLocationsPreferencePage"

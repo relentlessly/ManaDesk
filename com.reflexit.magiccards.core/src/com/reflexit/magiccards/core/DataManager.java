@@ -185,7 +185,7 @@ public class DataManager {
 		return output;
 	}
 
-	private IMagicCard resolve(IMagicCard card, ICardStore db) {
+	public IMagicCard resolve(IMagicCard card, ICardStore db) {
 		if (card instanceof MagicCard) {
 			card = (IMagicCard) db.getCard(card.getCardId());
 			return card;

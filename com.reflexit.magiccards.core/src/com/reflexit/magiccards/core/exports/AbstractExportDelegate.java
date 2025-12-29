@@ -89,8 +89,7 @@ public abstract class AbstractExportDelegate<T extends ICard> implements IExport
 			stream.close();
 	}
 
-	public abstract void export(ICoreProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException;
+	public abstract void export(ICoreProgressMonitor monitor) throws InvocationTargetException, InterruptedException;
 
 	@Override
 	public void setColumns(ICardField[] columnsForExport) {
@@ -122,8 +121,7 @@ public abstract class AbstractExportDelegate<T extends ICard> implements IExport
 	public IFilteredCardStore<T> getExampleData() {
 		MemoryFilteredCardStore<T> fstore = new MemoryFilteredCardStore<>();
 		IImportDelegate del = ImportExportFactory.TABLE_PIPED.getImportDelegate();
-		del.init(new ImportData(true, Location.NO_WHERE,
-				ImportExportFactory.TABLE_PIPED.getExample()));
+		del.init(new ImportData(true, Location.NO_WHERE, ImportExportFactory.CSV.getExample()));
 		try {
 			del.run(ICoreProgressMonitor.NONE);
 			fstore.addAll((List) del.getResult().getList());

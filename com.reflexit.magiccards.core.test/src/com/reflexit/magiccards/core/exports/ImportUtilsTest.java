@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +21,6 @@ import com.reflexit.magiccards.core.model.MagicCard;
 import com.reflexit.magiccards.core.model.MagicCardPhysical;
 import com.reflexit.magiccards.core.model.storage.IDbCardStore;
 import com.reflexit.magiccards.core.monitor.ICoreProgressMonitor;
-import com.reflexit.magiccards.core.sync.GatherHelper;
 import com.reflexit.unittesting.CardGenerator;
 
 public class ImportUtilsTest extends AbstarctImportTest {
@@ -47,8 +45,8 @@ public class ImportUtilsTest extends AbstarctImportTest {
 
 	@Test
 	public void testPerformPreImport() throws InvocationTargetException, InterruptedException {
-		addLine("NAME|COUNT");
-		addLine("Counterspell|2");
+		addLine("NAME|COUNT|SET");
+		addLine("Counterspell|2|Revision Edition");
 		preimport();
 		assertEquals(1, resSize);
 		assertEquals("Counterspell", card1.getName());
@@ -70,13 +68,13 @@ public class ImportUtilsTest extends AbstarctImportTest {
 		}
 	}
 
+	// Name alone is not enough anymore
 	@Test
 	public void testFindRefByName() {
 		MagicCard card = new MagicCard();
 		card.setName("Lightning Bolt");
 		MagicCard ref = ImportUtils.findRef(card, getDB());
-		assertNotNull(ref);
-		assertNotNull(ref.getSet());
+		assertNull(ref);
 	}
 
 	@Override
@@ -96,7 +94,6 @@ public class ImportUtilsTest extends AbstarctImportTest {
 
 	@Test
 	public void testResolveSet() {
-		// !!! RD Disable for now assertEquals("Time Spiral Timeshifted", ImportUtils.resolveSet("''Timeshifted''").getName());
 		assertEquals("Duel Decks: Ajani vs. Nicol Bolas",
 				ImportUtils.resolveSet("Duel decks : Ajani vs. Nicol Bolas").getName());
 		assertEquals("Lorwyn", ImportUtils.resolveSet("Token Lorwyn ").getName());
@@ -171,43 +168,34 @@ public class ImportUtilsTest extends AbstarctImportTest {
 
 	@Test
 	public void testPerformPreImportWithDbOverride() {
-		addLine("NAME|SET|ARTIST|COLLNUM|IMAGE_URL");
-		addLine("Nighthowler|Magic Game Day Cards|Seb McKinnon|31|https://magiccards.info/scans/en/mgdc/31.jpg");
-		resolve = false;
-		preimport();
-		ArrayList<IMagicCard> mdb = new ArrayList<>();
-		Editions.getInstance().addEdition("Magic Game Day Cards", "MGDC");
-		ImportUtils.performPreImportWithDb(preimport, mdb, result.getFields());
-		// ImportUtils.importIntoDb(mdb);
-		assertEquals(1, mdb.size());
-		IMagicCard card = mdb.get(0);
-		assertNotNull(card.getType());
-		assertEquals("Enchantment Creature - Horror", card.getType().replace("—", "-"));
-		assertEquals("Seb McKinnon", card.getArtist());
-		assertEquals("Magic Game Day Cards", card.getSet());
-		assertEquals(31, card.getCollectorNumberId());
-		assertEquals("https://magiccards.info/scans/en/mgdc/31.jpg", card.getBase().getImageUrl());
-	}
+		addLine("NAME|SET|COUNT|ARTIST|COLLNUM|IMAGE_URL");
+		addLine("Nighthowler|Theros Promos|1|Seb McKinnon|31|https://magiccards.info/scans/en/mgdc/31.jpg");
 
-	@Test
-	public void testPerformPreImportWithDbOvNoUrl() {
-		addLine("NAME|SET|ARTIST|COLLNUM|TEXT");
-		addLine("Nighthowler|Theros Promos|Seb McKinnon|31|My Text");
 		resolve = false;
 		preimport();
 		ArrayList<IMagicCard> mdb = new ArrayList<>();
 		Editions.getInstance().addEdition("Theros Promos", "PTHS");
 		ImportUtils.performPreImportWithDb(preimport, mdb, result.getFields());
-		// ImportUtils.importIntoDb(mdb);
+		//		ImportUtils.importIntoDb(mdb);
 		assertEquals(1, mdb.size());
 		IMagicCard card = mdb.get(0);
+		assertNotNull(card.getType());
 		assertEquals("Enchantment Creature - Horror", card.getType().replace("—", "-"));
 		assertEquals("Seb McKinnon", card.getArtist());
 		assertEquals("Theros Promos", card.getSet());
-		assertEquals("My Text", card.getText());
-		assertEquals("https://cards.scryfall.io/normal/front/7/7/77b85aef-2f4b-4318-8f29-8adfbee92628.jpg?1562636771",
-				card.getBase().getImageUrl());
+		assertEquals(31, card.getCollectorNumberId());
+		assertEquals("https://magiccards.info/scans/en/mgdc/31.jpg", card.getBase().getImageUrl());
 	}
+
+	/*
+	 * !!! RD Disable now, we're not updating the DB when importing
+	 * 
+	 * @Test public void testPerformPreImportWithDbOvNoUrl() { // addLine("NAME|SET|ARTIST|COLLNUM|TEXT"); // !!! RD addLine("Nighthowler|Theros Promos|Seb McKinnon|31|My Text");
+	 * 
+	 * addLine("NAME|SET|COUNT|ARTIST|COLLNUM|IMAGE_URL"); addLine("Nighthowler|Theros Promos|1|Seb McKinnon|31|My Text");
+	 * 
+	 * resolve = false; preimport(); ArrayList<IMagicCard> mdb = new ArrayList<>(); Editions.getInstance().addEdition("Theros Promos", "PTHS"); ImportUtils.performPreImportWithDb(preimport, mdb, result.getFields()); // ImportUtils.importIntoDb(mdb); assertEquals(1, mdb.size()); IMagicCard card = mdb.get(0); assertEquals("Enchantment Creature - Horror", card.getType().replace("—", "-")); assertEquals("Seb McKinnon", card.getArtist()); assertEquals("Theros Promos", card.getSet()); assertEquals("My Text", card.getText()); assertEquals("https://cards.scryfall.io/normal/front/7/7/77b85aef-2f4b-4318-8f29-8adfbee92628.jpg?1562636771", card.getBase().getImageUrl()); }
+	 */
 
 	@Test
 	public void testValidateDbRecords() {
@@ -266,40 +254,23 @@ public class ImportUtilsTest extends AbstarctImportTest {
 		assertEquals(true, ((MagicCardPhysical) card2).isOwn());
 	}
 
-	/* !!! RD To rework without using a Russian card
-	@Test
-	public void testRank() {
-		IMagicCard candidate = getDB().getCard("e768c957-3a1f-42f5-853a-96942f645df5");// Magic 2011 Lightning Bolt
-		// Удар Молнии
-		ImportUtils.loadLanguageForCard("Russian", Collections.singletonList(candidate), getDB(), monitor);
-		IMagicCard candidate2 = getDB().getCard("225403");
-		// coll num 149
-
-		MagicCard card = new MagicCard();
-		card.setName("Lightning Bolt");
-		card.setSet("Magic 2010");
-
-		long rating1 = ImportUtils.matchRating(card, candidate);
-		System.err.println(rating1);
-		card.setSet("Magic 2011");
-		long rating2 = ImportUtils.matchRating(card, candidate);
-		System.err.println(rating2);
-		assertTrue(rating2 > rating1);
-
-		card.setCollNumber("149");
-
-		long rating5 = ImportUtils.matchRating(card, candidate2);
-		System.err.println(rating5);
-		assertTrue(rating5 > rating1);
-
-		card.setLanguage("Russian");
-		long rating3 = ImportUtils.matchRating(card, candidate);
-		System.err.println(rating3);
-
-		long rating4 = ImportUtils.matchRating(card, candidate2);
-		System.err.println(rating4);
-
-		assertTrue(rating4 > rating3);
-	}
-	*/
+	/*
+	 * !!! RD To rework without using a Russian card
+	 * 
+	 * @Test public void testRank() { IMagicCard candidate = getDB().getCard("e768c957-3a1f-42f5-853a-96942f645df5");// Magic 2011 Lightning Bolt // Удар Молнии ImportUtils.loadLanguageForCard("Russian", Collections.singletonList(candidate), getDB(), monitor); IMagicCard candidate2 = getDB().getCard("225403"); // coll num 149
+	 * 
+	 * MagicCard card = new MagicCard(); card.setName("Lightning Bolt"); card.setSet("Magic 2010");
+	 * 
+	 * long rating1 = ImportUtils.matchRating(card, candidate); System.err.println(rating1); card.setSet("Magic 2011"); long rating2 = ImportUtils.matchRating(card, candidate); System.err.println(rating2); assertTrue(rating2 > rating1);
+	 * 
+	 * card.setCollNumber("149");
+	 * 
+	 * long rating5 = ImportUtils.matchRating(card, candidate2); System.err.println(rating5); assertTrue(rating5 > rating1);
+	 * 
+	 * card.setLanguage("Russian"); long rating3 = ImportUtils.matchRating(card, candidate); System.err.println(rating3);
+	 * 
+	 * long rating4 = ImportUtils.matchRating(card, candidate2); System.err.println(rating4);
+	 * 
+	 * assertTrue(rating4 > rating3); }
+	 */
 }

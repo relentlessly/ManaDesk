@@ -3,6 +3,7 @@ package com.reflexit.magiccards.ui.views.columns;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.EditingSupport;
 
+import com.reflexit.magiccards.core.model.MagicCardPhysical;
 import com.reflexit.magiccards.core.model.abs.ICardField;
 
 /**
@@ -17,5 +18,10 @@ public class StringEditorColumn extends GenColumn {
 	@Override
 	public EditingSupport getEditingSupport(final ColumnViewer viewer) {
 		return new StringEditingSupport(viewer, this);
+	}
+
+	@Override
+	protected boolean canEditElement(Object element) {
+		return element instanceof MagicCardPhysical;
 	}
 }

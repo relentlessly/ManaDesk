@@ -32,4 +32,15 @@ public class CsvExportDelegate extends AbstractExportDelegatePerLine<IMagicCard>
 	protected String escape(String element) {
 		return escapeQuot(element);
 	}
+
+	@Override
+	public String getExample() {
+		return "NAME,SET,COUNT,SPECIAL,COMMENT,LANG,COLLNUM,GATHERERID,ID,OWNERSHIP\n"
+				+ "\"Aang, Swift Savior // Aang and La, Ocean's Fury (transform)\",Avatar: The Last Airbender,1,,,English,359b,0,-372afa84-9ca9-46e6-8643-e16249505c59,true\n"
+				+ "2001 World Championships Ad,World Championship Decks 2001,1,,c1,English,0,0,3513d5d3-7e88-4f5d-927f-1e67eb18e58e,true\n"
+				+ "A Reckoning Approaches,Archenemy: Nicol Bolas Schemes,1,s1,c2,English,16★,430661,3c05afe6-c92f-440d-b09a-cc23b15da495,false\n"
+				+ "Abandon Hope,Tempest,1,s2,c3,English,107,4635,942cf220-472c-48f6-8f60-993939ea5ab8,true\n"
+				+ "Abaddon the Despoiler,\"Warhammer 40,000 Commander\",1,s3,,English,171,582569,a78ab8fe-4499-4860-87d3-f8707398c00c,true\n"
+				+ "Reya Dawnbringer,Tenth Edition,1,,,English,35★,0,f9349fdc-3d9c-4fa9-88b6-a7bc782bfd44,true\n";
+	}
 }

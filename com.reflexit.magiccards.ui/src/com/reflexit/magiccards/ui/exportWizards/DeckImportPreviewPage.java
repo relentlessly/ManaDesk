@@ -5,39 +5,30 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 import com.reflexit.magiccards.core.DataManager;
-import com.reflexit.magiccards.core.MagicException;
 import com.reflexit.magiccards.core.exports.ImportData;
-import com.reflexit.magiccards.core.exports.ImportError;
 import com.reflexit.magiccards.core.exports.ImportSource;
 import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.MagicCard;
@@ -46,16 +37,20 @@ import com.reflexit.magiccards.core.model.MagicCardPhysical;
 import com.reflexit.magiccards.core.model.abs.ICardField;
 import com.reflexit.magiccards.core.model.nav.CardElement;
 import com.reflexit.magiccards.ui.MagicUIActivator;
-import com.reflexit.magiccards.ui.dialogs.NewSetDialog;
 import com.reflexit.magiccards.ui.dnd.CopySupport;
 import com.reflexit.magiccards.ui.utils.WaitUtils;
 import com.reflexit.magiccards.ui.views.IMagicColumnViewer;
 import com.reflexit.magiccards.ui.views.SimpleTableViewer;
 import com.reflexit.magiccards.ui.views.columns.AbstractColumn;
 import com.reflexit.magiccards.ui.views.columns.ColumnCollection;
+import com.reflexit.magiccards.ui.views.columns.CommentColumn;
+import com.reflexit.magiccards.ui.views.columns.CountColumn;
 import com.reflexit.magiccards.ui.views.columns.GroupColumn;
+import com.reflexit.magiccards.ui.views.columns.IdColumn;
 import com.reflexit.magiccards.ui.views.columns.MagicColumnCollection;
+import com.reflexit.magiccards.ui.views.columns.OwnershipColumn;
 import com.reflexit.magiccards.ui.views.columns.SetColumn;
+import com.reflexit.magiccards.ui.views.columns.StringEditorColumn;
 
 public class DeckImportPreviewPage extends WizardPage {
 	private IMagicColumnViewer viewer;
@@ -218,39 +213,13 @@ public class DeckImportPreviewPage extends WizardPage {
 		GridData tld = new GridData(GridData.FILL_BOTH);
 		tld.widthHint = 100 * 5;
 		viewer.getControl().setLayoutData(tld);
-		Button button = new Button(comp, SWT.PUSH);
-		button.setText("Attempt to Auto Fix Errors");
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				Collection<IMagicCard> result = (Collection<IMagicCard>) importData.getList();
-				DeckImportPage mainPage = getMainPage();
-				int choice = mainPage.getIntoChoice();
-				final boolean dbImport = choice == 3;
-				try {
-					IRunnableWithProgress work = new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException, InterruptedException {
-							mainPage.fixErrors(result, dbImport, monitor);
-						}
-					};
-					getRunnableContext().run(true, true, work);
-				} catch (InvocationTargetException ite) {
-					Throwable e = ite.getCause();
-					if (e instanceof OperationCanceledException) {
-						reload();
-						return;
-					}
-					importData.setError(e);
-					if (e instanceof RuntimeException && !(e instanceof MagicException))
-						MagicUIActivator.log(e);
-				} catch (InterruptedException e) {
-					importData.setError(e);
-					reload();
-				}
-			}
-		});
+		/*
+		 * !!! RD Button button = new Button(comp, SWT.PUSH); button.setText("Attempt to Auto Fix Errors"); button.addSelectionListener(new SelectionAdapter() {
+		 * 
+		 * @Override public void widgetSelected(SelectionEvent event) { Collection<IMagicCard> result = (Collection<IMagicCard>) importData.getList(); DeckImportPage mainPage = getMainPage(); int choice = mainPage.getIntoChoice(); final boolean dbImport = choice == 3; try { IRunnableWithProgress work = new IRunnableWithProgress() {
+		 * 
+		 * @Override public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException { mainPage.fixErrors(result, dbImport, monitor); } }; getRunnableContext().run(true, true, work); } catch (InvocationTargetException ite) { Throwable e = ite.getCause(); if (e instanceof OperationCanceledException) { reload(); return; } importData.setError(e); if (e instanceof RuntimeException && !(e instanceof MagicException)) MagicUIActivator.log(e); } catch (InterruptedException e) { importData.setError(e); reload(); } } });
+		 */
 	}
 
 	protected IRunnableContext getRunnableContext() {
@@ -265,21 +234,99 @@ public class DeckImportPreviewPage extends WizardPage {
 		@Override
 		protected GroupColumn createGroupColumn() {
 			return new GroupColumn(true, true, true) {
+
 				@Override
-				public Color getForeground(Object element) {
+				public Color getBackground(Object element) {
 					IMagicCard card = (IMagicCard) element;
 					if (card != null && card.getCardId() == null) {
 						if (!card.getEdition().isUnknown())
 							return Display.getDefault().getSystemColor(SWT.COLOR_RED);
 					}
-					return super.getForeground(element);
+					return super.getBackground(element);
 				}
 
 				@Override
 				protected void setElementValue(Object element, Object value) {
 					super.setElementValue(element, value);
+					viewer.refresh();
 					validate();
 				};
+			};
+		}
+
+		@Override
+		protected CountColumn createCountColumn() {
+			return new CountColumn() {
+
+				@Override
+				protected boolean canEditElement(Object element) {
+					return false;
+				}
+			};
+		}
+
+		@Override
+		protected StringEditorColumn createSpecialColumn() {
+			return new StringEditorColumn(MagicCardField.SPECIAL, "Special") {
+
+				@Override
+				public EditingSupport getEditingSupport(final ColumnViewer viewer) {
+					return null;
+				}
+
+				@Override
+				protected boolean canEditElement(Object element) {
+					return element instanceof MagicCardPhysical;
+				}
+
+			};
+		}
+
+		@Override
+		protected CommentColumn createCommentColumn() {
+			return new CommentColumn() {
+
+				@Override
+				protected boolean canEditElement(Object element) {
+					return false;
+				}
+			};
+		}
+
+		@Override
+		protected OwnershipColumn createOwnershipColumn() {
+			return new OwnershipColumn() {
+
+				@Override
+				public EditingSupport getEditingSupport(final ColumnViewer viewer) {
+					return null;
+				}
+
+				@Override
+				protected boolean canEditElement(Object element) {
+					return false;
+				}
+			};
+		}
+
+		@Override
+		protected IdColumn createIdColumn() {
+			return new IdColumn() {
+
+				@Override
+				public Color getBackground(Object element) {
+					IMagicCard card = (IMagicCard) element;
+					if (card != null && card.getCardId() != null) {
+
+						IMagicCard iref = DataManager.getInstance().resolve(card,
+								DataManager.getInstance().getMagicDBStore());
+
+						if (iref == null) {
+							return Display.getDefault().getSystemColor(SWT.COLOR_RED);
+						}
+					}
+					return super.getBackground(element);
+				}
 			};
 		}
 
@@ -307,16 +354,9 @@ public class DeckImportPreviewPage extends WizardPage {
 										break;
 									}
 								}
-								if (!found) {
-									NewSetDialog newdia = new NewSetDialog(getShell(), set);
-									if (newdia.open() == Window.OK) {
-										card.getBase().setSet(newdia.getSet().getName());
-										card.setError(null);
-									} else {
-										card.getBase().setSet(set);
-										card.setError(ImportError.SET_NOT_FOUND_ERROR);
-									}
-								}
+								/*
+								 * !!! RD if (!found) { NewSetDialog newdia = new NewSetDialog(getShell(), set); if (newdia.open() == Window.OK) { card.getBase().setSet(newdia.getSet().getName()); card.setError(null); } else { card.getBase().setSet(set); card.setError(ImportError.SET_NOT_FOUND_ERROR); } }
+								 */
 								viewer.refresh(true);
 								validate();
 							}

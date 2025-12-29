@@ -9,6 +9,11 @@ public class MagicColumnCollection extends ColumnCollection {
 	private String id;
 	private GroupColumn groupColumn;
 	private SetColumn setColumn;
+	private CountColumn countColumn;
+	private StringEditorColumn specialColumn;
+	private CommentColumn commentColumn;
+	private OwnershipColumn ownershipColumn;
+	private IdColumn idColumn;
 
 	public MagicColumnCollection(String prefPageId) {
 		this.id = prefPageId;
@@ -19,7 +24,8 @@ public class MagicColumnCollection extends ColumnCollection {
 		boolean myCards = true;
 		groupColumn = createGroupColumn();
 		columns.add(groupColumn);
-		columns.add(new IdColumn());
+		idColumn = createIdColumn();
+		columns.add(idColumn);
 		columns.add(new GenColumn(MagicCardField.GATHERERID, "Multiverse ID"));
 		columns.add(new CostColumn());
 		columns.add(new TypeColumn());
@@ -31,10 +37,13 @@ public class MagicColumnCollection extends ColumnCollection {
 		columns.add(new GenColumn(MagicCardField.RARITY, "Rarity"));
 		columns.add(new GenColumn(MagicCardField.CTYPE, "Color Type"));
 		if (myCards) {
-			columns.add(new CountColumn());
+			countColumn = createCountColumn();
+			columns.add(countColumn);
 			columns.add(new LocationColumn());
-			columns.add(new OwnershipColumn());
-			columns.add(new CommentColumn());
+			ownershipColumn = createOwnershipColumn();
+			columns.add(ownershipColumn);
+			commentColumn = createCommentColumn();
+			columns.add(commentColumn);
 			columns.add(new PriceColumn());
 		}
 		columns.add(new ColorColumn());
@@ -44,7 +53,9 @@ public class MagicColumnCollection extends ColumnCollection {
 		columns.add(new GenColumn(MagicCardField.ARTIST, "Artist"));
 		columns.add(new CollectorsNumberColumn());
 		if (myCards) {
-			columns.add(new StringEditorColumn(MagicCardField.SPECIAL, "Special"));
+
+			specialColumn = createSpecialColumn();
+			columns.add(specialColumn);
 			columns.add(new ForTradeCountColumn());
 		}
 		columns.add(new LanguageColumn());
@@ -69,6 +80,26 @@ public class MagicColumnCollection extends ColumnCollection {
 		return new SetColumn();
 	}
 
+	protected CountColumn createCountColumn() {
+		return new CountColumn();
+	}
+
+	protected StringEditorColumn createSpecialColumn() {
+		return new StringEditorColumn(MagicCardField.SPECIAL, "Special");
+	}
+
+	protected CommentColumn createCommentColumn() {
+		return new CommentColumn();
+	}
+
+	protected IdColumn createIdColumn() {
+		return new IdColumn();
+	}
+
+	protected OwnershipColumn createOwnershipColumn() {
+		return new OwnershipColumn();
+	}
+
 	protected GroupColumn createGroupColumn() {
 		return new GroupColumn();
 	}
@@ -83,6 +114,36 @@ public class MagicColumnCollection extends ColumnCollection {
 		if (setColumn == null)
 			setColumn = createSetColumn();
 		return setColumn;
+	}
+
+	public CountColumn getCountColumn() {
+		if (countColumn == null)
+			countColumn = createCountColumn();
+		return countColumn;
+	}
+
+	public StringEditorColumn getSpecialColumn() {
+		if (specialColumn == null)
+			specialColumn = createSpecialColumn();
+		return specialColumn;
+	}
+
+	public CommentColumn getCommentColumn() {
+		if (commentColumn == null)
+			commentColumn = createCommentColumn();
+		return commentColumn;
+	}
+
+	public IdColumn getIdColumn() {
+		if (idColumn == null)
+			idColumn = createIdColumn();
+		return idColumn;
+	}
+
+	public OwnershipColumn getOwnershipColumn() {
+		if (ownershipColumn == null)
+			ownershipColumn = createOwnershipColumn();
+		return ownershipColumn;
 	}
 
 	@Override

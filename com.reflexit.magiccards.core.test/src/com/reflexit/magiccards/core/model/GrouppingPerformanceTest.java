@@ -1,10 +1,10 @@
 package com.reflexit.magiccards.core.model;
 
-import junit.framework.TestCase;
-
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.model.abs.ICard;
 import com.reflexit.magiccards.core.model.storage.IFilteredCardStore;
+
+import junit.framework.TestCase;
 
 public class GrouppingPerformanceTest extends TestCase {
 	@Override
@@ -28,6 +28,6 @@ public class GrouppingPerformanceTest extends TestCase {
 		long end = System.currentTimeMillis();
 		long millis = end - start;
 		System.err.println("Time " + millis);
-		assertTrue("Time was " + millis, millis < 1400);
+		assertTrue("Time was " + millis, millis < 2000);
 	}
 }

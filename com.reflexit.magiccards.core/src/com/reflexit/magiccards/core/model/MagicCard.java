@@ -61,9 +61,11 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 	}
 
 	public void setCardId(int id) {
-		if (id == 0)
+		if (id == 0) {
 			this.id = null;
-		this.id = String.valueOf(id);
+		} else {
+			this.id = String.valueOf(id);
+		}
 	}
 
 	public void setCardId(String id) {
@@ -504,12 +506,23 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 	public String getGathererCardId() {
 		Object id = getProperty(MagicCardField.GATHERERID);
 
-		return (String) id;
+		if (id != null) {
+			return id.toString();
+		} else {
+			return null;
+		}
+
 	}
 
 	@Override
 	public String getTcgCardId() {
-		return (String) getProperty(MagicCardField.TCGID);
+		Object id = getProperty(MagicCardField.TCGID);
+
+		if (id != null) {
+			return id.toString();
+		} else {
+			return null;
+		}
 	}
 
 	public String getPart() {

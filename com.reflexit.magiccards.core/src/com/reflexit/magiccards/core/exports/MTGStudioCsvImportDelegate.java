@@ -167,7 +167,7 @@ public class MTGStudioCsvImportDelegate extends CsvImportDelegate {
 		}
 		Object err = card.getError();
 		if (err instanceof ImportError
-				&& (((ImportError) err).getType().equals(Type.NAME_NOT_FOUND_IN_DB) || ((ImportError) err)
+				&& (((ImportError) err).getType().equals(Type.ID_NOT_FOUND_IN_DB) || ((ImportError) err)
 						.getType().equals(
 								Type.NAME_NOT_FOUND_IN_SET))) {
 			String name = card.getName();

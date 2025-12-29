@@ -22,7 +22,6 @@ import com.reflexit.magiccards.core.model.Editions;
 import com.reflexit.magiccards.ui.MagicUIActivator;
 import com.reflexit.magiccards.ui.dialogs.NewSetDialog;
 import com.reflexit.magiccards.ui.views.editions.EditionsComposite;
-import com.reflexit.magiccards.ui.widgets.ActivityEnablerLink;
 
 public class EditionsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private EditionsComposite comp;
@@ -89,16 +88,16 @@ public class EditionsPreferencePage extends PreferencePage implements IWorkbench
 		 * ParseSetLegality.loadAllFormats(ICoreProgressMonitor.NONE);
 		 * comp.performApply(); comp.initialize(); } });
 		 */
-		link = new ActivityEnablerLink(panel, MagicUIActivator.ACTIVITY_DB_EXTEND,
-				"Enable <a>Editing Database</a> activity to add more sets", true) {
-
-			@Override
-			protected void clicked(String id, boolean enabled) {
-				super.clicked(id, enabled);
-				updateWidgetEnablement();
-			};
-
-		};
+		/*
+		 * !!! RD link = new ActivityEnablerLink(panel,
+		 * MagicUIActivator.ACTIVITY_DB_EXTEND,
+		 * "Enable <a>Editing Database</a> activity to add more sets", true) {
+		 * 
+		 * @Override protected void clicked(String id, boolean enabled) {
+		 * super.clicked(id, enabled); updateWidgetEnablement(); };
+		 * 
+		 * };
+		 */
 		updateWidgetEnablement();
 	}
 
@@ -108,9 +107,11 @@ public class EditionsPreferencePage extends PreferencePage implements IWorkbench
 		addSet.setVisible(dben);
 		delSet.setLayoutData(GridDataFactory.swtDefaults().exclude(!dben).create());
 		delSet.setVisible(dben);
-		link.setLayoutData(GridDataFactory.swtDefaults().exclude(dben).create());
-		link.setVisible(!dben);
-		link.getParent().getParent().layout(true);
+		/*
+		 * !!! RD
+		 * link.setLayoutData(GridDataFactory.swtDefaults().exclude(dben).create());
+		 * link.setVisible(!dben); link.getParent().getParent().layout(true);
+		 */
 	}
 
 	protected void addSet() {

@@ -237,6 +237,7 @@ public enum MagicCardField implements ICardField {
 		public Object getM(MagicCard card) {
 			return card.getCollNumber();
 		};
+
 	},
 	RULINGS {
 		@Override
@@ -276,7 +277,7 @@ public enum MagicCardField implements ICardField {
 			return card.getEnglishCardId();
 		};
 	},
-	GATHERERID(null) {
+	GATHERERID {
 		@Override
 		public ICardVisitor getAggregator() {
 			return new CollisionAggregator(this, 0);
@@ -291,8 +292,14 @@ public enum MagicCardField implements ICardField {
 		public Object get(IMagicCard card) {
 			return card.getGathererId();
 		};
+
+		@Override
+		public boolean isTransient() {
+			return false;
+		}
+
 	},
-	TCGID(null) {
+	TCGID {
 		@Override
 		public ICardVisitor getAggregator() {
 			return new CollisionAggregator(this, 0);
@@ -307,6 +314,11 @@ public enum MagicCardField implements ICardField {
 		public Object get(IMagicCard card) {
 			return card.getTcgId();
 		};
+
+		@Override
+		public boolean isTransient() {
+			return false;
+		}
 	},
 	NOUPDATE(null) {
 		@Override

@@ -46,9 +46,9 @@ public class ImportExportFactory {
 		loadExtensions();
 		loadCustom();
 		XML = getByLabel("ManaDesk XML");
-		CSV = getByLabel("ManaDesk CSV");
-		TEXT_DECK_CLASSIC = getByLabel("Deck Classic Text: 1 x Name");
-		TABLE_PIPED = getByLabel("ManaDesk Piped Table");
+		CSV = getByLabel("ManaDesk Minimum CSV");
+		TEXT_DECK_CLASSIC = getByLabel("ManaDesk Minimum CSV");
+		TABLE_PIPED = getByLabel("ManaDesk Full Piped Table");
 	}
 
 	private static void loadCustom() {

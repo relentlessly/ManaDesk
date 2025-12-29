@@ -1,7 +1,5 @@
 package com.reflexit.magiccards.core.exports;
 
-import static org.junit.Assert.assertNull;
-
 import java.lang.reflect.InvocationTargetException;
 
 import org.junit.FixMethodOrder;
@@ -32,14 +30,14 @@ public class CsvImportDelegateTest extends AbstarctImportTest {
 		assertEquals(0, resSize);
 	}
 
-	//NAME,COUNT
+	// NAME,COUNT
 	@Test
 	public void testHeaderOnly() {
 		parseAbove();
 		assertEquals(0, resSize);
 	}
 
-	//NAME,COUNT
+	// NAME,COUNT
 	//
 	@Test
 	public void testBlank() {
@@ -47,8 +45,8 @@ public class CsvImportDelegateTest extends AbstarctImportTest {
 		assertEquals(0, resSize);
 	}
 
-	//	ID,NAME,COST,TYPE,POWER,TOUGHNESS,ORACLE,SET,RARITY,DBPRICE,LANG,RATING,ARTIST,COLLNUM,RULINGS,TEXT,ENID,PROPERTIES,COUNT,PRICE,COMMENT,LOCATION,CUSTOM,OWNERSHIP,SPECIAL,DATE
-	//	-39,name 39,{4},type 39,4,*,bla 39,set 19,Common,1.2256411,Russian,2.39,Elena 39,39a,,bla <br> bla 39,0,,5,2.1,comment 40,mem,,true,"foil,c=mint",Sun Jan 11 22:37:54 EST 2015
+	// ID,NAME,COST,TYPE,POWER,TOUGHNESS,ORACLE,SET,RARITY,DBPRICE,LANG,RATING,ARTIST,COLLNUM,RULINGS,TEXT,ENID,PROPERTIES,COUNT,PRICE,COMMENT,LOCATION,CUSTOM,OWNERSHIP,SPECIAL,DATE
+	// -39,name 39,{4},type 39,4,*,bla 39,set 19,Common,1.2256411,Russian,2.39,Elena 39,39a,,bla <br> bla 39,0,,5,2.1,comment 40,mem,,true,"foil,c=mint",Sun Jan 11 22:37:54 EST 2015
 	@Test
 	public void testLines() {
 		parseAbove();
@@ -130,7 +128,7 @@ public class CsvImportDelegateTest extends AbstarctImportTest {
 		parseAbove();
 		assertEquals(1, resSize);
 		assertEquals("Accursed Spirit", card1.getName());
-		assertEquals("Magic 2015", card1.getSet());
+		assertEquals("M15W", card1.getSet());
 	}
 
 	// NAME,QTY,EDITION_ABBR
@@ -141,12 +139,12 @@ public class CsvImportDelegateTest extends AbstarctImportTest {
 		assertEquals(1, resSize);
 		assertEquals("Hoo", card1.getName());
 		assertEquals("M15W", card1.getSet());
-		assertEquals("Name not found in db", String.valueOf(((MagicCardPhysical) card1).getError()));
+		assertEquals("Set not found", String.valueOf(((MagicCardPhysical) card1).getError()));
 	}
 
 	// NAME,COUNT,LOCATION,SIDEBOARD
-	//Accursed Spirit,1,deck,true
-	//Accursed Spirit,1,deck,
+	// Accursed Spirit,1,deck,true
+	// Accursed Spirit,1,deck,
 	@Test
 	public void test_ignoreLoc() {
 		parseAbove();
@@ -157,7 +155,7 @@ public class CsvImportDelegateTest extends AbstarctImportTest {
 	}
 
 	// NAME,COUNT,FORTRADECOUNT
-	//Accursed Spirit,4,1
+	// Accursed Spirit,4,1
 	@Test
 	public void testForTrade() {
 		parseAbove();
@@ -180,7 +178,7 @@ public class CsvImportDelegateTest extends AbstarctImportTest {
 	public void testMA1_3_1_14() {
 		parseAbove();
 		assertEquals(5, resSize);
-		assertEquals("Card variant is not loaded in DB", ((MagicCardPhysical) card1).getError().toString());
+		assertEquals("ID not found in db", ((MagicCardPhysical) card1).getError().toString());
 	}
 
 	/*-

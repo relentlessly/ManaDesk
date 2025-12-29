@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.model.CardGroup;
+import com.reflexit.magiccards.core.model.Edition;
+import com.reflexit.magiccards.core.model.Editions;
 import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.IMagicCardPhysical;
 import com.reflexit.magiccards.core.model.MagicCard;
@@ -55,7 +57,9 @@ public class SetColumn extends AbstractImageColumn implements Listener {
 	public Color getBackground(Object element) {
 		if (element instanceof IMagicCard) {
 			IMagicCard card = (IMagicCard) element;
-			if (card.getCardId() == null && element instanceof MagicCardPhysical)
+
+			Edition eset = Editions.getInstance().getEditionByName(card.getSet());
+			if (eset == null && element instanceof MagicCardPhysical)
 				return Display.getDefault().getSystemColor(SWT.COLOR_RED);
 		}
 		return super.getBackground(element);

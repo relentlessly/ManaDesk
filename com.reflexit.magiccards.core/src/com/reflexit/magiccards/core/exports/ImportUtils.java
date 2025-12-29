@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -191,13 +190,23 @@ public class ImportUtils {
 	public static MagicCard updateCardReference(MagicCardPhysical card) {
 		if (card == null)
 			return null;
+
+		MagicCard base = card.getCard();
+		IMagicCard iref = DataManager.getInstance().resolve(card.getCard(),
+				DataManager.getInstance().getMagicDBStore());
+
+		// Id found, we're 100% happy.
+		if (iref != null) {
+			card.setMagicCard((MagicCard) iref);
+			return null;
+		}
+
 		String originalSet = card.getSet();
 		Edition ed = resolveSet(originalSet);
 		if (ed != null) {
 			card.getBase().setSet(ed.getName());
 			originalSet = ed.getName();
 		}
-		MagicCard base = card.getCard();
 		ICardStore lookupStore = DataManager.getInstance().getMagicDBStore();
 		if (lookupStore == null) {
 			card.setError(ImportError.NO_DB_ERROR);
@@ -206,23 +215,7 @@ public class ImportUtils {
 		MagicCard ref = findRef(base, lookupStore);
 
 		if (ref != null) {
-			if (originalSet == null || ref.getSet().equals(originalSet)) {
-
-				if (!base.getCollectorId().isEmpty() && !ref.getCollectorId().isEmpty()) {
-					if (!ref.getCollectorId().equals(base.getCollectorId())) {
-						base.setEmptyFromCard(ref);
-
-						card.setError(ImportError.NO_VARIANT);
-						// if (!hadId) base.setCardId(0);// cannot use same id we should attempt to
-						// resolve it
-						return card.getBase();
-					}
-					if (!Objects.equals(ref.getCardId(), base.getCardId()) && base.getCardId() != null) {
-						base.setEmptyFromCard(ref);
-						card.setError(ImportError.NO_VARIANT);
-						return card.getBase();
-					}
-				}
+			if (ref.getSet().equals(originalSet)) {
 
 				boolean langMatches = false;
 				String lang = base.getLanguage();
@@ -246,6 +239,7 @@ public class ImportUtils {
 				card.setMagicCard(ref);
 				return null;
 			} else {
+				// !!! RD Probably impossible to get here
 				if (ed == null || ed.isUnknown()) {
 					base.setEmptyFromCard(ref);
 					card.setError(ImportError.SET_NOT_FOUND_ERROR);
@@ -264,7 +258,16 @@ public class ImportUtils {
 				}
 			}
 		} else {
-			card.setError(ImportError.NAME_NOT_FOUND_IN_DB_ERROR);
+			// If not resolve but CardId specified, this is the root error		
+			if (card.getCardId() != null && !card.getCardId().isEmpty()) {
+				card.setError(ImportError.NAME_NOT_FOUND_IN_DB_ERROR);
+				// If not resolve and set unknown, this is the root error				
+			} else if (ed == null || ed.isUnknown()) {
+				card.setError(ImportError.SET_NOT_FOUND_ERROR);
+				// Last possibility, card name not found				
+			} else {
+				card.setError(ImportError.NAME_NOT_FOUND_IN_SET_ERROR);
+			}
 		}
 		return card.getBase();
 	}
@@ -283,16 +286,14 @@ public class ImportUtils {
 	public static long matchRating(IMagicCard base, IMagicCard candidate) {
 		long result = 0;
 		long m = 1000 * 1000;
-		int gathererId = base.getGathererId();
-		if (gathererId > 0) {
-			if (gathererId == candidate.getGathererId()) {
-				result = 1 * 100 * 1000 * 1000;
-				return result;
-			}
 
-		}
+		// Once here, we know that Scryfall ID is not found/specified
+		// or GathererID is not matching if provided
 
-		result += candidate.getGathererId();
+		// Note: We know that set is matching
+		// Let used the other fields
+		// In priority Name, then String Collector Number
+
 		String collectorId = base.getCollectorId();
 		int collectorNumberId = base.getCollectorNumberId();
 		String candName = candidate.getName();
@@ -303,27 +304,21 @@ public class ImportUtils {
 		boolean namematched = false;
 		if (name != null) {
 			if (name.equalsIgnoreCase(candName)) {
-				result += 26 * m;
+				result += 28 * m;
 				essential++;
+				essential++; // If perfect match, we're convince this is good, but be sure to select the
+								// right card CollNum
 				namematched = true;
-			} else if (candName != null && candName.startsWith(name)) {
-				result += 22 * m;
-				essential++;
 			}
 		}
-		if (set != null && set.equals(candidate.getSet())) {
-			result += 25 * m;
-			essential++;
-		}
 
-		// Prefer a string collectorId match
+		// Set is always matching here, just keep the logic
+		// But doesn't count this as an "essential" anymore
+		result += 25 * m;
+
+		// Consider only perfect collectorId match
 		if (!collectorId.isEmpty() && candidate.getCollectorId().equals(collectorId)) {
-			result += 28 * m;
-			essential++;
-		} else if (collectorNumberId != 0 && candidate.getCollectorNumberId() == collectorNumberId) {
-			// Partial match must not exceed the threshold because the right card is
-			// probably just after in the list
-			result += 5 * m;
+			result += 26 * m;
 			essential++;
 		}
 
@@ -334,10 +329,10 @@ public class ImportUtils {
 
 		if (lang != null) {
 			if (lang.equals(candidate.getLanguage())) {
-				result += 25 * m;
+				result += 20 * m;
 			}
 		} else if (candidate.getLanguage() == null) {
-			result += 25 * m;
+			result += 20 * m;
 		}
 
 		if (result > 100 * m)
@@ -349,19 +344,13 @@ public class ImportUtils {
 		// System.err.println("*** LOOKING FOR " + base);
 		MagicCard ref = null;
 
+		// First reference, ID matching Scryfall Id
 		// by Scryfall id (new reference)
 		if (base.getCardId() != null) {
 			ref = (MagicCard) lookupStore.getCard(base.getCardId());
-		}
-		if (ref != null)
-			return ref;
 
-		// by MA Scryfall id (with scry_ prefix)
-		if (base.getCardId() != null) {
-			ref = (MagicCard) lookupStore.getCard(base.getCardId().replace("scry_", ""));
-		}
-		if (ref != null)
 			return ref;
+		}
 
 		// Do a ranking search to find the best matching card
 		long maxRank = 0;
@@ -371,11 +360,10 @@ public class ImportUtils {
 		DbMultiFileCardStore dbM = DbMultiFileCardStore.getInstance();
 
 		String locBase = base.getSet();
-		if (base.getSet() != null)
-		{
+		if (base.getSet() != null) {
 			locBase = locBase.replaceAll("[\\W]", "_");
 		}
-		
+
 		Location set = Location.valueOf(locBase);
 
 		if (set != Location.NO_WHERE) {
@@ -388,9 +376,9 @@ public class ImportUtils {
 				for (Object element : storage) {
 					MagicCard a = (MagicCard) element;
 
-					// Check for perfect match first, if a card id as been provided
-					if (base.getCardId() != null &&
-						String.valueOf(a.getGathererId()).compareTo(base.getCardId()) == 0) {
+					// Second priority, check for perfect match using card Gatherer id, if provided
+					if (base.getGathererCardId() != null
+							&& String.valueOf(a.getGathererCardId()).compareTo(base.getGathererCardId()) == 0) {
 						ref = a;
 						break;
 					}
@@ -409,20 +397,11 @@ public class ImportUtils {
 		}
 		// Do Full Search across all the cards (more than 100k) as before, but this is
 		// very long
-		if (maxRank == 0) {
-			for (Object element : lookupStore) {
-				MagicCard a = (MagicCard) element;
-				long rank = matchRating(base, a);
-				if (rank > maxRank && rank != 0) {
-					ref = a;
-					maxRank = rank;
-
-					if (rank > threashold)
-						break;
-				}
-			}
-			// System.err.println(base+" ----> "+ref+" ---> "+maxRank);
-		}
+		/*
+		 * !!! RD Disable for now if (maxRank == 0) { for (Object element : lookupStore) { MagicCard a = (MagicCard) element; long rank = matchRating(base, a); if (rank > maxRank && rank != 0) { ref = a; maxRank = rank;
+		 * 
+		 * if (rank > threashold) break; } } // System.err.println(base+" ----> "+ref+" ---> "+maxRank); }
+		 */
 
 		return ref;
 	}
@@ -500,8 +479,7 @@ public class ImportUtils {
 	}
 
 	/**
-	 * Finds and associates imported cards with magic db cards. If card not found in
-	 * db creates new db cards and adds to newdbrecords
+	 * Finds and associates imported cards with magic db cards. If card not found in db creates new db cards and adds to newdbrecords
 	 */
 	public static void performPreImportWithDb(Collection<IMagicCard> result, Collection<IMagicCard> newdbrecords,
 			ICardField[] columns) {
@@ -521,6 +499,7 @@ public class ImportUtils {
 				} else if (oldCard != card.getBase()) {
 					// card is updated - merge
 					card.getBase().setNonEmptyFromCard(columns, oldCard);
+					newdbrecords.add(card); // !!! RD Try to fix unit test
 				}
 			} else if (card instanceof MagicCard) {
 				newdbrecords.add(card);

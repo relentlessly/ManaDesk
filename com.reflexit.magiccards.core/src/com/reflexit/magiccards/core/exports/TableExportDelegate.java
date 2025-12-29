@@ -37,10 +37,10 @@ public class TableExportDelegate extends AbstractExportDelegatePerLine<IMagicCar
 	}
 
 	public static String getTablePiped() {
-		return "NAME|ID|COST|TYPE|POWER|TOUGHNESS|SET|COUNT|SPECIAL|TEXT|SIDEBOARD\n"
-				+ "Reya Dawnbringer|106384|{6}{W}{W}{W}|Legendary Creature - Angel|4|6|Tenth Edition|4||Flying<br>At the beginning of your upkeep, you may return target creature card from your graveyard to the battlefield.|false\n"
-				+ "Platinum Angel|191313|{7}|Artifact Creature - Angel|4|4|Magic 2010|3|foil,c=good|Flying<br>You can't lose the game and your opponents can't win the game.|false\n"
-				+ "Reya Dawnbringer|196998|{6}{W}{W}{W}|Legendary Creature - Angel|4|6|Duel Decks: Divine vs. Demonic|3|c=heavily_played|Flying<br>At the beginning of your upkeep, you may return target creature card from your graveyard to the battlefield.|false\n"
-				+ "Reya Dawnbringer|196998|{6}{W}{W}{W}|Legendary Creature - Angel|4|6|Duel Decks: Divine vs. Demonic|1|c=heavily_played,fortrade|Flying<br>At the beginning of your upkeep, you may return target creature card from your graveyard to the battlefield.|false\n";
+		return "NAME|ID|GATHERERID|COST|TYPE|POWER|TOUGHNESS|SET|COUNT|SPECIAL|COMMENT|TEXT|SIDEBOARD\n"
+				+ "Reya Dawnbringer|4b81ef83-41c2-46dc-aff9-41bb3a32637a|106384|{6}{W}{W}{W}|Legendary Creature - Angel|4|6|Tenth Edition|4|||Flying<br>At the beginning of your upkeep, you may return target creature card from your graveyard to the battlefield.|false\n"
+				+ "Platinum Angel|7b782865-b9d1-41ed-8a7b-a36c17022190|191313|{7}|Artifact Creature - Angel|4|4|Magic 2010|3|foil,c=good||Flying<br>You can't lose the game and your opponents can't win the game.|false\n"
+				+ "Reya Dawnbringer|7ee7d4a5-25ee-4efe-bfd3-75873a1e83f3|196998|{6}{W}{W}{W}|Legendary Creature - Angel|4|6|Duel Decks: Divine vs. Demonic|3|c=heavily_played||Flying<br>At the beginning of your upkeep, you may return target creature card from your graveyard to the battlefield.|false\n"
+				+ "Reya Dawnbringer|7ee7d4a5-25ee-4efe-bfd3-75873a1e83f3|196998|{6}{W}{W}{W}|Legendary Creature - Angel|4|6|Duel Decks: Divine vs. Demonic|1|c=heavily_played,fortrade||Flying<br>At the beginning of your upkeep, you may return target creature card from your graveyard to the battlefield.|false\n";
 	}
 }

@@ -58,7 +58,6 @@ import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.FileUtils;
@@ -86,7 +85,6 @@ import com.reflexit.magiccards.core.monitor.ICoreProgressMonitor;
 import com.reflexit.magiccards.core.sync.ParseGathererOracle;
 import com.reflexit.magiccards.core.sync.WebUtils;
 import com.reflexit.magiccards.ui.MagicUIActivator;
-import com.reflexit.magiccards.ui.dialogs.CorrectSetDialog;
 import com.reflexit.magiccards.ui.dialogs.EditTextDialog;
 import com.reflexit.magiccards.ui.dialogs.LocationPickerDialog;
 import com.reflexit.magiccards.ui.dnd.CopySupport;
@@ -217,59 +215,41 @@ public class DeckImportPage extends WizardDataTransferPage {
 		int totalerrors = total - noerrors;
 		submon.worked(noerrors);
 		submon.setWorkRemaining(totalerrors);
-		Integer varErrors = categorizeErrors.get(ImportError.NO_VARIANT);
-		if (varErrors != null) {
-			boolean yes = askQuestion(
-					"Local database does not contain cards variants you trying to import (i.e. alternate land graphics) ("
-							+ varErrors + " errors), do you want to load them?");
-			if (yes) {
-				fixVariantErrors(magicDb, result, submon.split(varErrors));
-			} else {
-				monitor.worked(varErrors);
-			}
-		}
-		if (submon.isCanceled())
-			throw new OperationCanceledException();
-		Integer langErrors = categorizeErrors.get(ImportError.NO_LANG);
-		if (langErrors != null) {
-			boolean yes = askQuestion("Local database does not contain cards in the language you trying to import ("
-					+ langErrors + " errors), do you want to load them? It will take A WHILE");
-			if (yes) {
-				fixLangErrors(magicDb, result, submon.split(langErrors));
-			} else {
-				monitor.worked(langErrors);
-			}
-		}
-		if (submon.isCanceled())
-			throw new OperationCanceledException();
+		/*
+		 * !!! RD Integer varErrors = categorizeErrors.get(ImportError.NO_VARIANT); if
+		 * (varErrors != null) { boolean yes = askQuestion(
+		 * "Local database does not contain cards variants you trying to import (i.e. alternate land graphics) ("
+		 * + varErrors + " errors), do you want to load them?"); if (yes) {
+		 * fixVariantErrors(magicDb, result, submon.split(varErrors)); } else {
+		 * monitor.worked(varErrors); } } if (submon.isCanceled()) throw new
+		 * OperationCanceledException(); Integer langErrors =
+		 * categorizeErrors.get(ImportError.NO_LANG); if (langErrors != null) { boolean
+		 * yes =
+		 * askQuestion("Local database does not contain cards in the language you trying to import ("
+		 * + langErrors + " errors), do you want to load them? It will take A WHILE");
+		 * if (yes) { fixLangErrors(magicDb, result, submon.split(langErrors)); } else {
+		 * monitor.worked(langErrors); } } if (submon.isCanceled()) throw new
+		 * OperationCanceledException();
+		 */
 		int size = total;
-		Map<String, String> badSets = ImportUtils.getSetCandidates(result);
-		if (badSets.size() > 0) {
-			boolean yes = askQuestion(
-					"Cannot resolve " + badSets.size() + " set(s). The following sets are not found or ambigues: "
-							+ badSets.keySet() + ".\n Do you want to fix these?");
-			if (yes) {
-				// ask user to fix sets
-				for (Iterator<String> iterator = badSets.keySet().iterator(); iterator.hasNext();) {
-					String set = iterator.next();
-					CorrectSetDialog dialog = new CorrectSetDialog(getShell(), set, badSets.get(set));
-					if (openDialog(dialog)) {
-						String newSet = dialog.getSet();
-						badSets.put(set, newSet);
-					} else {
-						break;
-					}
-				}
-				// fix cards for these sets
-				ImportUtils.fixSets(result, badSets);
-			}
-		}
+		/*
+		 * !!! RD Map<String, String> badSets = ImportUtils.getSetCandidates(result); if
+		 * (badSets.size() > 0) { boolean yes = askQuestion( "Cannot resolve " +
+		 * badSets.size() + " set(s). The following sets are not found or ambigues: " +
+		 * badSets.keySet() + ".\n Do you want to fix these?"); if (yes) { // ask user
+		 * to fix sets for (Iterator<String> iterator = badSets.keySet().iterator();
+		 * iterator.hasNext();) { String set = iterator.next(); CorrectSetDialog dialog
+		 * = new CorrectSetDialog(getShell(), set, badSets.get(set)); if
+		 * (openDialog(dialog)) { String newSet = dialog.getSet(); badSets.put(set,
+		 * newSet); } else { break; } } // fix cards for these sets
+		 * ImportUtils.fixSets(result, badSets); } }
+		 */
 		ArrayList<IMagicCard> newdbrecords = new ArrayList<>();
 		ImportUtils.performPreImportWithDb(result, newdbrecords,
 				reportType.getImportDelegate().getResult().getFields());
 		ArrayList<String> lerrors = new ArrayList<>();
 		ImportUtils.validateDbRecords(newdbrecords, lerrors);
-		if (newdbrecords.size() > 0 && lerrors.size() == 0) {
+		if (false && newdbrecords.size() > 0 && lerrors.size() == 0) { // !!! RD Disable for now
 			boolean yes2 = dbImport;
 			if (yes2 == false) {
 				yes2 = askQuestion(newdbrecords.size()
@@ -534,17 +514,18 @@ public class DeckImportPage extends WizardDataTransferPage {
 		virtualCards.setSelection(false);
 		virtualCards.setLayoutData(spanAll.create());
 		// db import
-		Hyperlink hyperlink = toolkit.createHyperlink(group,
-				"Extends cards database (do not create new deck or collection)", SWT.NONE);
-		hyperlink.addHyperlinkListener(new HyperlinkAdapter() {
-			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				getWizard().performCancel();
-				getContainer().getShell().close();
-				openWizard(new SetImportWizard(), new StructuredSelection(getElement()));
-			}
-		});
-		hyperlink.setLayoutData(spanAll.create());
+		/*
+		 * !!! RD Not applicable anymore Hyperlink hyperlink =
+		 * toolkit.createHyperlink(group,
+		 * "Extends cards database (do not create new deck or collection)", SWT.NONE);
+		 * 
+		 * hyperlink.addHyperlinkListener(new HyperlinkAdapter() {
+		 * 
+		 * @Override public void linkActivated(HyperlinkEvent e) {
+		 * getWizard().performCancel(); getContainer().getShell().close();
+		 * openWizard(new SetImportWizard(), new StructuredSelection(getElement())); }
+		 * }); hyperlink.setLayoutData(spanAll.create());
+		 */
 		return group;
 	}
 
@@ -667,9 +648,9 @@ public class DeckImportPage extends WizardDataTransferPage {
 	public void setInputChoice(ImportSource inputChoice) {
 		this.inputChoice = inputChoice;
 		fileRadio.setSelection(inputChoice == ImportSource.FILE);
-		clipboardRadio.setSelection(inputChoice == ImportSource.TEXT);
+// !!! RD		clipboardRadio.setSelection(inputChoice == ImportSource.TEXT);
 		// inputRadio.setSelection(inputChoice == ImportSource.INPUT);
-		urlRadio.setSelection(inputChoice == ImportSource.URL);
+// !!! RD 		urlRadio.setSelection(inputChoice == ImportSource.URL);
 	}
 
 	private void selectReportType(final ReportType type) {
@@ -705,25 +686,25 @@ public class DeckImportPage extends WizardDataTransferPage {
 		fileSelectionArea.setLayoutData(GridDataFactory.fillDefaults().create());
 		fileSelectionArea.setLayout(GridLayoutFactory.swtDefaults().numColumns(3).create());
 		// clipboard control
-		clipboardRadio = toolkit.createButton(fileSelectionArea, "Clipboard", SWT.RADIO,
-				(e) -> onInputChoice(e, ImportSource.TEXT));
-		clipboardRadio.setLayoutData(GridDataFactory.fillDefaults().create());
-		clipboardPreviewText = toolkit.createText(fileSelectionArea, "", SWT.BORDER);
-		clipboardPreviewText.setEditable(false);
-		clipboardPreviewText.setText(getClipboardClipped());
-		clipboardPreviewText.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				openEditDialog();
-			}
-		});
+		/*
+		 * !!! RD clipboardRadio = toolkit.createButton(fileSelectionArea, "Clipboard",
+		 * SWT.RADIO, (e) -> onInputChoice(e, ImportSource.TEXT));
+		 * clipboardRadio.setLayoutData(GridDataFactory.fillDefaults().create());
+		 * clipboardPreviewText = toolkit.createText(fileSelectionArea, "", SWT.BORDER);
+		 * clipboardPreviewText.setEditable(false);
+		 * clipboardPreviewText.setText(getClipboardClipped());
+		 * clipboardPreviewText.addMouseListener(new MouseAdapter() {
+		 * 
+		 * @Override public void mouseUp(MouseEvent e) { openEditDialog(); } });
+		 */
 		GridDataFactory textBoxFc = GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).grab(true, false);
 		GridDataFactory buttFc = GridDataFactory.swtDefaults().hint(100, SWT.DEFAULT).grab(true, false);
-		clipboardPreviewText.setLayoutData(textBoxFc.create());
-		Button edit = toolkit.createButton(fileSelectionArea, "Edit...", SWT.PUSH, (e) -> {
-			openEditDialog();
-		});
-		edit.setLayoutData(buttFc.create());
+
+		/* !!! RD clipboardPreviewText.setLayoutData(textBoxFc.create()); */
+		/*
+		 * !!! RD Button edit = toolkit.createButton(fileSelectionArea, "Edit...",
+		 * SWT.PUSH, (e) -> { openEditDialog(); }); edit.setLayoutData(buttFc.create());
+		 */
 		// file selector
 		fileRadio = toolkit.createButton(fileSelectionArea, "File", SWT.RADIO,
 				(e) -> onInputChoice(e, ImportSource.FILE));
@@ -756,18 +737,18 @@ public class DeckImportPage extends WizardDataTransferPage {
 		// where you enter the text (or paste");
 		// inputRadio.setLayoutData(GridDataFactory.fillDefaults().create());
 		// url selector
-		urlRadio = toolkit.createButton(fileSelectionArea, "URL", SWT.RADIO, (e) -> onInputChoice(e, ImportSource.URL));
-		urlText = toolkit.createText(fileSelectionArea, "", SWT.BORDER);
-		urlText.setToolTipText(
-				"You can select an url by copying it from browser, but only if there is a parser that understans its format it can be parsed");
-		urlText.addModifyListener((e) -> {
-			urlName = urlText.getText();
-			if (inputChoice != ImportSource.URL) {
-				setInputChoice(ImportSource.URL);
-			}
-			onInputChoice(null, ImportSource.URL);
-		});
-		urlText.setLayoutData(textBoxFc.create());
+		/*
+		 * !!! RD urlRadio = toolkit.createButton(fileSelectionArea, "URL", SWT.RADIO,
+		 * (e) -> onInputChoice(e, ImportSource.URL));
+		 * 
+		 * urlText = toolkit.createText(fileSelectionArea, "", SWT.BORDER);
+		 * urlText.setToolTipText(
+		 * "You can select an url by copying it from browser, but only if there is a parser that understans its format it can be parsed"
+		 * ); urlText.addModifyListener((e) -> { urlName = urlText.getText(); if
+		 * (inputChoice != ImportSource.URL) { setInputChoice(ImportSource.URL); }
+		 * onInputChoice(null, ImportSource.URL); });
+		 * urlText.setLayoutData(textBoxFc.create());
+		 */
 	}
 
 	private void openEditDialog() {
@@ -960,7 +941,7 @@ public class DeckImportPage extends WizardDataTransferPage {
 	@Override
 	protected void updateWidgetEnablements() {
 		fileText.setEnabled(inputChoice == ImportSource.FILE);
-		urlText.setEnabled(inputChoice == ImportSource.URL);
+		// !!! RD urlText.setEnabled(inputChoice == ImportSource.URL);
 	}
 
 	public ReportType getReportType() {

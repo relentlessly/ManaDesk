@@ -50,7 +50,7 @@ public abstract class ComboStringEditingSupport extends EditingSupport {
 			int index = (Integer) value;
 			String set = "";
 			if (index < 0) {
-				set = ((CCombo) ((ComboBoxCellEditor) cellEditor).getControl()).getText();
+				set = ((CCombo) cellEditor.getControl()).getText();
 			} else {
 				set = ((ComboBoxCellEditor) cellEditor).getItems()[index];
 			}
