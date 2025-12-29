@@ -62,7 +62,7 @@ public class P2Util {
 		try {
 			String url = System.getProperty("ma.repo");
 			if (url == null)
-				url = "http://mtgbrowser.sourceforge.net/update/1.5/";
+				url = "https://github.com/BKurler/MAFork/raw/software-update/updates/noused"; // not used
 			URI repoLocation = new URI(url);
 			// Load repository manager
 			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent
