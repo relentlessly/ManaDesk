@@ -34,7 +34,7 @@
       startupProgressRect="100,10,420,15"
       startupMessageRect="100,25,420,20"
       startupForegroundColor="000000" />
-   <launcher name="magicfork">
+   <launcher name="manadesk">
       <linux icon="../com.reflexit.magiccards_rcp/icons/m48.xpm"/>
       <win useIco="false">
          <bmp
@@ -76,16 +76,26 @@
    </features>
 
    <configurations>
+      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.e4.core.services" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.e4.ui.workbench" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.e4.ui.workbench.addons.swt" autoStart="true" startLevel="4" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.http.jetty" autoStart="true" startLevel="3" />
-      <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
    </configurations>
 
    <repositories>
-	   <repository location="https://raw.githubusercontent.com/BKurler/MAFork/refs/heads/master/updates/" enabled="true" />
+      <repository location="https://raw.githubusercontent.com/BKurler/MAFork/refs/heads/master/updates/" name="" enabled="true" />
    </repositories>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
+
 </product>

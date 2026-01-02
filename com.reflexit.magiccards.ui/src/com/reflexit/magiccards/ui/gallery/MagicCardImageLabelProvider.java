@@ -1,11 +1,16 @@
 package com.reflexit.magiccards.ui.gallery;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 
 import com.reflexit.magiccards.core.model.CardGroup;
 import com.reflexit.magiccards.core.model.IMagicCard;
@@ -23,9 +28,21 @@ final class MagicCardImageLabelProvider extends LabelProvider implements IImageO
 	}
 
 	private ImageCache cache = ImageCache.INSTANCE;
+	private final Set<Image> galleryImages = Collections.synchronizedSet(new HashSet<>());
 
 	@Override
 	public void dispose() {
+		// Nettoyer toutes les copies créées par ce label provider
+		synchronized (galleryImages) {
+			for (Image img : galleryImages) {
+				if (img != null && !img.isDisposed()) {
+					img.dispose();
+				}
+			}
+			galleryImages.clear();
+		}
+
+		super.dispose();
 	}
 
 	@Override
@@ -41,21 +58,30 @@ final class MagicCardImageLabelProvider extends LabelProvider implements IImageO
 
 	@Override
 	public Image getImage(final Object element) {
-		// System.err.println("getting image for " + element + " " +
-		// element.getClass());
+
 		Object candidate = element;
 		if (element instanceof CardGroup) {
-			CardGroup cardGroup = (CardGroup) element;
-			candidate = cardGroup.getFirstCard();
+			candidate = ((CardGroup) element).getFirstCard();
 		}
 		if (!(candidate instanceof IMagicCard)) {
 			return null;
 		}
+
 		final IMagicCard card = (IMagicCard) candidate;
-		Image im = cache.getImage(card, () -> refreshCallback(element));
-		if (im != null)
-			return im;
-		return cache.CARD_NOT_FOUND_IMAGE_TEMPLATE;
+
+		// Image "source" venant du cache
+		Image base = cache.getImage(card, () -> refreshCallback(element));
+
+		if (base == null || base.isDisposed()) {
+			base = cache.CARD_NOT_FOUND_IMAGE_TEMPLATE;
+			if (base == null || base.isDisposed())
+				return null;
+		}
+
+		// Copie dédiée à l’affichage (Gallery / viewer)
+		Image copy = new Image(Display.getDefault(), base, SWT.IMAGE_COPY);
+		galleryImages.add(copy);
+		return copy;
 	}
 
 	protected void refreshCallback(final Object element) {

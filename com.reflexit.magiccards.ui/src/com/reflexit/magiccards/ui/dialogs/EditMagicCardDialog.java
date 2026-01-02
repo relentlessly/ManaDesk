@@ -2,20 +2,29 @@ package com.reflexit.magiccards.ui.dialogs;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -95,12 +104,75 @@ public class EditMagicCardDialog extends MagicDialog {
 		return;
 	}
 
-	private void reloadImage(String path) {
-		if (img != null)
+	private void reloadImage(final String path) {
+
+		// 1) Retirer l’image AVANT de disposer (SWT-safe)
+		if (img != null && !img.isDisposed()) {
+			imageButton.setImage(null); // ← OBLIGATOIRE
 			img.dispose();
-		img = ImageCreator.getInstance().createCardImage(path, true);
-		imageButton.setImage(img);
-		imageButton.getParent().layout(true);
+			img = null;
+		}
+
+		// 2) Charger l’ImageData en background
+		new Job("Reload card image") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+
+				ImageData data = null;
+
+				try {
+					data = ImageCreator.createCardImageData(path, true);
+				} catch (Exception ex) {
+					StringWriter sw = new StringWriter();
+					ex.printStackTrace(new PrintWriter(sw));
+					MagicUIActivator.log("Error creating ImageData for reloadImage: " + path + "\n" + sw.toString());
+					data = null;
+				}
+
+				final ImageData finalData = data;
+
+				// 3) UI thread : créer l’Image et l’appliquer
+				Display.getDefault().asyncExec(() -> {
+
+					if (imageButton == null || imageButton.isDisposed())
+						return;
+
+					Image newImg = null;
+
+					try {
+						if (finalData != null) {
+							newImg = new Image(Display.getDefault(), finalData);
+						}
+					} catch (SWTException ex) {
+						MagicUIActivator.log("Failed to create Image from ImageData for reloadImage: " + path + " - "
+								+ ex.getMessage());
+						newImg = null;
+					}
+
+					// fallback UI-safe
+					if (newImg == null) {
+						try {
+							newImg = ImageCreator.getInstance().createCardNotFoundImage(null);
+						} catch (Throwable t) {
+							MagicUIActivator.log("Failed to create not-found image for reloadImage: " + path + " - "
+									+ t.getMessage());
+							return;
+						}
+					}
+
+					// appliquer la nouvelle image
+					img = newImg;
+					imageButton.setImage(img);
+
+					// relayout UI
+					if (!imageButton.getParent().isDisposed()) {
+						imageButton.getParent().layout(true);
+					}
+				});
+
+				return Status.OK_STATUS;
+			}
+		}.schedule();
 	}
 
 	@Override

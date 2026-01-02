@@ -12,11 +12,10 @@
 	<h2>
 		<a name="viewmagicdb">Scryfall Database View</a>
 	</h2>
-	"Scryfall Database" view show all available cards. By default local database
-	of cards contains only latest print of a card with the same name.
+	"Scryfall Database" view show all available cards. 
 	Default database contains sets only up to the last public set that was
 	released prior to the software release. You can update local database
-	with specific set or with "Standard" format sets. See
+	with specific set, with recent sets (least 2 years) or all sets. See
 	<a href="preferences.html#update">Update Scryfall Database</a>.
 	<p />
 	Scryfall Database View specific context menu actions:
@@ -75,8 +74,6 @@
 							bar.
 						</li>
 						<li>"Sort By" - sorts by specific column</li>
-						<li>"Load Extra Fields..." - loads fields of selected cards
-							from internet (such as prices, rulings, extra languages).</li>
 					</ul></li>
 			</ul>
 		</li>
@@ -104,7 +101,7 @@
 	<a name="columns" />
 	<ul>
 		<li>Name - name of the card</li>
-		<li>Id - id of the card (gatherer id)</li>
+		<li>Id - id of the card (Scryfall id)</li>
 		<li>Cost - cost images and converted cast cost (sorts by CCC)</li>
 		<li>Type - type of card</li>
 		<li>P - power for creatures</li>
@@ -114,7 +111,7 @@
 		<li>Oracle text - text of card (oracle variant)</li>
 		<li>Color - card color determined by casting cost</li>
 		<li>Color type - mono, multi or hybrid</li>
-		<li>Seller Price - price of single card from selected MTG seller</li>
+		<li>SPrice - price of single card from TCGplayer</li>
 	</ul>
 	<p />
 	These only available in Deck and My Cards view:
@@ -122,7 +119,7 @@
 		<li>Count - Card count</li>
 		<li>Location - Card location: Deck or Collection path</li>
 		<li>Comment - card comment</li>
-		<li>Price - personal price per card</li>
+		<li>User Price - personal price per card</li>
 	</ul>
 
 
@@ -209,14 +206,14 @@
 
 	<p />
 	To try what hands you can get with this deck you can run command
-	"Emulate Draw" from the view menu (triangle icon).
+	"New Game" from the view menu (triangle icon).
 
 	<h2>
 		<a name="viewcard" />Card Info View
 	</h2>
 	Card Info view shows details of the card selected in one of the cards
 	views (Scryfall Database, My Cards or Deck). It loads a card image from
-	"gatherer" site, and caches it in the workspace.
+	"Scryfall" site, and caches it in the workspace.
 	<p />
 	You can turn off card caching from
 	<a href="preferences.html">Preferences</a> in the Magic Preferences

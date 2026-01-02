@@ -72,8 +72,8 @@ fi
 if [ "$UPLOAD" -eq 1 ]; then
 	RELEASE_DIR="$EXPORT_DIR/$RELEASE"
 	rm -rf "$RELEASE_DIR"; mkdir -p "$RELEASE_DIR"
-	cp $RESULT/magicfork*.zip $RELEASE_DIR/
-	cp $RESULT/magicfork*.exe $RELEASE_DIR/
+	cp $RESULT/manadesk*.zip $RELEASE_DIR/
+	cp $RESULT/manadesk*.exe $RELEASE_DIR/
 	cp $MA_WORKSPACE/com.reflexit.magiccards-metadata/README.TXT $RELEASE_DIR/
 	echo "Published results at $RELEASE_DIR/"
 	echo "Uploading builds for $RELEASE..."

@@ -6,14 +6,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -29,12 +35,13 @@ import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.Location;
 import com.reflexit.magiccards.core.model.MagicCardPhysical;
 import com.reflexit.magiccards.core.model.abs.ICardCountable;
+import com.reflexit.magiccards.ui.MagicUIActivator;
 import com.reflexit.magiccards.ui.utils.ImageCreator;
 import com.reflexit.magiccards.ui.widgets.SlidingPaneAnimation;
 
 public class CountConfirmationDialog extends Dialog {
 	private SlidingPaneAnimation animation = new SlidingPaneAnimation();
-	private Map<IMagicCard, Integer> countMap = new HashMap<IMagicCard, Integer>();
+	private Map<IMagicCard, Integer> countMap = new HashMap<>();
 	private IMagicCard cards[];
 	private Composite panels[];
 	private Composite confirmer;
@@ -88,8 +95,7 @@ public class CountConfirmationDialog extends Dialog {
 		comp.setLayout(new GridLayout());
 		comp.setData(card);
 		Label label = new Label(comp, SWT.WRAP);
-		label.setText(card.getName() + " (" + card.getSet() + ") " + " x "
-				+ ((ICardCountable) card).getCount());
+		label.setText(card.getName() + " (" + card.getSet() + ") " + " x " + ((ICardCountable) card).getCount());
 		if (lazy)
 			new Thread("Loading image for " + card) {
 				@Override
@@ -113,18 +119,84 @@ public class CountConfirmationDialog extends Dialog {
 	}
 
 	private void createCardImage(final Composite comp, final IMagicCard card) {
+		final Label img = new Label(comp, SWT.NONE);
+
 		try {
-			final Label img = new Label(comp, SWT.NONE);
-			String path = ImageCreator.getInstance().createCardPath(card, true, false);
-			Image image = ImageCreator.getInstance().createCardImage(path, false);
-			img.setImage(image);
-			comp.layout(true);
+			final String path = ImageCreator.getInstance().createCardPath(card, true, false);
+			final boolean resize = false;
+
+			Job loadJob = new Job("Load card image") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					ImageData data = null;
+					// background-safe: create ImageData (no SWT Image here)
+					data = ImageCreator.createCardImageData(path, resize);
+
+					final ImageData finalData = data;
+					Display.getDefault().asyncExec(() -> {
+						if (img.isDisposed())
+							return;
+
+						Image old = img.getImage();
+						Image newImg = null;
+
+						// create Image from ImageData in UI thread
+						if (finalData != null) {
+							try {
+								newImg = new Image(img.getDisplay(), finalData);
+							} catch (SWTException ex) {
+								MagicUIActivator.log(
+										"Failed to create Image from ImageData for: " + card + " - " + ex.getMessage());
+								newImg = null;
+							}
+						}
+
+						// fallback "not found" image (UI-safe)
+						if (newImg == null) {
+							try {
+								newImg = ImageCreator.getInstance().createCardNotFoundImage(card);
+							} catch (Throwable t) {
+								MagicUIActivator
+										.log("Failed to create not-found image for: " + card + " - " + t.getMessage());
+								return;
+							}
+						}
+
+						// IMPORTANT : retirer l’image AVANT de disposer l’ancienne
+						img.setImage(null);
+
+						if (old != null && !old.isDisposed()) {
+							old.dispose();
+						}
+
+						// appliquer la nouvelle image
+						img.setImage(newImg);
+
+						// add dispose listener once
+						if (img.getData("disposeListenerAdded") == null) {
+							img.addDisposeListener(ev -> {
+								Image i = img.getImage();
+								if (i != null && !i.isDisposed())
+									i.dispose();
+							});
+							img.setData("disposeListenerAdded", Boolean.TRUE);
+						}
+
+						// relayout parent
+						if (!comp.isDisposed())
+							comp.layout(true);
+					});
+					return Status.OK_STATUS;
+				}
+			};
+
+			loadJob.setPriority(Job.SHORT);
+			loadJob.schedule();
+
 		} catch (CannotDetermineSetAbbriviation e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MagicUIActivator.log("Cannot determine set abbreviation for card: " + card + " - " + e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MagicUIActivator.log("IO error while creating card path for: " + card + " - " + e.getMessage());
 		}
 	}
 
@@ -268,9 +340,8 @@ public class CountConfirmationDialog extends Dialog {
 		// SWT.DOUBLE_BUFFERED);
 		// shell.setSize(600, 600);
 		DataManager.getInstance().waitForInit(5000);
-		Collection<IMagicCard> candidates = DataManager.getCardHandler().getMagicDBStore()
-				.getCandidates("Forest");
-		ArrayList<IMagicCard> list = new ArrayList<IMagicCard>();
+		Collection<IMagicCard> candidates = DataManager.getCardHandler().getMagicDBStore().getCandidates("Forest");
+		ArrayList<IMagicCard> list = new ArrayList<>();
 		int i = 0;
 		for (IMagicCard base : candidates) {
 			if (i == 10)

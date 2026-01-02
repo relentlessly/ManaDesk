@@ -58,8 +58,7 @@ public class FileUtils {
 	}
 
 	/**
-	 * Create a ZIP file including specified source and its content in case of a directory. Files in {@code exclude} will not be include in the
-	 * resulting ZIP file. If a directory is excluded all it children will excluded also. Empty directories will be add.
+	 * Create a ZIP file including specified source and its content in case of a directory. Files in {@code exclude} will not be include in the resulting ZIP file. If a directory is excluded all it children will excluded also. Empty directories will be add.
 	 *
 	 * @param src     Source can be a directory or a single file. Directories includes all it content.
 	 * @param dest    The resulting ZIP file.
@@ -305,7 +304,7 @@ public class FileUtils {
 		if (str != null) {
 			return new File(str.replaceFirst("^file:", ""));
 		} else {
-			return new File(System.getProperty("user.home"), "MagicFork");
+			return new File(System.getProperty("user.home"), "ManaDesk");
 		}
 	}
 

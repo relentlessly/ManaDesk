@@ -53,6 +53,9 @@ class CardDescComposite extends Composite {
 	private Image cardNotFound;
 	private PowerColumn powerProvider;
 	private PowerColumn toughProvider;
+	private Image transparentImageA;
+	private Image transparentImageB;
+
 	// int width = 223, hight = 310;
 	int width = 265, hight = 370;
 	private StoredSelectionProvider selectionProvider = new StoredSelectionProvider();
@@ -69,6 +72,15 @@ class CardDescComposite extends Composite {
 				.align(SWT.CENTER, SWT.BEGINNING)//
 				.hint(width + 2, hight + 2).applyTo(this.imageControl);
 		createImages();
+		addDisposeListener(e -> {
+			if (transparentImageA != null && !transparentImageA.isDisposed()) {
+				transparentImageA.dispose();
+			}
+			if (transparentImageB != null && !transparentImageB.isDisposed()) {
+				transparentImageB.dispose();
+			}
+		});
+
 		this.powerProvider = new PowerColumn(MagicCardField.POWER, null, null);
 		this.toughProvider = new PowerColumn(MagicCardField.TOUGHNESS, null, null);
 		details = new Composite(panel, SWT.INHERIT_DEFAULT);
@@ -136,20 +148,27 @@ class CardDescComposite extends Composite {
 	private void createImages() {
 		int border = 10;
 		{
-			Image im = ImageCreator.createTransparentImage(width - 2 * border, hight - 2 * border);
-			GC gc = new GC(im);
+			if (transparentImageA != null && !transparentImageA.isDisposed()) {
+				transparentImageA.dispose();
+			}
+
+			transparentImageA = ImageCreator.createTransparentImage(width - 2 * border, hight - 2 * border);
+			GC gc = new GC(transparentImageA);
 			gc.setForeground(getForeground());
 			gc.drawText("Loading...", 10, 10, true);
 			gc.dispose();
-			this.loadingImage = ImageCreator.drawBorder(im, border);
+			this.loadingImage = ImageCreator.drawBorder(transparentImageA, border);
 		}
 		{
-			Image im = ImageCreator.createTransparentImage(width - 2 * border, hight - 2 * border);
-			GC gc = new GC(im);
+			if (transparentImageB != null && !transparentImageB.isDisposed()) {
+				transparentImageB.dispose();
+			}
+			transparentImageB = ImageCreator.createTransparentImage(width - 2 * border, hight - 2 * border);
+			GC gc = new GC(transparentImageB);
 			gc.setForeground(getForeground());
 			gc.drawText("Can't find image", 10, 10, true);
 			gc.dispose();
-			this.cardNotFound = ImageCreator.drawBorder(im, border);
+			this.cardNotFound = ImageCreator.drawBorder(transparentImageB, border);
 		}
 	}
 
@@ -169,20 +188,33 @@ class CardDescComposite extends Composite {
 	private void setImage(Image remoteImage) {
 		if (imageControl.isDisposed())
 			return;
+
+		// 1) Retirer l’image du widget AVANT de disposer l’ancienne
 		if (this.image != null && this.image != this.loadingImage && this.image != this.cardNotFound) {
+			imageControl.setImage(null); // ← OBLIGATOIRE
 			this.image.dispose();
 			this.image = null;
 		}
+
+		// 2) Si aucune nouvelle image, on s’arrête
 		if (remoteImage == null)
 			return;
+
+		// 3) Appliquer la nouvelle image
 		this.image = remoteImage;
-		this.imageControl.setImage(this.image);
-		GridData ld = (GridData) this.imageControl.getLayoutData();
+		imageControl.setImage(this.image);
+
+		// 4) Ajuster la taille
+		GridData ld = (GridData) imageControl.getLayoutData();
 		ld.minimumWidth = this.image.getBounds().width + 1;
 		ld.minimumHeight = this.image.getBounds().height + 1;
 		ld.widthHint = ld.minimumWidth;
 		ld.heightHint = ld.minimumHeight;
-		this.layout(true, true);
+
+		// 5) Relayout en sécurité
+		if (!this.isDisposed()) {
+			this.layout(true, true);
+		}
 	}
 
 	private boolean logOnce = false;

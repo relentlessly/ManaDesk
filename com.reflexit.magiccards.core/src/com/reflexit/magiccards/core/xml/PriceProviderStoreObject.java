@@ -24,7 +24,7 @@ import com.reflexit.magiccards.core.seller.IPriceProviderStore;
 public class PriceProviderStoreObject implements IPriceProviderStore {
 	public String name; // provider name
 	public Properties properties = new Properties();
-	public HashMap<String, Float> map;
+	public HashMap<String, String> map;
 	public transient File file;
 	public String comment;
 	public static transient PricesXmlStreamWriter writer = new PricesXmlStreamWriter();
@@ -68,7 +68,7 @@ public class PriceProviderStoreObject implements IPriceProviderStore {
 	}
 
 	@Override
-	public HashMap<String, Float> getPriceMap() {
+	public HashMap<String, String> getPriceMap() {
 		return map;
 	}
 

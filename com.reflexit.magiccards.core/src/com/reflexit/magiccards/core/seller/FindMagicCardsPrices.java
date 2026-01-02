@@ -65,7 +65,7 @@ public class FindMagicCardsPrices extends AbstractPriceProvider {
 					return null;
 				if (id != null) {
 					// System.err.println("found " + set + " " + id);
-					HashMap<String, Float> prices = null;
+					HashMap<String, String> prices = null;
 					try {
 						prices = parse(id);
 					} catch (IOException e) {
@@ -78,8 +78,8 @@ public class FindMagicCardsPrices extends AbstractPriceProvider {
 						if (set2.equals(set)) {
 							float price = -1;
 							if (prices != null && prices.containsKey(magicCard.getName())) {
-								Float price1 = prices.get(magicCard.getName());
-								price = (price1.floatValue());
+								/* !!! RD Just to compile								Float price1 = prices.get(magicCard.getName());
+																price = (price1.floatValue());*/
 							} else {
 								// load individual card
 								try {
@@ -91,7 +91,7 @@ public class FindMagicCardsPrices extends AbstractPriceProvider {
 							if (price > 0) {
 								if (!setIdMap.containsKey(set))
 									setIdMap.put(set, id);
-								priceMap.put(magicCard.getCardId(), price);
+								priceMap.put(magicCard.getCardId(), String.valueOf(price)); // !!! RD Just to make it compile
 							}
 							monitor.worked(1);
 						}
@@ -147,8 +147,8 @@ public class FindMagicCardsPrices extends AbstractPriceProvider {
 		}
 	}
 
-	public HashMap<String, Float> parse(String setId) throws IOException {
-		HashMap<String, Float> res = new HashMap<String, Float>();
+	public HashMap<String, String> parse(String setId) throws IOException {
+		HashMap<String, String> res = new HashMap<String, String>();
 		URL url = new URL(baseURL.toString().replace("${SetAbbr}", setId));
 		InputStream openStream = WebUtils.openUrl(url);
 		BufferedReader st = new BufferedReader(new InputStreamReader(openStream));
@@ -189,7 +189,7 @@ public class FindMagicCardsPrices extends AbstractPriceProvider {
 	   <TD><font color='#999966'>Rare</font>&nbsp;</TD>
 	   <TD>1.94&nbsp;</TD></TR>
 	 */
-	private void processFile(BufferedReader st, HashMap<String, Float> res) throws IOException {
+	private void processFile(BufferedReader st, HashMap<String, String> res) throws IOException {
 		String line = "";
 		while ((line = st.readLine()) != null) {
 			Matcher matcher = rowPattern.matcher(line);
@@ -201,7 +201,7 @@ public class FindMagicCardsPrices extends AbstractPriceProvider {
 					String price = matcher2.group(2);
 					try {
 						float f = Float.parseFloat(price);
-						res.put(name, f);
+						// !!! RD Just to compile res.put(name, f);
 					} catch (NumberFormatException e) {
 						break;
 					}

@@ -29,10 +29,8 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 	private final String singleCardURL = "https://www.cardmarket.com/en/Magic/MainPage/advancedSearch?search=1&idExpansion=SET&cardName=NAME";
 	private static final Pattern setsPattern = Pattern
 			.compile("<select name=\\\"expansion\\[\\]\\\"[^>]*>(.*?)</select>");
-	private static final Pattern setItemPattern = Pattern
-			.compile("<option[ ]*value=\\\"(\\d*?)\\\">(.*?)</option>");
-	private static final Pattern paginationPattern = Pattern
-			.compile("resultsPage=(\\d+)\"[^<>]*rel=\"last\"");
+	private static final Pattern setItemPattern = Pattern.compile("<option[ ]*value=\\\"(\\d*?)\\\">(.*?)</option>");
+	private static final Pattern paginationPattern = Pattern.compile("resultsPage=(\\d+)\"[^<>]*rel=\"last\"");
 	/* Mapping between MCM and MA set name.
 	 * Key: MCN set name
 	 * Value: MA set name
@@ -49,8 +47,7 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 		setNameMapping.put("Commander", "Magic: The Gathering-Commander");
 		setNameMapping.put("Commander 2013", "Commander 2013 Edition");
 		setNameMapping.put("Conspiracy", "Magic: The Gathering\u2014Conspiracy");
-		setNameMapping
-				.put("Duel Decks: Phyrexia vs. The Coalition", "Duel Decks: Phyrexia vs. the Coalition");
+		setNameMapping.put("Duel Decks: Phyrexia vs. The Coalition", "Duel Decks: Phyrexia vs. the Coalition");
 		setNameMapping.put("From the Vault: Annihilation", "From the Vault: Annihilation (2014)");
 		setNameMapping.put("Magic 2015", "Magic 2015 Core Set");
 		setNameMapping.put("Magic 2014", "Magic 2014 Core Set");
@@ -59,8 +56,7 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 		setNameMapping.put("Ugin's Fate Promos", "Ugin's Fate promos");
 		setNameMapping.put("Unlimited", "Unlimited Edition");
 		setNameMapping.put("Planechase 2012", "Planechase 2012 Edition");
-		setNameMapping
-				.put("Premium Deck Series: Fire & Lightning", "Premium Deck Series: Fire and Lightning");
+		setNameMapping.put("Premium Deck Series: Fire & Lightning", "Premium Deck Series: Fire and Lightning");
 		setNameMapping.put("Prerelease Promos", "Promo set for Gatherer"); // split also into online set Harper Prism Promos
 		// Seems to be unknown to MKM because they are from Magic Online Game only
 		//setNameMapping.put("", "Masters Edition");
@@ -95,8 +91,8 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 	}
 
 	@Override
-	public Iterable<IMagicCard> updatePrices(final Iterable<IMagicCard> iterable,
-			final ICoreProgressMonitor monitor) throws IOException {
+	public Iterable<IMagicCard> updatePrices(final Iterable<IMagicCard> iterable, final ICoreProgressMonitor monitor)
+			throws IOException {
 		final Map<String, List<IMagicCard>> offlineSets = new HashMap<>();
 		for (IMagicCard magicCard : iterable) {
 			if (offlineSets.containsKey(magicCard.getSet())) {
@@ -201,8 +197,7 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 	private Map<String, String> processSetFile(URL url) throws IOException {
 		MagicLogger.debug("Getting online sets for provider [" + getName() + "] ...");
 		Map<String, String> result = new HashMap<>();
-		try (
-				BufferedReader br = new BufferedReader(new InputStreamReader(WebUtils.openUrl(url)))) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(WebUtils.openUrl(url)))) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				Matcher allSetsMatcher = setsPattern.matcher(line);
@@ -283,6 +278,7 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 						for (IMagicCard magicCard : offlineCards) {
 							parseSingleCard(mappingSetID, magicCard);
 							cardName = changeNameHTMLToDB(magicCard.getName(), magicCard.getFlipId() != null);
+							/* !!! RD Just to compile
 							if (prices.containsKey(cardName)) {
 								Float price = prices.get(cardName);
 								setDbPrice(magicCard, price, getCurrency());
@@ -292,6 +288,7 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 										magicCard.getFlipId() != null));
 								setDbPrice(magicCard, price, getCurrency());
 							}
+							*/
 						}
 					} else {
 						// bulk fetch for all online cards in a set
@@ -301,6 +298,7 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 							for (IMagicCard magicCard : offlineCards) {
 								String cardName = changeNameHTMLToDB(magicCard.getName(),
 										magicCard.getFlipId() != null);
+								/* !!! RD  just to compile
 								if (prices.containsKey(cardName)) {
 									Float price = prices.get(cardName);
 									setDbPrice(magicCard, price, getCurrency());
@@ -310,6 +308,7 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 											magicCard.getFlipId() != null));
 									setDbPrice(magicCard, price, getCurrency());
 								}
+								*/
 							}
 						}
 					}
@@ -436,8 +435,7 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 			}
 			// Test output
 			//System.err.println("Loading page for provider ["+getName()+"]: " + url.replace("PAGE", "" + pagination));
-			MagicLogger.trace("Loading page for provider [" + getName() + "]: "
-					+ url.replace("PAGE", "" + pagination));
+			MagicLogger.trace("Loading page for provider [" + getName() + "]: " + url.replace("PAGE", "" + pagination));
 			int newMaxPagination = -1;
 			URL url2 = new URL(url.replace("PAGE", "" + pagination));
 			// I know I get the full side here, but HTTPS returns sometimes an
@@ -527,8 +525,8 @@ public class ParseMagicCardMarketPrices extends AbstractPriceProvider {
 					}
 					// Test output
 					// System.err.println("Online card price found. Name [" + priceMatcher.group(1) + "], price [" + sPrice + "]");
-					MagicLogger.trace("Online card price found. Name [" + priceMatcher.group(1)
-							+ "], price [" + sPrice + "]");
+					MagicLogger.trace(
+							"Online card price found. Name [" + priceMatcher.group(1) + "], price [" + sPrice + "]");
 				}
 			}
 		}

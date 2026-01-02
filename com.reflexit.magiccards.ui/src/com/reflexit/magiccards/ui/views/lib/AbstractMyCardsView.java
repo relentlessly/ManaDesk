@@ -84,11 +84,16 @@ public abstract class AbstractMyCardsView extends AbstractGroupPageCardsView imp
 				splitSelected();
 			}
 		};
-		/*
-		 * !!! RD this.edit = new Action("Edit Card...") {
-		 * 
-		 * @Override public void run() { editSelected(); } };
-		 */
+
+		this.edit = new Action("Edit Card...") {
+
+			@Override
+			public void run() {
+				editSelected();
+			}
+
+		};
+
 		this.moveToDeckMenu = new MenuManager("Move to");
 		this.moveToDeckMenu.setRemoveAllWhenShown(true);
 		this.moveToDeckMenu.addMenuListener(new IMenuListener() {
@@ -260,8 +265,7 @@ public abstract class AbstractMyCardsView extends AbstractGroupPageCardsView imp
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.reflexit.magiccards.ui.views.AbstractCardsView#fillContextMenu(org
-	 * .eclipse.jface.action.IMenuManager)
+	 * @see com.reflexit.magiccards.ui.views.AbstractCardsView#fillContextMenu(org .eclipse.jface.action.IMenuManager)
 	 */
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
@@ -270,8 +274,8 @@ public abstract class AbstractMyCardsView extends AbstractGroupPageCardsView imp
 		manager.add(this.moveToDeckMenu);
 		manager.add(this.addToDeck);
 		manager.add(this.split);
-// !!! RD		manager.add(this.edit);
-// !!! RD		manager.add(this.buyCards);
+		manager.add(this.edit);
+		// !!! RD		manager.add(this.buyCards);
 	}
 
 	@Override
@@ -329,8 +333,7 @@ public abstract class AbstractMyCardsView extends AbstractGroupPageCardsView imp
 	@Override
 
 	/**
-	 * RD (from Speedprog) We need to disponse the MenuManager so they can be used
-	 * in the new menu
+	 * RD (from Speedprog) We need to disponse the MenuManager so they can be used in the new menu
 	 */
 	protected void preActivate(IViewPage activePage) {
 		this.moveToDeckMenu.dispose();

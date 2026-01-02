@@ -5,24 +5,17 @@ import java.util.Iterator;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import com.reflexit.magicassistant.p2.UpdateHandlerP2;
 import com.reflexit.magiccards.core.DataManager;
-import com.reflexit.magiccards.core.MagicLogger;
 import com.reflexit.magiccards.core.seller.IPriceProvider;
 import com.reflexit.magiccards.core.seller.IPriceProviderStore;
-import com.reflexit.magiccards.core.sync.CurrencyConvertor;
 import com.reflexit.magiccards.core.sync.WebUtils;
 import com.reflexit.magiccards.ui.MagicUIActivator;
 
@@ -66,6 +59,7 @@ public class MagicPreferencePage extends FieldEditorPreferencePage implements IW
 			}
 		};
 		addField(owncopy);
+		/* !!! RD 
 		StringFieldEditor cur = new StringFieldEditor(PreferenceConstants.CURRENCY, //
 				"Default currency (code)", getFieldEditorParent()) {
 			@Override
@@ -84,6 +78,7 @@ public class MagicPreferencePage extends FieldEditorPreferencePage implements IW
 			}
 		};
 		addField(cur);
+		*/
 	}
 
 	protected void createInternetOptionsGroup() {

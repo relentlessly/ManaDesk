@@ -1,6 +1,7 @@
 package com.reflexit.magiccards.ui.utils;
 
-import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.widgets.Display;
 
 import com.reflexit.magiccards.core.CachedImageNotFoundException;
 import com.reflexit.magiccards.core.model.IMagicCard;
@@ -69,44 +73,102 @@ public class ImageCache {
 	 * @param callback
 	 * @return
 	 */
+
 	public Image getImage(Object element, final Runnable callback) {
-		// System.err.println("getting image for " + element + " " +
-		// element.getClass());
 		Image image = map.get(element);
 		if (image != null)
 			return image;
-		if (element instanceof ICardGroup) {
+
+		if (element instanceof ICardGroup)
 			return null;
-		}
-		if (!(element instanceof IMagicCard)) {
+
+		if (!(element instanceof IMagicCard))
 			return null;
-		}
+
 		final IMagicCard card = (IMagicCard) element;
-		if (in() == false)
+
+		if (!in())
 			return null;
+
 		new Job("Loading card image " + card) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
+					ImageData data = null;
+
 					try {
 						String path = ImageCreator.getInstance().createCardPath(card, true, false);
-						final Image image = ImageCreator.getInstance().createCardImage(path, false);
-						if (image != null) {
-							map.put(card, image);
-							callback.run();
-						}
+						boolean resize = false;
+
+						// background-safe : création de l’ImageData
+						data = ImageCreator.createCardImageData(path, resize);
+
 					} catch (CachedImageNotFoundException e) {
-						if (!WebUtils.isWorkOffline())
-							MagicUIActivator.log(e);
-					} catch (IOException e) {
-						MagicUIActivator.log(e);
+						if (!WebUtils.isWorkOffline()) {
+							MagicUIActivator.log("Cached image not found for: " + card + " - " + e.getMessage());
+						}
+					} catch (Exception ex) {
+						StringWriter sw = new StringWriter();
+						ex.printStackTrace(new PrintWriter(sw));
+						MagicUIActivator.log("Error creating ImageData for: " + card + "\n" + sw.toString());
 					}
+
+					final ImageData finalData = data;
+
+					// UI thread : création de l’Image + mise en cache + callback
+					Display.getDefault().asyncExec(() -> {
+						if (!in())
+							return;
+
+						Image newImg = null;
+
+						try {
+							if (finalData != null) {
+								newImg = new Image(Display.getDefault(), finalData);
+							}
+						} catch (SWTException ex) {
+							MagicUIActivator.log(
+									"Failed to create Image from ImageData for: " + card + " - " + ex.getMessage());
+							newImg = null;
+						}
+
+						// fallback UI-safe
+						if (newImg == null) {
+							try {
+								newImg = ImageCreator.getInstance().createCardNotFoundImage(card);
+							} catch (Throwable t) {
+								MagicUIActivator
+										.log("Failed to create not-found image for: " + card + " - " + t.getMessage());
+								return;
+							}
+						}
+
+						// mise en cache + dispose de l’ancienne image
+						synchronized (map) {
+							Image old = map.put(card, newImg);
+
+							if (old != null && old != newImg && !old.isDisposed()) {
+								old.dispose();
+							}
+						}
+
+						// callback UI
+						try {
+							if (callback != null)
+								callback.run();
+						} catch (Throwable t) {
+							MagicUIActivator.log("Callback error for card: " + card + " - " + t.getMessage());
+						}
+					});
+
 					return Status.OK_STATUS;
+
 				} finally {
 					out();
 				}
 			}
 		}.schedule();
+
 		return null;
 	}
 

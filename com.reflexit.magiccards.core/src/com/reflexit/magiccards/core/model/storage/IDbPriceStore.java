@@ -16,13 +16,18 @@ public interface IDbPriceStore {
 
 	void initialize();
 
-	HashMap<String, Float> getPriceMap(IPriceProviderStore provider);
+	HashMap<String, String> getPriceMap(IPriceProviderStore provider);
 
 	float getDbPrice(IMagicCard card);
 
+	float getDbPriceFoil(IMagicCard card);
+
 	void setDbPrice(IMagicCard card, float price);
+
+	void setDbPrice(IMagicCard card, float price, float price_foil);
 
 	boolean isInitialized();
 
 	void reloadPrices();
+
 }

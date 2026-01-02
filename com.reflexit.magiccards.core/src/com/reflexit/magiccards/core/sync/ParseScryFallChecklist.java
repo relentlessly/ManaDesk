@@ -1,7 +1,9 @@
 package com.reflexit.magiccards.core.sync;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -17,22 +19,30 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.reflexit.magiccards.core.DataManager;
+import com.reflexit.magiccards.core.FileUtils;
 import com.reflexit.magiccards.core.MagicLogger;
 import com.reflexit.magiccards.core.model.Edition;
 import com.reflexit.magiccards.core.model.Editions;
 import com.reflexit.magiccards.core.model.MagicCard;
 import com.reflexit.magiccards.core.model.MagicCardField;
+import com.reflexit.magiccards.core.model.storage.ICardStore;
+import com.reflexit.magiccards.core.model.xml.DbPricesMultiFileStore;
 import com.reflexit.magiccards.core.monitor.ICoreProgressMonitor;
+import com.reflexit.magiccards.core.seller.CustomPriceProvider;
 import com.reflexit.magiccards.core.sync.ParserHtmlHelper.ILoadCardHander;
 import com.reflexit.magiccards.core.sync.ParserHtmlHelper.OutputHandler;
 
 public class ParseScryFallChecklist extends AbstractParseJson {
+	CustomPriceProvider priceProvider = new CustomPriceProvider("TCG Player (Medium)");
+	DbPricesMultiFileStore priceStore = (DbPricesMultiFileStore) DbPricesMultiFileStore.getInstance();
 	public static final String BASE_SEARCH_URL = "https://api.scryfall.com/cards/search?";
 	public static final String TEXT_EXPORT_DIR = "/tmp/madatabase";
 	public boolean includeImagesUrl = true;
 
 	// Set to try when generating flat files. This is required to remove some fields
 	public boolean generateFlat = false;
+	public ICardStore store = DataManager.getInstance().getMagicDBStore();
 
 	@Override
 	public String processFromReader(BufferedReader st, ILoadCardHander handler) throws IOException {
@@ -328,6 +338,8 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		String cardText = "";
 		Object tcgId = elem.get("tcgplayer_id");
 		Object tcgEtchedId = elem.get("tcgplayer_etched_id");
+		Object rulings_uri = elem.get("rulings_uri");
+		String rulingsUriString = "";
 
 		// Always use Scryfall ID
 		frontCard.setCardId(elem.get("id").toString());
@@ -363,11 +375,38 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 				Object tcg = purchaseUri.get("tcgplayer");
 				if (tcg != null) {
 					tcgUriString = "   <a href=\"" + ((String) tcg) + "\">TcgPlayer</a>";
+
+					float price = 0f;
+					float price_foil = 0f;
+					JSONObject prices = (JSONObject) elem.get("prices");
+
+					if (prices != null && prices.size() >= 0) {
+						Object obj = prices.get("usd");
+
+						if (obj != null) {
+							price = Float.parseFloat(obj.toString());
+						}
+
+						obj = prices.get("usd_foil");
+						if (obj != null) {
+							price_foil = Float.parseFloat(obj.toString());
+						}
+
+						if (price == 0f) {
+							price = -0.0001f;
+						}
+						if (price_foil == 0f) {
+							price_foil = -0.0001f;
+						}
+						priceStore.setDbPrice(frontCard, price, price_foil);
+						priceProvider.setDbPrice(frontCard.getCardId(), price, price_foil, CurrencyConvertor.USD);
+
+					}
 				}
 			}
-
-			priceString = BuildPrice((JSONObject) elem.get("prices"));
 		}
+
+		priceString = BuildPrice((JSONObject) elem.get("prices"));
 
 		JSONObject relatedUri = (JSONObject) elem.get("related_uris");
 		String gathererUriString = "";
@@ -377,6 +416,10 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			if (gatherer != null) {
 				gathererUriString = "   <a href=\"" + ((String) gatherer) + "\">Gatherer</a>";
 			}
+		}
+
+		if (rulings_uri != null) {
+			rulingsUriString = "<BR><a href=\"" + ((String) rulings_uri) + "\">Rulings</a>";
 		}
 
 		JSONObject image_uris = (JSONObject) elem.get("image_uris");
@@ -393,7 +436,7 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			frontCard.setRarity(elem.get("rarity").toString());
 			frontCard.setPower(elem.get("power") != null ? elem.get("power").toString() : "");
 			frontCard.setToughness(elem.get("toughness") != null ? elem.get("toughness").toString() : "");
-			frontCard.setOracleText(elem.get("oracle_text").toString().replace("|", "&vert;"));
+			frontCard.setOracleText(elem.get("oracle_text").toString().replace("|", "&vert;") + rulingsUriString);
 			frontCard.setArtist(elem.get("artist").toString());
 			frontCard.setCollNumber(elem.get("collector_number").toString());
 
@@ -480,11 +523,11 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			backCard.setToughness(backFace.get("toughness") != null ? backFace.get("toughness").toString() : "");
 
 			frontCard.setOracleText(frontFace.get("oracle_text") != null
-					? frontFace.get("oracle_text").toString().replace("|", "&vert;")
+					? (frontFace.get("oracle_text").toString().replace("|", "&vert;") + rulingsUriString)
 					: "");
-			backCard.setOracleText(
-					backFace.get("oracle_text") != null ? backFace.get("oracle_text").toString().replace("|", "&vert;")
-							: "");
+			backCard.setOracleText(backFace.get("oracle_text") != null
+					? (backFace.get("oracle_text").toString().replace("|", "&vert;") + rulingsUriString)
+					: "");
 
 			frontCard.setArtist(frontFace.get("artist") != null ? frontFace.get("artist").toString() : "");
 			backCard.setArtist(backFace.get("artist") != null ? backFace.get("artist").toString() : "");
@@ -694,11 +737,29 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 	public void downloadAndSaveEdition(File dir, String set) {
 		System.out.println("Downloading " + set + " from Scryfall");
 
+		BufferedInputStream st;
+		try {
+			st = new BufferedInputStream(new FileInputStream(new File(
+					"C:\\Dev\\runtime-magic.product\\magiccards\\MagicDBScry\\prices\\TCG_Player__Medium_.xml")),
+					FileUtils.DEFAULT_BUFFER_SIZE);
+
+			priceProvider.loadPrices(st);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		try (PrintStream out = new PrintStream(dir)) {
 			SortedOutputHanlder handler = new SortedOutputHanlder(out, true, true);
 			this.loadSet(set, handler, ICoreProgressMonitor.NONE);
 		} catch (Exception e) {
 			System.err.println(e);
+		}
+		try {
+			priceProvider.save();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

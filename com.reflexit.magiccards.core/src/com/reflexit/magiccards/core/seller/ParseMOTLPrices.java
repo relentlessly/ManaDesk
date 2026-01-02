@@ -92,7 +92,14 @@ public class ParseMOTLPrices extends AbstractPriceProvider {
 	public float getPrice(IMagicCard magicCard) {
 		if (magicCard == null)
 			return -1;
-		return priceMap.get(magicCard.getCardId());
+
+		String prices = priceMap.get(magicCard.getCardId());
+		int sep = prices.indexOf(":");
+		if (sep != -1) {
+			prices = prices.substring(0, sep);
+		}
+		float price = Float.valueOf(prices);
+		return price; // !!! RD just to make it compile
 	}
 
 	private long lastUpdate;
@@ -100,8 +107,8 @@ public class ParseMOTLPrices extends AbstractPriceProvider {
 	public boolean updateFromWeb() throws IOException {
 		if (lastUpdate != 0 && System.currentTimeMillis() - lastUpdate < 60 * 1000)
 			return false;
-		HashMap<String, Float> res;
-		res = new HashMap<String, Float>();
+		HashMap<String, String> res;
+		res = new HashMap<String, String>();
 		URL url = new URL(baseURL);
 		InputStream openStream = WebUtils.openUrl(url);
 		BufferedReader st = new BufferedReader(new InputStreamReader(openStream));
@@ -115,7 +122,7 @@ public class ParseMOTLPrices extends AbstractPriceProvider {
 	/*-
 	 * AEther Adept (M11),              0.40,  0.00,   0.40,   0.40,   0.40,  0.00,   1
 	 */
-	private void processFile(BufferedReader st, HashMap<String, Float> res) throws IOException {
+	private void processFile(BufferedReader st, HashMap<String, String> res) throws IOException {
 		String line = "";
 		while ((line = st.readLine()) != null) {
 			String[] fields = line.split("\\|");
@@ -125,14 +132,14 @@ public class ParseMOTLPrices extends AbstractPriceProvider {
 			String price = fields[1].trim();
 			try {
 				float f = Float.parseFloat(price);
-				res.put(name, f);
+				// !!! RD Just to compile res.put(name, f);
 			} catch (NumberFormatException e) {
 				continue;
 			}
 		}
 	}
 
-	private void updatePrices(HashMap<String, Float> res) {
+	private void updatePrices(HashMap<String, String> res) {
 		IDbCardStore<IMagicCard> db = DataManager.getInstance().getMagicDBStore();
 		// System.err.println(db.isInitialized());
 		HashMap<String, CountersMap> scandmap = new HashMap();
@@ -152,9 +159,11 @@ public class ParseMOTLPrices extends AbstractPriceProvider {
 				continue;
 			}
 			if (set == null) {
+				/* !!! RD Just to make it compile
 				for (IMagicCard mc : candidates) {
 					setDbPrice(mc, res.get(xname), getCurrency());
 				}
+				*/
 				continue;
 			} else {
 				boolean found = false;
@@ -166,7 +175,9 @@ public class ParseMOTLPrices extends AbstractPriceProvider {
 					if (abbr == null) {
 						MagicLogger.log("No abbreviation for !! " + cset);
 					} else if (abbr.equals(set)) {
+						/* !!! RD Just to make it compile
 						setDbPrice(mc, res.get(xname), getCurrency());
+						*/
 						found = true;
 						break;
 					}
@@ -191,9 +202,8 @@ public class ParseMOTLPrices extends AbstractPriceProvider {
 			for (String missingSet : scandmap.keySet()) {
 				CountersMap countersMap = scandmap.get(missingSet);
 				String poss = countersMap.maxKey();
-				System.err.println("* Not found set " + missingSet + " possible " + poss + " "
-						+ countersMap.get(poss) + " of "
-						+ allsetmap.get(missingSet));
+				System.err.println("* Not found set " + missingSet + " possible " + poss + " " + countersMap.get(poss)
+						+ " of " + allsetmap.get(missingSet));
 				for (Iterator iterator = countersMap.keySet().iterator(); iterator.hasNext();) {
 					String cset = (String) iterator.next();
 					System.err.println("  possible sets " + cset + " " + editions.getAbbrByName(cset) + " "

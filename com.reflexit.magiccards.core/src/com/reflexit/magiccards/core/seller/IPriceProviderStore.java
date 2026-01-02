@@ -6,7 +6,8 @@ import java.util.Properties;
 public interface IPriceProviderStore {
 	public abstract String getName();
 
-	public abstract HashMap<String, Float> getPriceMap();
+	public abstract HashMap<String, String> getPriceMap();
 
 	public abstract Properties getProperties();
+
 }

@@ -1,16 +1,25 @@
 package com.reflexit.magiccards.ui.dialogs;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -18,6 +27,7 @@ import org.eclipse.swt.widgets.Text;
 import com.reflexit.magiccards.core.model.MagicCardField;
 import com.reflexit.magiccards.core.model.SpecialTags;
 import com.reflexit.magiccards.core.sync.CardCache;
+import com.reflexit.magiccards.ui.MagicUIActivator;
 import com.reflexit.magiccards.ui.utils.ImageCreator;
 import com.reflexit.magiccards.ui.widgets.ContextAssist;
 
@@ -71,17 +81,94 @@ public class EditCardsPropertiesDialog extends MagicDialog {
 	}
 
 	private void createImageControl(Composite parent) {
-		Label imageControl = new Label(parent, SWT.NONE);
+
+		final Label imageControl = new Label(parent, SWT.NONE);
+
 		GridData gda1 = new GridData(GridData.FILL_VERTICAL);
 		gda1.widthHint = ImageCreator.CARD_WIDTH;
 		gda1.heightHint = ImageCreator.CARD_HEIGHT;
 		imageControl.setLayoutData(gda1);
-		String localPath = CardCache.createLocalImageFilePath(store.getString(MagicCardField.ID.name()),
+
+		final String localPath = CardCache.createLocalImageFilePath(store.getString(MagicCardField.ID.name()),
 				store.getString(MagicCardField.EDITION_ABBR.name()));
-		if (new File(localPath).exists()) {
-			Image img = ImageCreator.getInstance().createCardImage(localPath, false);
-			imageControl.setImage(img);
+
+		if (!new File(localPath).exists()) {
+			return;
 		}
+
+		new Job("Load local card image") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+
+				ImageData data = null;
+
+				try {
+					data = ImageCreator.createCardImageData(localPath, true);
+				} catch (Exception ex) {
+					StringWriter sw = new StringWriter();
+					ex.printStackTrace(new PrintWriter(sw));
+					MagicUIActivator
+							.log("Error creating ImageData for local image: " + localPath + "\n" + sw.toString());
+					data = null;
+				}
+
+				final ImageData finalData = data;
+
+				Display.getDefault().asyncExec(() -> {
+
+					if (imageControl.isDisposed())
+						return;
+
+					Image newImg = null;
+
+					try {
+						if (finalData != null) {
+							newImg = new Image(Display.getDefault(), finalData);
+						}
+					} catch (SWTException ex) {
+						MagicUIActivator.log(
+								"Failed to create Image from ImageData for: " + localPath + " - " + ex.getMessage());
+						newImg = null;
+					}
+
+					if (newImg == null) {
+						try {
+							newImg = ImageCreator.getInstance().createCardNotFoundImage(null);
+						} catch (Throwable t) {
+							MagicUIActivator
+									.log("Failed to create not-found image for: " + localPath + " - " + t.getMessage());
+							return;
+						}
+					}
+
+					// disposer l’ancienne image correctement
+					Image old = (Image) imageControl.getData("cardImage");
+					if (old != null && !old.isDisposed()) {
+						imageControl.setImage(null); // ← OBLIGATOIRE
+						old.dispose();
+					}
+
+					// appliquer la nouvelle image
+					imageControl.setImage(newImg);
+					imageControl.setData("cardImage", newImg);
+
+					if (imageControl.getData("disposeListenerAdded") == null) {
+						imageControl.addDisposeListener(ev -> {
+							Image i = (Image) imageControl.getData("cardImage");
+							if (i != null && !i.isDisposed())
+								i.dispose();
+						});
+						imageControl.setData("disposeListenerAdded", Boolean.TRUE);
+					}
+
+					if (!parent.isDisposed()) {
+						parent.layout(true);
+					}
+				});
+
+				return Status.OK_STATUS;
+			}
+		}.schedule();
 	}
 
 	public void createOwnershipFieldEditor(Composite area) {

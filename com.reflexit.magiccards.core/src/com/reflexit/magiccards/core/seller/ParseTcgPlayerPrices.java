@@ -38,6 +38,7 @@ public class ParseTcgPlayerPrices extends AbstractPriceProvider {
 	// http://magic.tcgplayer.com/db/price_guide.asp?setname=From%20the%20Vault:%20Twenty
 	public static enum Type {
 		Low("lowprice"), Medium("avgprice"), High("hiprice"),;
+
 		String tag;
 
 		Type(String tag) {
@@ -113,11 +114,13 @@ public class ParseTcgPlayerPrices extends AbstractPriceProvider {
 						for (MagicCard magicCard : map.keySet()) {
 							float price = map.get(magicCard);
 							MagicCard ref = ImportUtils.findRef(magicCard, db);
+							/* !!! RD Just to compile
 							if (ref != null) {
 								if (price == 0)
 									price = -0.0001f;
 								setDbPrice(ref, price, getCurrency());
 							}
+							*/
 						}
 					}
 				} catch (Exception e) {
@@ -139,11 +142,12 @@ public class ParseTcgPlayerPrices extends AbstractPriceProvider {
 								price = getPrice(flipCard);
 						}
 						// if (price > 0)
+						/* !!! RD Just to compile
 						{
 							if (price == 0)
 								price = -0.0001f;
 							setDbPrice(magicCard, price, getCurrency());
-						}
+						}*/
 						monitor.worked(1);
 					} catch (Exception e) {
 						MagicLogger.log(e);

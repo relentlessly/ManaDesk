@@ -74,7 +74,7 @@ public class ParseMtgFanaticPrices extends AbstractPriceProvider {
 			if (id != null) {
 				try {
 					// System.err.println("found " + set + " " + id);
-					HashMap<String, Float> prices = parse(id);
+					HashMap<String, String> prices = parse(id);
 					if (prices.size() > 0) {
 						for (IMagicCard magicCard : iterable) {
 							if (monitor.isCanceled())
@@ -82,8 +82,9 @@ public class ParseMtgFanaticPrices extends AbstractPriceProvider {
 							String set2 = magicCard.getSet();
 							if (set2.equals(set)) {
 								if (prices.containsKey(magicCard.getName())) {
+									/* !!! RD Just to compile
 									Float price = prices.get(magicCard.getName());
-									setDbPrice(magicCard, price, getCurrency());
+									setDbPrice(magicCard, price, getCurrency());*/
 									monitor.worked(1);
 								}
 							}
@@ -142,8 +143,8 @@ public class ParseMtgFanaticPrices extends AbstractPriceProvider {
 		return null;
 	}
 
-	public HashMap<String, Float> parse(String setId) throws IOException {
-		HashMap<String, Float> res = new HashMap<String, Float>();
+	public HashMap<String, String> parse(String setId) throws IOException {
+		HashMap<String, String> res = new HashMap<String, String>();
 		URL url = new URL(baseURL.toString().replace("SET", setId));
 		InputStream openStream = WebUtils.openUrl(url);
 		BufferedReader st = new BufferedReader(new InputStreamReader(openStream));
@@ -169,7 +170,7 @@ public class ParseMtgFanaticPrices extends AbstractPriceProvider {
 	private static final Pattern namePattern = Pattern
 			.compile("<a href=\"/store/magic/viewcard.aspx.I=MTG-MS-\\d+\">(.*?)</a>");
 
-	private void processFile(BufferedReader st, HashMap<String, Float> res) throws IOException {
+	private void processFile(BufferedReader st, HashMap<String, String> res) throws IOException {
 		String line = "";
 		while ((line = st.readLine()) != null) {
 			if (rowStart.matcher(line).find()) {
@@ -184,7 +185,7 @@ public class ParseMtgFanaticPrices extends AbstractPriceProvider {
 		}
 	}
 
-	private void processRow(String row, HashMap<String, Float> res) {
+	private void processRow(String row, HashMap<String, String> res) {
 		Matcher matcher = namePattern.matcher(row);
 		if (matcher.find()) {
 			String name = matcher.group(1);
@@ -192,8 +193,8 @@ public class ParseMtgFanaticPrices extends AbstractPriceProvider {
 			if (pmatcher.find()) {
 				String price = pmatcher.group(1);
 				try {
-					float f = Float.parseFloat(price);
-					res.put(name, f);
+					// !!! RD float f = Float.parseFloat(price);
+					// !!! RD Just to compile res.put(name, f);
 				} catch (NumberFormatException e) {
 					return;
 				}
@@ -239,7 +240,7 @@ public class ParseMtgFanaticPrices extends AbstractPriceProvider {
 	public static void main(String[] args) throws IOException {
 		ParseMtgFanaticPrices item = new ParseMtgFanaticPrices();
 		// item.parseSets();
-		HashMap<String, Float> res = item.parse("383");
+		HashMap<String, String> res = item.parse("383");
 		System.err.println(res);
 	}
 

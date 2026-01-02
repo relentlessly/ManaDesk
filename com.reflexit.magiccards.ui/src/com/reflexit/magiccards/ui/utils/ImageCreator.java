@@ -23,7 +23,9 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 
 import com.reflexit.magiccards.core.CachedImageNotFoundException;
 import com.reflexit.magiccards.core.MagicException;
@@ -39,14 +41,15 @@ import com.reflexit.magiccards.ui.MagicUIActivator;
 public class ImageCreator {
 	public static final int SET_IMG_HEIGHT = 16;
 	public static final int SET_IMG_WIDTH = 32;
-	public static final int CARD_HEIGHT = 370;
-	public static final int CARD_WIDTH = 265;
+	public static final int CARD_HEIGHT = 442;
+	public static final int CARD_WIDTH = 317;
 	private static final String TEXT_ITALIC_FONT_KEY = "text_italic";
 	private static final String TEXT_FONT_KEY = "text";
 	private static final String TYPE_FONT_KEY = "type";
 	private static final String TITLE_FONT_KEY = "title";
 	private static final String CARD_TEMPLATE = "card_template";
 	static private ImageCreator instance;
+	private Image createdImage;
 	private FontRegistry fontRegistry;
 
 	private ImageCreator() {
@@ -120,6 +123,69 @@ public class ImageCreator {
 		ImageData im2 = scaleAndCenter(im.getImageData(), SET_IMG_WIDTH, SET_IMG_HEIGHT, false);
 		im.dispose();
 		return new Image(display, im2);
+	}
+
+	/**
+	 * Indique si createCardNotFoundImageData est disponible.
+	 * Utile si tu veux tester la présence de la méthode sans provoquer d'exception.
+	 */
+	public static boolean hasCreateCardNotFoundImageData() {
+		return true;
+	}
+
+	/**
+	 * Retourne un ImageData représentant l'image "not found" pour la carte.
+	 * Cette méthode est sûre à appeler depuis un thread de fond : elle exécute
+	 * la création temporaire de l'Image dans le thread UI via Display.syncExec,
+	 * récupère l'ImageData, puis dispose l'Image.
+	 *
+	 * @param card la carte pour laquelle on veut l'image "not found"
+	 * @return ImageData ou null si échec
+	 */
+	public static ImageData createCardNotFoundImageData(final IMagicCard card) {
+		final ImageData[] result = new ImageData[1];
+		result[0] = null;
+
+		// Si on est déjà dans le thread UI, on peut créer directement l'image temporaire
+		if (Display.getCurrent() != null) {
+			Image tmp = null;
+			try {
+				tmp = ImageCreator.getInstance().createCardNotFoundImage(card); // méthode existante qui retourne Image
+				if (tmp != null) {
+					result[0] = tmp.getImageData();
+				}
+			} catch (Throwable t) {
+				MagicUIActivator.log("Failed to create not-found ImageData (UI thread)");
+			} finally {
+				if (tmp != null && !tmp.isDisposed())
+					tmp.dispose();
+			}
+			return result[0];
+		}
+
+		// Sinon, basculer sur le thread UI et faire la même chose (bloquant)
+		Display display = Display.getDefault();
+		if (display == null || display.isDisposed()) {
+			// pas de display disponible
+			return null;
+		}
+
+		display.syncExec(() -> {
+			Image tmp = null;
+			try {
+				tmp = ImageCreator.getInstance().createCardNotFoundImage(card);
+				if (tmp != null) {
+					result[0] = tmp.getImageData();
+				}
+			} catch (Throwable t) {
+				MagicUIActivator.log("Failed to create not-found ImageData (syncExec)");
+			} finally {
+				if (tmp != null && !tmp.isDisposed())
+					tmp.dispose();
+			}
+		});
+
+		return result[0];
 	}
 
 	public static Image createNewSetImage(URL url) {
@@ -259,11 +325,74 @@ public class ImageCreator {
 		}
 	}
 
+	public static ImageData createCardImageData(String path, boolean resize) {
+		try {
+			ImageData data = resize ? getResizedCardImage(new ImageData(path)) : new ImageData(path);
+			setAlphaBlendingForCorners(data);
+			return data;
+		} catch (SWTException e) {
+			MagicUIActivator.log("Failed to create ImageData for: " + path + e.toString());
+			return null;
+		}
+	}
+
+	public static void applyImageDataToControl(Control control, ImageData data) {
+		if (control == null || control.isDisposed())
+			return;
+		Display display = control.getDisplay();
+		if (Display.getCurrent() == null) {
+			display.asyncExec(() -> applyImageDataToControl(control, data));
+			return;
+		}
+
+		Image newImg = null;
+		try {
+			if (data != null)
+				newImg = new Image(display, data);
+		} catch (SWTException e) {
+			MagicUIActivator.log("Failed to create Image from ImageData");
+			MagicUIActivator.log(e);
+		}
+
+		if (control instanceof Label) {
+			Label label = (Label) control;
+			Image old = label.getImage();
+			label.setImage(newImg);
+			if (old != null && !old.isDisposed())
+				old.dispose();
+			if (label.getData("disposeListenerAdded") == null) {
+				label.addDisposeListener(ev -> {
+					Image i = label.getImage();
+					if (i != null && !i.isDisposed())
+						i.dispose();
+				});
+				label.setData("disposeListenerAdded", Boolean.TRUE);
+			}
+		} else {
+			Image old = (Image) control.getData("cardImage");
+			control.setData("cardImage", newImg);
+			if (old != null && !old.isDisposed())
+				old.dispose();
+			if (control.getData("disposeListenerAdded") == null) {
+				control.addDisposeListener(ev -> {
+					Image i = (Image) control.getData("cardImage");
+					if (i != null && !i.isDisposed())
+						i.dispose();
+				});
+				control.setData("disposeListenerAdded", Boolean.TRUE);
+			}
+		}
+	}
+
+	/* !!! RD Not used anymore !!!
 	public Image createCardImage(String path, boolean resize) {
 		try {
 			ImageData data = resize ? getResizedCardImage(new ImageData(path)) : new ImageData(path);
 			setAlphaBlendingForCorners(data);
 			return new Image(Display.getDefault(), data);
+	
+			// !!! RD Iamge "leak" to fix
+	
 		} catch (SWTException e) {
 			// failed to create image
 			MagicUIActivator.log("Failed to create an image for: " + path);
@@ -271,16 +400,71 @@ public class ImageCreator {
 			return null;
 		}
 	}
+	*/
+	public static ImageData scaleImageDataWithGC(Display display, ImageData srcData, int targetW, int targetH) {
+		if (srcData == null)
+			return null;
 
-	public ImageData getResizedCardImage(ImageData data) {
+		// Crée une Image source à partir de ImageData
+		Image srcImage = new Image(display, srcData);
+
+		// Prépare une ImageData destination 32 bits (avec palette ARGB) pour préserver l'alpha
+		PaletteData palette = new PaletteData(0xFF0000, 0xFF00, 0xFF);
+		ImageData dstData = new ImageData(targetW, targetH, 32, palette);
+		dstData.alphaData = new byte[targetW * targetH]; // initialisé à 0 (transparent) par défaut
+
+		// Crée l'image destination à partir de dstData (assure canal alpha)
+		Image dstImage = new Image(display, dstData);
+
+		GC gc = null;
+		try {
+			gc = new GC(dstImage);
+
+			// Essayer d'améliorer la qualité si la plateforme le supporte
+			try {
+				gc.setAntialias(SWT.ON);
+			} catch (Throwable ignored) {
+			}
+			try {
+				gc.setInterpolation(SWT.HIGH);
+			} catch (Throwable ignored) {
+			}
+
+			Rectangle sBounds = srcImage.getBounds();
+			int sx = 0, sy = 0, sw = sBounds.width, sh = sBounds.height;
+			int dx = 0, dy = 0, dw = targetW, dh = targetH;
+
+			// Dessine la source redimensionnée dans la destination
+			gc.drawImage(srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+
+		} finally {
+			if (gc != null && !gc.isDisposed())
+				gc.dispose();
+			if (srcImage != null && !srcImage.isDisposed())
+				srcImage.dispose();
+		}
+
+		// Récupère l'ImageData résultante puis dispose l'image destination
+		ImageData result = dstImage.getImageData();
+		if (dstImage != null && !dstImage.isDisposed())
+			dstImage.dispose();
+
+		return result;
+	}
+
+	public static ImageData getResizedCardImage(ImageData data) {
 		int width = data.width;
 		int height = data.height;
 		float ratio = width / (float) height;
-		if (ratio > 0.68 && ratio < 0.73) {
+		if (ratio > 0.68 && ratio < 0.73) { // !!! RD Useless I think but keep it for now
 			// regular card
-			// gather cards are 223 x 310 or 265 x 370, if card is bigger lets resize it
+			// gather cards are typically 680x488, if card bigger than reserved space (CARD_HEIGTH/WIDTH), lets resize it
 			if (height > ImageCreator.CARD_HEIGHT) {
-				return data.scaledTo((int) (ImageCreator.CARD_HEIGHT * ratio), ImageCreator.CARD_HEIGHT);
+				ratio = (float) ImageCreator.CARD_HEIGHT / (float) height;
+				Display display = Display.getDefault();
+				ImageData scale = scaleImageDataWithGC(display, data, ImageCreator.CARD_WIDTH,
+						ImageCreator.CARD_HEIGHT);
+				return scale;
 			}
 		}
 		return data;
@@ -463,7 +647,7 @@ public class ImageCreator {
 
 	private static final int FULL_OPAQUE = 255;
 
-	public void setAlphaBlendingForCorners(ImageData fullImageData) {
+	public static void setAlphaBlendingForCorners(ImageData fullImageData) {
 		int width = fullImageData.width;
 		int height = fullImageData.height;
 		// int redMask = fullImageData.palette.redMask;

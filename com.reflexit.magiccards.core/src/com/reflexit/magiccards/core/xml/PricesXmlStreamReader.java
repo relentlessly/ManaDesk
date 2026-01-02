@@ -31,7 +31,7 @@ public class PricesXmlStreamReader {
 		Stack<Tag> states = new Stack<>();
 		Tag state = Tag.cards;
 		private String id;
-		private float price;
+		private String price;
 		String last = null;
 		StringBuffer text = new StringBuffer();
 		String key;
@@ -63,7 +63,7 @@ public class PricesXmlStreamReader {
 				break;
 			case mc:
 				id = "0";
-				price = 0;
+				price = "";
 				break;
 			case property:
 				String name = attributes.getValue("name");
@@ -105,7 +105,7 @@ public class PricesXmlStreamReader {
 				case dbprice:
 					if (states.peek() == Tag.mc) {
 						if (ttStr != null && !ttStr.isEmpty()) {
-							price = Float.valueOf(ttStr);
+							price = ttStr;
 						}
 					}
 					break;
@@ -116,7 +116,7 @@ public class PricesXmlStreamReader {
 							if (last.equals("id"))
 								id = ttStr;
 							else if (last.equals("dbprice"))
-								price = Float.valueOf(ttStr);
+								price = ttStr;
 						}
 						break;
 					}

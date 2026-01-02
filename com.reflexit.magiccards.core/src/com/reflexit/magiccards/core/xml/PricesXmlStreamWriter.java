@@ -26,12 +26,12 @@ public class PricesXmlStreamWriter {
 				Properties properties = object.getProperties();
 				marshal(properties);
 				// list
-				HashMap<String, Float> map = object.getPriceMap();
+				HashMap<String, String> map = object.getPriceMap();
 				if (map != null) {
 					writer.startEl("list");
 					map.forEach((key, value) -> {
 						try {
-							if (value != 0) {
+							if (!value.isEmpty()) {
 								writer.startEl("mc");
 								writer.el("id", key);
 								writer.el("dbprice", String.valueOf(value));

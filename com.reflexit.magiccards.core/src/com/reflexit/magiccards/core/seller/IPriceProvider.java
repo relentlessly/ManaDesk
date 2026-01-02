@@ -25,14 +25,20 @@ public interface IPriceProvider extends IPriceProviderStore {
 	 *            - progress monitor
 	 * @throws IOException
 	 */
-	public void updatePricesAndSync(Iterable<IMagicCard> iterable, ICoreProgressMonitor monitor)
-			throws IOException;
+	public void updatePricesAndSync(Iterable<IMagicCard> iterable, ICoreProgressMonitor monitor) throws IOException;
+
+	public void Sync(Iterable<IMagicCard> iterable, ICoreProgressMonitor monitor) throws IOException;
 
 	void save() throws IOException;
 
-	void setDbPrice(IMagicCard card, float price, Currency cur);
+	void setDbPrice(IMagicCard card, float price, float price_foil, Currency cur);
+
+	void setDbPrice(String id, float price, float price_foil, Currency cur);
 
 	float getDbPrice(IMagicCard card, Currency cur);
 
 	Currency getCurrency();
+
+	float getDbPriceFoil(IMagicCard card, Currency cur);
+
 }

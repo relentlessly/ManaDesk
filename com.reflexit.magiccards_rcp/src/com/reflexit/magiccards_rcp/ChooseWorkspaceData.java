@@ -25,8 +25,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
- * This class stores the information behind the "Launch Workspace" dialog. The class is able to read
- * and write itself to a well known configuration file.
+ * This class stores the information behind the "Launch Workspace" dialog. The class is able to read and write itself to a well known configuration file.
  */
 public class ChooseWorkspaceData {
 	/**
@@ -38,27 +37,21 @@ public class ChooseWorkspaceData {
 	 */
 	private static final String PERS_FOLDER = "org.eclipse.ui.ide"; //$NON-NLS-1$
 	/**
-	 * The name of the file within the config area that will be used for the recever's persisted
-	 * data.
+	 * The name of the file within the config area that will be used for the recever's persisted data.
 	 * 
 	 * @see PERS_FOLDER
 	 */
 	private static final String PERS_FILENAME = "recentWorkspaces.xml"; //$NON-NLS-1$
 	/**
-	 * In the past a file was used to store persist these values. This file was written with this
-	 * value as its protocol identifier.
+	 * In the past a file was used to store persist these values. This file was written with this value as its protocol identifier.
 	 */
 	private static final int PERS_ENCODING_VERSION = 1;
 	/**
-	 * This is the first version of the encode/decode protocol that uses the config area preference
-	 * store for persistence. The only encoding done is to convert the recent workspace list into a
-	 * comma-separated list.
+	 * This is the first version of the encode/decode protocol that uses the config area preference store for persistence. The only encoding done is to convert the recent workspace list into a comma-separated list.
 	 */
 	private static final int PERS_ENCODING_VERSION_CONFIG_PREFS = 2;
 	/**
-	 * This is the second version of the encode/decode protocol that uses the confi area preferences
-	 * store for persistence. This version is the same as the previous version except it uses a \n
-	 * character to seperate the path entries instead of commas. (see bug 98467)
+	 * This is the second version of the encode/decode protocol that uses the confi area preferences store for persistence. This version is the same as the previous version except it uses a \n character to seperate the path entries instead of commas. (see bug 98467)
 	 * 
 	 * @since 3.3.1
 	 */
@@ -99,21 +92,18 @@ public class ChooseWorkspaceData {
 	}
 
 	/**
-	 * Return the folder to be used as a default if no other information exists. Does not return
-	 * null.
+	 * Return the folder to be used as a default if no other information exists. Does not return null.
 	 */
 	public String getInitialDefault() {
 		if (initialDefault == null) {
 			setInitialDefault(System.getProperty("user.dir") //$NON-NLS-1$
-					+ File.separator + "MagicForkWorkspace"); //$NON-NLS-1$
+					+ File.separator + "ManaDeskWorkspace"); //$NON-NLS-1$
 		}
 		return initialDefault;
 	}
 
 	/**
-	 * Set this data's initialDefault parameter to a properly formatted version of the argument
-	 * directory string. The proper format is to the platform appropriate separator character
-	 * without meaningless leading or trailing separator characters.
+	 * Set this data's initialDefault parameter to a properly formatted version of the argument directory string. The proper format is to the platform appropriate separator character without meaningless leading or trailing separator characters.
 	 */
 	private void setInitialDefault(String dir) {
 		if (dir == null || dir.length() <= 0) {
@@ -149,8 +139,7 @@ public class ChooseWorkspaceData {
 	}
 
 	/**
-	 * The argument workspace has been selected, update the receiver. Does not persist the new
-	 * values.
+	 * The argument workspace has been selected, update the receiver. Does not persist the new values.
 	 */
 	public void workspaceSelected(String dir) {
 		// this just stores the selection, it is not inserted and persisted
@@ -177,8 +166,7 @@ public class ChooseWorkspaceData {
 	}
 
 	/**
-	 * Update the persistent store. Call this function after the currently selected value has been
-	 * found to be ok.
+	 * Update the persistent store. Call this function after the currently selected value has been found to be ok.
 	 */
 	public void writePersistedData() {
 		// 1. get config pref node
@@ -214,8 +202,7 @@ public class ChooseWorkspaceData {
 	}
 
 	/**
-	 * Return the current (persisted) value of the "showDialog on startup" preference. Return the
-	 * global default if the file cannot be accessed.
+	 * Return the current (persisted) value of the "showDialog on startup" preference. Return the global default if the file cannot be accessed.
 	 */
 	public static boolean getShowDialogValue() {
 		// TODO See the long comment in #readPersistedData -- when the
@@ -228,8 +215,7 @@ public class ChooseWorkspaceData {
 	}
 
 	/**
-	 * Return the current (persisted) value of the "showDialog on startup" preference. Return the
-	 * global default if the file cannot be accessed.
+	 * Return the current (persisted) value of the "showDialog on startup" preference. Return the global default if the file cannot be accessed.
 	 */
 	public static void setShowDialogValue(boolean showDialog) {
 		// TODO See the long comment in #readPersistedData -- when the
@@ -256,7 +242,8 @@ public class ChooseWorkspaceData {
 		max = Math.max(max, RECENT_MAX_LENGTH);
 		// 4. load values of recent workspaces into array
 		String workspacePathPref = store.getString(MAWorkbenchPreferences.RECENT_WORKSPACES);
-		recentWorkspaces = decodeStoredWorkspacePaths(PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS, max, workspacePathPref);
+		recentWorkspaces = decodeStoredWorkspacePaths(PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS, max,
+				workspacePathPref);
 		return true;
 	}
 
@@ -281,8 +268,7 @@ public class ChooseWorkspaceData {
 	}
 
 	/**
-	 * The the preference for recent workspaces must be converted from the storage string into an
-	 * array.
+	 * The the preference for recent workspaces must be converted from the storage string into an array.
 	 */
 	private static String[] decodeStoredWorkspacePaths(int protocol, int max, String prefValue) {
 		String[] paths = new String[max];
@@ -311,8 +297,7 @@ public class ChooseWorkspaceData {
 	}
 
 	/**
-	 * Return true if the protocol used to encode the argument memento is compatible with the
-	 * receiver's implementation and false otherwise.
+	 * Return true if the protocol used to encode the argument memento is compatible with the receiver's implementation and false otherwise.
 	 */
 	private static boolean compatibleFileProtocol(IMemento memento) {
 		IMemento protocolMemento = memento.getChild(XML.PROTOCOL);
@@ -326,9 +311,7 @@ public class ChooseWorkspaceData {
 	/**
 	 * The workspace data is stored in the well known file pointed to by the result of this method.
 	 * 
-	 * @param create
-	 *            If the directory and file does not exist this parameter controls whether it will
-	 *            be created.
+	 * @param create If the directory and file does not exist this parameter controls whether it will be created.
 	 * @return An url to the file and null if it does not exist or could not be created.
 	 */
 	private static URL getPersistenceUrl(URL baseUrl, boolean create) {

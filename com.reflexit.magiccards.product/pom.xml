@@ -12,6 +12,12 @@
 	<artifactId>magic.product</artifactId>
 	<packaging>eclipse-repository</packaging>
 
+<properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <tycho.compiler.source>17</tycho.compiler.source>
+    <tycho.compiler.target>17</tycho.compiler.target>
+</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -20,7 +26,6 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<includeAllDependencies>true</includeAllDependencies>
-
 					<profileProperties>
 						<macosx-bundled>true</macosx-bundled>
 					</profileProperties>
@@ -50,12 +55,12 @@
 						<product>
 							<id>com.reflexit.magiccards_rcp.product</id>
 							<!-- optional parameters -->
-							<rootFolder>MagicFork</rootFolder>
+							<rootFolder>ManaDesk</rootFolder>
 							<rootFolders>
-								<macosx>MagicFork.app</macosx>
+								<macosx>ManaDesk.app</macosx>
 							</rootFolders>
 
-							<archiveFileName>magicfork-${qualifiedVersion}</archiveFileName>
+							<archiveFileName>manadesk-${qualifiedVersion}</archiveFileName>
 						</product>
 					</products>
 				</configuration>

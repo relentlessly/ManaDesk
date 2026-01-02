@@ -45,7 +45,7 @@ public class DbPricesMultiFileStore implements IDbPriceStore {
 			}
 			if (store.properties != null)
 				provider.getProperties().putAll(store.properties);
-			HashMap<String, Float> map = provider.getPriceMap();
+			HashMap<String, String> map = provider.getPriceMap();
 			if (store.map != null) {
 				map.putAll(store.map);
 			}
@@ -148,12 +148,23 @@ public class DbPricesMultiFileStore implements IDbPriceStore {
 
 	@Override
 	public synchronized void setDbPrice(IMagicCard card, float price) {
-		current.setDbPrice(card, price, CurrencyConvertor.getCurrency());
+		// !!! RD current.setDbPrice(card, price, CurrencyConvertor.getCurrency());
+	}
+
+	// Set standard and foil price
+	@Override
+	public synchronized void setDbPrice(IMagicCard card, float price, float price_foil) {
+		current.setDbPrice(card, price, price_foil, CurrencyConvertor.getCurrency());
 	}
 
 	@Override
 	public synchronized float getDbPrice(IMagicCard card) {
 		return current.getDbPrice(card, CurrencyConvertor.getCurrency());
+	}
+
+	@Override
+	public synchronized float getDbPriceFoil(IMagicCard card) {
+		return current.getDbPriceFoil(card, CurrencyConvertor.getCurrency());
 	}
 
 	@Override
@@ -171,7 +182,7 @@ public class DbPricesMultiFileStore implements IDbPriceStore {
 	}
 
 	@Override
-	public HashMap<String, Float> getPriceMap(IPriceProviderStore provider) {
+	public HashMap<String, String> getPriceMap(IPriceProviderStore provider) {
 		initialize();
 		return provider.getPriceMap();
 	}

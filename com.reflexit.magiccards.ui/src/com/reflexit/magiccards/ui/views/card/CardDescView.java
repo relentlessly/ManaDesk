@@ -25,7 +25,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -87,7 +89,8 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 	private Action actionAsScanned;
 	private boolean asScanned;
 	private Action open;
-// !!! RD 	private Action edit;
+	// !!! RD 	private Action edit;
+	private Image cardImage;
 	private IWebBrowser browser;
 
 	public class LoadCardJob extends Job {
@@ -223,58 +226,112 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 		try {
 			if (!isStillNeeded(card))
 				return Status.CANCEL_STATUS;
-			Image remoteImage = null;
+
+			ImageData remoteData = null;
 			IOException e = null;
+
 			try {
 				if (card.getCardId() != null) {
 					String path = ImageCreator.getInstance().createCardPath(card, isLoadingOnClickEnabled(),
 							forceUpdate);
 					boolean resize = asScanned == false;
-					remoteImage = ImageCreator.getInstance().createCardImage(path, resize);
+					// <-- background-safe: create ImageData, not Image
+					remoteData = ImageCreator.createCardImageData(path, resize);
 				}
 			} catch (CachedImageNotFoundException e1) {
 				// skip
 			} catch (IOException e1) {
 				e = e1;
 			}
+
 			MagicLogger.trace("loadCardImage remote done");
+
 			if (monitor.isCanceled() || !isStillNeeded(card))
 				return Status.CANCEL_STATUS;
+
 			monitor.worked(90);
+
 			if (monitor.isCanceled() || !isStillNeeded(card))
 				return Status.CANCEL_STATUS;
+
 			if (e != null)
 				setMessage(e.getMessage());
 			else if (!isLoadingOnClickEnabled())
 				setMessage("Image loading is disabled");
 			else
 				setMessage("");
+
 			MagicLogger.trace("loadCardImage message done " + Thread.currentThread());
+
 			if (monitor.isCanceled() || !isStillNeeded(card))
 				return Status.CANCEL_STATUS;
-			Image image = remoteImage;
-			if (image == null || image.getBounds().width < 20) {
-				image = ImageCreator.getInstance().createCardNotFoundImage(card);
-			}
-			// rotate image if needed
-			String options = (String) card.get(MagicCardField.PART);
-			if (options != null && options.length() > 0 && image != null) {
-				int rotate = 0;
-				if (options.contains("rotate180")) {
-					rotate = 180;
-				} else if (options.contains("rotate90")) {
-					rotate = 90;
+
+			// Passer à l'UI thread pour créer l'Image SWT et l'appliquer
+			final ImageData finalData = remoteData;
+			Display.getDefault().asyncExec(() -> {
+				try {
+					if (!isStillNeeded(card))
+						return;
+					// 1) créer l'image à partir de ImageData (UI thread)
+					Image image = null;
+					try {
+						if (finalData != null) {
+							image = new Image(Display.getDefault(), finalData);
+						}
+					} catch (SWTException ex) {
+						MagicUIActivator.log("Failed to create Image from ImageData for: " + card);
+						image = null;
+					}
+
+					// 2) fallback "not found" si nécessaire (création dans UI)
+					if (image == null || image.getBounds().width < 20) {
+						// si tu as createCardNotFoundImageData, utilise-la ; sinon utilise l'ancienne méthode qui retourne Image
+						if (ImageCreator.hasCreateCardNotFoundImageData()) {
+							ImageData notFoundData = ImageCreator.createCardNotFoundImageData(card);
+							if (notFoundData != null) {
+								if (image != null && !image.isDisposed())
+									image.dispose();
+								image = new Image(Display.getDefault(), notFoundData);
+							}
+						} else {
+							// createCardNotFoundImage retourne Image et doit être appelé dans UI
+							if (image != null && !image.isDisposed())
+								image.dispose();
+							image = ImageCreator.getInstance().createCardNotFoundImage(card);
+						}
+					}
+
+					// 3) rotation (doit être faite dans UI car utilise Image/GC)
+					String options = (String) card.get(MagicCardField.PART);
+					if (options != null && options.length() > 0 && image != null) {
+						int rotate = 0;
+						if (options.contains("rotate180")) {
+							rotate = 180;
+						} else if (options.contains("rotate90")) {
+							rotate = 90;
+						}
+						if (rotate != 0) {
+							Image rimage = ImageCreator.getInstance().getRotated(image, rotate);
+							if (image != null && !image.isDisposed())
+								image.dispose();
+							image = rimage;
+						}
+					}
+
+					// 4) appliquer l'image (setImage doit gérer le remplacement / dispose de l'ancienne image)
+					if (isStillNeeded(card)) {
+						MagicLogger.trace("loadCardImage set image start (UI thread)");
+						setImage(card, image);
+					} else {
+						// si plus nécessaire, disposer l'image créée
+						if (image != null && !image.isDisposed())
+							image.dispose();
+					}
+				} catch (Throwable t) {
+					MagicUIActivator.log("Error applying image to UI for card: " + card);
 				}
-				if (rotate != 0) {
-					Image rimage = ImageCreator.getInstance().getRotated(image, rotate);
-					image.dispose();
-					image = rimage;
-				}
-			}
-			if (monitor.isCanceled() || !isStillNeeded(card))
-				return Status.CANCEL_STATUS;
-			MagicLogger.trace("loadCardImage set image start");
-			setImage(card, image);
+			});
+
 		} finally {
 			monitor.done();
 			MagicLogger.traceEnd("loadCardImage");
@@ -321,8 +378,26 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 
 	public void setImage(IMagicCard card, Image remoteImage) {
 		if (card == panel.getCard()) {
-			// dumpUiThread();
-			Display.getDefault().asyncExec(() -> panel.setImage(card, remoteImage));
+
+			Image old = cardImage; // garder une référence locale
+			cardImage = remoteImage; // mettre à jour immédiatement la référence
+
+			Display.getDefault().asyncExec(() -> {
+				// si le panel est mort, on nettoie et on sort
+				if (panel == null || panel.isDisposed()) {
+					if (remoteImage != null && !remoteImage.isDisposed())
+						remoteImage.dispose();
+					return;
+				}
+
+				// 1) appliquer la nouvelle image dans le panel
+				panel.setImage(card, remoteImage);
+
+				// 2) disposer l’ancienne image APRÈS que le panel l’ait retirée
+				if (old != null && !old.isDisposed()) {
+					old.dispose();
+				}
+			});
 		}
 	}
 
@@ -375,16 +450,16 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 
 	private void fillLocalToolBar(IToolBarManager manager) {
 		// !!! RD manager.add(open);
-		// !!! RD manager.add(actionAsScanned);
+		manager.add(actionAsScanned);
 		// !!! RD manager.add(sync);
-// !!! RD		manager.add(edit);
+		// !!! RD		manager.add(edit);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		fillShowInMenu(manager);
-// !!! RD		manager.add(open);
-//		!!! RD		manager.add(sync);
-// !!! RD 		manager.add(edit);
+		// !!! RD		manager.add(open);
+		//		!!! RD		manager.add(sync);
+		// !!! RD 		manager.add(edit);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -402,12 +477,9 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 	void makeActions() {
 
 		/*
-		 * !!! RD must be Disabled this.sync = new Action("Update card info from web",
-		 * SWT.NONE) { { setImageDescriptor(MagicUIActivator.getImageDescriptor(
-		 * "icons/clcl16/software_update.png")); }
+		 * !!! RD must be Disabled this.sync = new Action("Update card info from web", SWT.NONE) { { setImageDescriptor(MagicUIActivator.getImageDescriptor( "icons/clcl16/software_update.png")); }
 		 * 
-		 * @Override public void run() { LoadCardJob job = new LoadCardJob();
-		 * job.setUser(true); job.schedule(); } };
+		 * @Override public void run() { LoadCardJob job = new LoadCardJob(); job.setUser(true); job.schedule(); } };
 		 */
 		this.actionAsScanned = new Action("When depressed - scanned image is not scaled", IAction.AS_CHECK_BOX) {
 			{
@@ -421,20 +493,11 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 			}
 		};
 		/*
-		 * !!! RD this.open = new Action("Open card in browser", SWT.NONE) { {
-		 * setImageDescriptor(MagicUIActivator.getImageDescriptor(
-		 * "icons/clcl16/discovery.gif")); }
+		 * !!! RD this.open = new Action("Open card in browser", SWT.NONE) { { setImageDescriptor(MagicUIActivator.getImageDescriptor( "icons/clcl16/discovery.gif")); }
 		 * 
-		 * @Override public void run() { try { if (panel.getCard() == null) return;
-		 * String url = getUrl(); if (WebUtils.isWorkOffline()) return; IWebBrowser
-		 * browser = getBrowser(); browser.openURL(new URL(url)); } catch (Exception e)
-		 * { MessageDialog.openError(getControl().getShell(), "Error",
-		 * "Well that kind of failed... " + e.getMessage()); MagicUIActivator.log(e); }
-		 * } };
+		 * @Override public void run() { try { if (panel.getCard() == null) return; String url = getUrl(); if (WebUtils.isWorkOffline()) return; IWebBrowser browser = getBrowser(); browser.openURL(new URL(url)); } catch (Exception e) { MessageDialog.openError(getControl().getShell(), "Error", "Well that kind of failed... " + e.getMessage()); MagicUIActivator.log(e); } } };
 		 * 
-		 * edit = new Action("Edit...") { {
-		 * setImageDescriptor(MagicUIActivator.getImageDescriptor(
-		 * "icons/clcl16/edit.png")); }
+		 * edit = new Action("Edit...") { { setImageDescriptor(MagicUIActivator.getImageDescriptor( "icons/clcl16/edit.png")); }
 		 * 
 		 * @Override public void run() { editCard(); } };
 		 */
@@ -515,6 +578,9 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 
 	@Override
 	public void dispose() {
+		if (cardImage != null && !cardImage.isDisposed()) {
+			cardImage.dispose();
+		}
 		getSite().getPage().removeSelectionListener(this);
 		saveSelection();
 		try {

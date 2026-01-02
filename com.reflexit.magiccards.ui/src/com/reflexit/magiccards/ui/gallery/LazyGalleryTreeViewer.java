@@ -23,6 +23,7 @@ import org.eclipse.nebula.jface.galleryviewer.GalleryTreeViewer;
 import org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryGroupRenderer;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
+import org.eclipse.nebula.widgets.gallery.Gallery;
 import org.eclipse.nebula.widgets.gallery.GalleryItem;
 import org.eclipse.nebula.widgets.gallery.NoGroupRenderer;
 import org.eclipse.swt.SWT;
@@ -77,6 +78,38 @@ public class LazyGalleryTreeViewer extends GalleryTreeViewer implements ISelecti
 		setContentProvider(new GroupExpandContentProvider());
 		setLabelProvider(new MagicCardImageLabelProvider(this));
 		setGroupsVisible(false);
+		gallery.addDisposeListener(e -> disposeAllGalleryImages(gallery));
+	}
+
+	private void disposeAllGalleryImages(Gallery gallery) {
+		if (gallery == null || gallery.isDisposed()) {
+			return;
+		}
+
+		GalleryItem[] groups = gallery.getItems();
+		if (groups != null) {
+			for (GalleryItem group : groups) {
+				disposeItemRecursive(group);
+			}
+		}
+	}
+
+	private void disposeItemRecursive(GalleryItem item) {
+		if (item == null || item.isDisposed()) {
+			return;
+		}
+
+		Image img = item.getImage();
+		if (img != null && !img.isDisposed()) {
+			img.dispose();
+		}
+
+		GalleryItem[] children = item.getItems();
+		if (children != null) {
+			for (GalleryItem child : children) {
+				disposeItemRecursive(child);
+			}
+		}
 	}
 
 	@Override
@@ -304,7 +337,7 @@ public class LazyGalleryTreeViewer extends GalleryTreeViewer implements ISelecti
 
 	@Override
 	public Object[] getExpandedElements() {
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<>();
 		Item[] items = gallery.getItems();
 		for (int i = 0; i < items.length; i++) {
 			Item item = items[i];

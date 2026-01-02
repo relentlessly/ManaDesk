@@ -87,9 +87,9 @@ for example you don't want to disassemble your existing decks don't select them 
 <li> You can use search or other filters as in previous task (of populating deck from db view)
 <li> For virtual deck when card is found you either drag and "copy" drop it into new deck (be carefull if you don't "copy" drop it will just move the card!)
 or use "Copy To" action in the context menu. For real deck - you move the card ("drag and drop" or "Move To" menu).
-<li>If you always want to work with virtual decks it may be easier to do that with Magic DB view instead of
+<li>If you always want to work with virtual decks it may be easier to do that with the database view instead of
 My Cards view. You can enable column Own Count, to see what you own, but when you drag cards from
-Magic DB view they will be always copied and own card instances remain in your collections</li>
+the database view they will be always copied and own card instances remain in your collections</li>
 <p/>
 
 <h2><a name="import_deck">Populate a deck using import</a></h2>
@@ -101,60 +101,35 @@ Select appropriate format for import.
 You will see a preview of your deck import.
 Click Finish to finish the importing. 
 <p/>
-Example 1 (Deck Classic, Count last):
-<pre>
-Diabolic Tutor (Tenth Edition) x4
-Quagmire Druid x 3
-</pre>
-<p/>
-Example 2 (Deck Classic, Count first):
-<pre>
-4 x Diabolic Tutor 
-3 x Quagmire Druid
-</pre>
-<h3>Importing from csv format or excel</h3>
+<h3>Importing from csv or Excel format</h3>
 If you have you cards in excel you can import them in the ManaDesk deck or collection.
-To do that, first rename the columns to match these name exactly (but order don't matter):
+To do that, first you need to know that only colums with any of belows name are considered (but order don't matter):
 <pre>
-ID,NAME,COST,TYPE,POWER,TOUGHNESS,ORACLE,SET,RARITY,DBPRICE,LANG,COUNT,PRICE,COMMENT,LOCATION,CUSTOM,OWNERSHIP
+NAME,SET,COUNT,SPECIAL, COMMENT, LANG, COLLNUM, GATHERERID, ID, OWNERSHIP, EDITION_ABBR
 </pre>
-This is actually ManaDesk CSV export format.  
-The only columns which are used are ID, NAME, SET and user data such as COUNT, PRICE and COMMENT.
-All columns except NAME (or ID) does not have to be present.
-Export data from excel into .csv file with "," or "|" separator and import it into ManaDesk.
-When importing select "CSV" format (or Table Piped for "|"). 
-Check "Data has a header row" checkbox. Without header row columns has to be exact in the order as above.
+Columns used to identify the card:
+NAME, SET, COLLNUM, GATHERERID, ID, EDITION_ABBR
+
+Columns imported once the card is correctly identify:
+COUNT, SPECIAL, COMMENT, LANG, OWNERSHIP
+Key columns: 
+ID: This is the Scryfall ID. If this field is present, this must matched an entry in the database. All other identification fields are ignored.
+SET or EDITION_ABBR: When ID not specify, the SET name or the SET abbreviation (EDITION_ABBR) is used. If not found, the card couldn't be imported.
+NAME, GATHERERID and COLLNUM: When the set is found, the best matching card will be detected based on the best combination of all those 3 fields.
+Export data from excel into .csv file with "," separator and import it into ManaDesk.
+When importing select "CSV" format. 
 Preview would show if format is matching. There is way to edit some import problems right in the import wizard.
 
 <p/>
-Example 3 (CSV format, no header row):
+Example 1 (CSV format, header row):
 <pre>
-,Diabolic Tutor,,,,,,Tenth Edition,,,,4,1.99,Signed by Artist,
-,Quagmire Druid,,,,,,Apocalypse,,,,2,0.15,,
-,Swamp,,,,,,Tenth Edition,,,,16,0.15,,
-</pre>
-Example 4 (CSV format, header row):
-<pre>
-ID,NAME,COST,TYPE,POWER,TOUGHNESS,ORACLE,SET,RARITY,DBPRICE,LANG,COUNT,PRICE,COMMENT,LOCATION,CUSTOM,OWNERSHIP
-129525,Diabolic Tutor,{2}{B}{B},Sorcery,,,Search your library for a card and put that card into your hand. Then shuffle your library.,Tenth Edition,Uncommon,1.99,,4,0.0,,,,false
-27188,Quagmire Druid,{2}{B},Creature - Zombie Druid,2,2,"{G}, {T}, Sacrifice a creature: Destroy target enchantment.",Apocalypse,Common,0.15,,2,0.0,,,,false
-129757,Swamp,,Basic Land - Swamp,,,[B],Tenth Edition,BasicLand,0.15,,16,0.0,,Decks/Thrull Breader & Demon.xml,,false
+NAME,SET,COUNT,COMMENT,OWNERSHIP
+Diabolic Tutor,Tenth Edition,4,,false
+Quagmire Druid,Apocalypse,2,Comment,false
+Swamp,Tenth Edition,16,,true
 </pre>
 Note that for CSV format if field has "," it is it has to be in quotes.
 <p/>
-Piped Table format is the same as CSV but using | as separator and ignoring the quotes.
-<p> 
-Example 5 (Table Piped format, no header row):
-<pre>
-|Diabolic Tutor||||||Tenth Edition||||4
-|Quagmire Druid||||||Apocalypse||||2
-</pre>
-Example 6 (Table Piped format, header row):
-<pre>
-NAME|SET|COUNT
-Diabolic Tutor|Tenth Edition|4
-Quagmire Druid|Apocalypse|2
-</pre>
 
 
 </body>

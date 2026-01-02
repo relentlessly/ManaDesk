@@ -1,56 +1,78 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target includeMode="feature" name="rcp_master" sequenceNumber="1">
-<locations>
+<target includeMode="feature" name="rcp_master" sequenceNumber="2">
+  <locations>
 
-<!-- Eclipse 2024-12 : Support Java 21 -->
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+    <!-- Eclipse 2023-12 : base RCP + p2 -->
+    <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+
+      <unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.equinox.p2.rcp.feature.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.help.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.ui.browser" version="0.0.0"/>
+      <unit id="org.eclipse.ui.net" version="0.0.0"/>
+      <unit id="org.eclipse.ui.themes" version="0.0.0"/>
+      <unit id="org.eclipse.platform.feature.group" version="0.0.0"/>
+ <!--     <unit id="org.eclipse.equinox.p2.reconciler.dropins" version="0.0.0"/> -->
+
+<unit id="org.eclipse.e4.core.services" version="0.0.0"/>
+<unit id="org.eclipse.e4.core.contexts" version="0.0.0"/>
+<unit id="org.eclipse.e4.ui.workbench" version="0.0.0"/>
+<unit id="org.eclipse.e4.ui.workbench3" version="0.0.0"/>
+<unit id="org.eclipse.e4.ui.workbench.addons.swt" version="0.0.0"/>
+
+
+  	  <unit id="org.junit" version="0.0.0"/>
+  	  <unit id="org.eclipse.core.runtime" version="0.0.0"/>
+
+<unit id="org.eclipse.equinox.core.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.equinox.p2.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/releases/2024-12/"/>
+
+      <repository location="https://download.eclipse.org/releases/2023-03/"/>
+    </location>
+
+    <!-- Mockito + ByteBuddy + Objenesis (Orbit 2022-12, compatible 2023-12) -->
+    <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+
+      <unit id="org.mockito.mockito-core" version="0.0.0"/>
+      <unit id="net.bytebuddy.byte-buddy" version="0.0.0"/>
+      <unit id="net.bytebuddy.byte-buddy-agent" version="0.0.0"/>
+      <unit id="org.objenesis" version="0.0.0"/>
+
+      <repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20221123021534/repository/"/>
+    </location>
+
+    <!-- Nebula -->
+    <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+
+      <unit id="org.eclipse.nebula.widgets.gallery.feature.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.nebula.widgets.gallery" version="0.0.0"/>
+
+      <repository location="https://download.eclipse.org/nebula/releases/2.7.0/"/>
+    </location>
+
+<!-- BIRT release (chart bundles, core, model) -->
+
+	  <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+		  <repository location="https://download.eclipse.org/birt/updates/release/4.13.0"/>
+		  <unit id="org.eclipse.birt.chart.feature.group" version="4.13.0.v202303021806"/>
+	  </location>
+	  
+	  
+<!-- SWTBot (tests UI) -->
+<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+  <unit id="org.eclipse.swtbot.go" version="0.0.0"/>          
+ 
+  <unit id="org.eclipse.swtbot.swt.finder" version="0.0.0"/>
+  <unit id="org.eclipse.swtbot.eclipse.finder" version="0.0.0"/>
+  <repository location="https://download.eclipse.org/technology/swtbot/releases/latest/"/>
 </location>
+	  
+  </locations>
 
-<!-- Orbit R20220531185310 (2022-06) - BouncyCastle, etc. -->
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-<unit id="org.apache.commons.io" version="0.0.0"/>
-<unit id="org.apache.commons.logging" version="0.0.0"/>
-<unit id="org.bouncycastle.bcprov" version="0.0.0"/>
-<unit id="org.bouncycastle.bcpg" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220531185310/repository/"/>
-</location>
 
-<!-- Orbit R20221123021534 - Mockito 4.8.1 and dependancies -->
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-<unit id="org.mockito.mockito-core" version="0.0.0"/>
-<unit id="net.bytebuddy.byte-buddy" version="0.0.0"/>
-<unit id="net.bytebuddy.byte-buddy-agent" version="0.0.0"/>
-<unit id="org.objenesis" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20221123021534/repository/"/>
-</location>
 
-<!-- SWTBot -->
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-<unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>
-<unit id="org.eclipse.swtbot.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/technology/swtbot/releases/3.1.0/"/>
-</location>
 
-<!-- BIRT 4.9 -->
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-<unit id="org.eclipse.birt.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/birt/update-site/4.9/"/>
-</location>
-
-<!-- Nebula -->
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-<unit id="org.eclipse.nebula.widgets.gallery.feature.feature.group" version="0.0.0"/>
-<repository location="https://download.eclipse.org/nebula/releases/2.7.0/"/>
-</location>
-
-</locations>
-
-<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17"/>
+  <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17"/>
 </target>

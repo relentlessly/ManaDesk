@@ -20,7 +20,7 @@ import com.reflexit.magiccards.core.xml.PricesXmlStreamWriter;
 
 public class AbstractPriceProvider implements IPriceProvider {
 	protected String name;
-	protected final HashMap<String, Float> priceMap;
+	protected final HashMap<String, String> priceMap;
 	protected final Properties properties;
 
 	public AbstractPriceProvider(String name) {
@@ -38,8 +38,7 @@ public class AbstractPriceProvider implements IPriceProvider {
 	}
 
 	@Override
-	public void updatePricesAndSync(Iterable<IMagicCard> iterable, ICoreProgressMonitor monitor)
-			throws IOException {
+	public void updatePricesAndSync(Iterable<IMagicCard> iterable, ICoreProgressMonitor monitor) throws IOException {
 		monitor.beginTask("Loading prices from " + getURL() + " ...", 200);
 		try {
 			Iterable<IMagicCard> res = updatePrices(iterable, new SubCoreProgressMonitor(monitor, 100));
@@ -47,6 +46,16 @@ public class AbstractPriceProvider implements IPriceProvider {
 				save();
 				sync(res, new SubCoreProgressMonitor(monitor, 100));
 			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	@Override
+	public void Sync(Iterable<IMagicCard> iterable, ICoreProgressMonitor monitor) throws IOException {
+		monitor.beginTask("Sync prices", 200);
+		try {
+			sync(iterable, new SubCoreProgressMonitor(monitor, 100));
 		} finally {
 			monitor.done();
 		}
@@ -115,35 +124,52 @@ public class AbstractPriceProvider implements IPriceProvider {
 	}
 
 	@Override
-	public synchronized void setDbPrice(IMagicCard magicCard, float price, Currency cur) {
-		String id = magicCard.getCardId();
-		String fid = magicCard.getFlipId();
-		if (fid != null) {
-			setDbPrice(fid, price, cur);
-		}
-		setDbPrice(id, price, cur);
-	}
-
-	public synchronized void setDbPrice(int id, float price, Currency cur) {
-		this.setDbPrice(String.valueOf(id), price, cur);
-	}
-
-	public synchronized void setDbPrice(String id, float price, Currency cur) {
-		if (id == null || id.equals("0") || price < -0.1f)
+	public synchronized void setDbPrice(String id, float price, float price_foil, Currency cur) {
+		if (id == null || id.equals("0") || (price < -0.1f && price_foil < -0.1f))
 			return;
-		if (price == 0)
+		if (price == 0 && price_foil == 0)
 			priceMap.remove(id);
 		else {
 			float curr = CurrencyConvertor.convertFromInto(price, cur, getCurrency());
-			priceMap.put(id, curr);
+			float currF = CurrencyConvertor.convertFromInto(price_foil, cur, getCurrency());
+			priceMap.put(id, String.valueOf(curr) + ":" + String.valueOf(currF));
 		}
+	}
+
+	@Override
+	public synchronized void setDbPrice(IMagicCard magicCard, float price, float price_foil, Currency cur) {
+		String id = magicCard.getCardId();
+
+		setDbPrice(id, price, price_foil, cur);
 	}
 
 	@Override
 	public synchronized float getDbPrice(IMagicCard card, Currency cur) {
 		String id = card.getCardId();
 		if (priceMap.containsKey(id)) {
-			float price = priceMap.get(id);
+			String prices = priceMap.get(id);
+			int sep = prices.indexOf(":");
+			if (sep != -1) {
+				prices = prices.substring(0, sep);
+			}
+			float price = Float.valueOf(prices);
+			return CurrencyConvertor.convertFromInto(price, getCurrency(), cur);
+		}
+		return 0f;
+	}
+
+	@Override
+	public synchronized float getDbPriceFoil(IMagicCard card, Currency cur) {
+		String id = card.getCardId();
+		if (priceMap.containsKey(id)) {
+			String prices = priceMap.get(id);
+			int sep = prices.indexOf(":");
+			if (sep != -1 && sep < prices.length() - 1) {
+				prices = prices.substring(sep + 1);
+			} else {
+				prices = "-0.0001f";
+			}
+			float price = Float.valueOf(prices);
 			return CurrencyConvertor.convertFromInto(price, getCurrency(), cur);
 		}
 		return 0f;
@@ -174,7 +200,7 @@ public class AbstractPriceProvider implements IPriceProvider {
 	}
 
 	@Override
-	public HashMap<String, Float> getPriceMap() {
+	public HashMap<String, String> getPriceMap() {
 		return priceMap;
 	}
 

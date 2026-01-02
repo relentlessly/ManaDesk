@@ -26,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.model.ICardHandler;
+import com.reflexit.magiccards.core.model.xml.DbPricesMultiFileStore;
 import com.reflexit.magiccards.core.sync.UpdateCardsFromWeb;
 import com.reflexit.magiccards.ui.MagicUIActivator;
 import com.reflexit.magiccards.ui.preferences.MagicGathererPreferencePage;
@@ -61,7 +62,7 @@ public class UpdateDbHandler extends AbstractHandler {
 		final String set = u1;
 		if (u1.equalsIgnoreCase(MagicGathererPreferencePage.ALL)) {
 			boolean confirm = MessageDialog.openConfirm(shell, "Warning", "You selected to update All sets. " //
-					+ "This operation will take about 20 minutes. "
+					+ "This operation will take about 25 minutes. "
 					+ "This will go faster if the visible windows contains no/few cards."
 					+ "\nIf you want to update a specific set simply type it in the input field. "
 					+ "\nIf you want to update to latest sets just use 'Recents (last 2 years)'. "
@@ -94,6 +95,11 @@ public class UpdateDbHandler extends AbstractHandler {
 								if (view != null) {
 									((MagicDbView) view).reloadData();
 								}
+
+								DbPricesMultiFileStore store = (DbPricesMultiFileStore) DbPricesMultiFileStore
+										.getInstance();
+								store.reloadPrices();
+
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -105,6 +111,7 @@ public class UpdateDbHandler extends AbstractHandler {
 										"No new cards found for selected set but all the current cards has been updated");
 							else
 								MessageDialog.openError(shell, "Magic Db Update", "Query returned empty page");
+
 						}
 					});
 					return Status.OK_STATUS;

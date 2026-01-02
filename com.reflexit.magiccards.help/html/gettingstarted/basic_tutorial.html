@@ -10,7 +10,7 @@
 <h1>ManaDesk Overview</h1>
 <h2> Workspace </h2>
 Workspace is the directory where ManaDesk store all its data, by default 
-it is in your home directory, in sub-directory <tt>MagicForkWorkspace</tt>.
+it is in your home directory, in sub-directory <tt>ManaDeskWorkspace</tt>.
 Check installation instructions if you want to change it. Please ensure you
 back it up regularity or sync to avoid data loss. See <a href="../tasks/sync.html">Setting up cloud sync or version control</a>
 for more details. 
@@ -19,8 +19,6 @@ for more details.
 ManaDesk is application for browsing "Magic: The Gathering" &#0153; cards 
 (see <a href="http://www.wizards.com/magic">official wizards website</a>) 
 and organizing cards into decks and library collections. 
-Also contains tournament organizer for MTG in-house tournaments.
-You can also switch to "Tournament Organizer" from Windows menu.
 <p/>
 For more information on ManaDesk check <a href="http://mtgbrowser.sourceforge.net">ManaDesk website</a>.
 <p/>
@@ -29,17 +27,17 @@ Few terms that ManaDesk uses: <br/>
 card - magic card; <br/>
 card printing - abstract representation of printed card, contains card properties such as name, type, rating etc.;<br/>
 card instance - concrete representation of card, has reference to printing, but also has additional properties such as count, 
-comment, special tags (foil, online, mint condition, fortrade, etc);<br/>
+comment, special tags (foil, etc);<br/>
 collection - set of magic cards stored in a specific location or virtually grouped;<br/>
 deck - specialized collection which is designed for play (when application refers to term collection it usually means both deck or 
 non-deck collection);<br/>
-own card - card that you own physically or online;<br/>
+own card - card that you own physically;<br/>
 virtual card - card you don't own, but want to play with, by creating virtual decks or wishlists;<br/>
 card pile - representation of card instances in a single element, with count, pile can be split if you need to move individual cards around;<br/>
-card database - set of card printings cashed locally representing all cards that app knows about (usually synced with "Gatherer" web site)
+card database - set of card printings cashed locally representing all cards that app knows about (usually synced with "Scryfall" web site)
   
 <p/>
-Car Organizer perspective contains several views (panels): <br/>
+Card Organizer perspective contains several views (panels): <br/>
 <br/>
 <a href="../reference/views.html#viewmagicdb">Scryfall Database</a> - To browse existing mtg cards, <br/> 
 <a href="../reference/views.html#viewcard">Card Info</a> - To view detailed card information and picture,<br/> 
@@ -61,16 +59,13 @@ is invoked by "mouse right click" on windows and linux.
 <h2>Updating Scryfall Card Database Online</h2>
 
 Scryfall Database View shows all available cards. By default it will only
-show cards witch pre-loaded with application. It can quickly be out of date, 
+show cards pre-loaded with the application. It can quickly be out of date, 
 to keep database in sync you have to perform cards updates. 
 App will check for update automatically on startup (unless you turned it off).
 
 To update cards manually, see <a href="../tasks/updatingdb.html">updating database</a> section.
-Cards are updated from the official magic maker website called Gatherer <a href="https://gatherer.wizards.com">http://gatherer.wizards.com</a>.
+Cards are updated from the Scryfall website <a href="https://scryfall.com/">https://scryfall.com/</a>.
 If you see something wrong with database info please check this website first and report issues to them.
-For sets they don't have, there is a complicated procedure of how you can extend database manually, 
-check the end of <a href="../tasks/updatingdb.html">updating database</a> section or  ask on forum.
-
 
 <h2>Browsing and Searching </h2>
 To browse cards you can use grouping,  sorting and filtering: 
@@ -107,8 +102,8 @@ create virtual decks, create deck with virtual flag and use copy drag instead.
 See more details in <a href="../tasks/creatingdeck.html">Creating and Populating a Deck or Collection</a>.
 <p/>
 You can edit cards in your decks and collections. To edit card properties you can select one or more cards from the
-table and choose "Edit..." from context menu (or double click on a card). Editable card properties currently are:
- count, comment, ownership and price.
+table and choose "Edit..." from context menu. Editable card properties currently are:
+ count, user price, ownership comment and special tags.
 <p/>
 You can analyse you deck using some tools: Mana Curve, Colors, Card Types, Draw, Legality - these are tabs at the bottom of the
 deck view. Also you can group cards to achieve same statistics in the main table tab using Group By menu (from the view menu).
@@ -119,7 +114,7 @@ Average bars - is normal distribution of cards in average deck adjusted to numbe
 <br>
 If you have sideboard it is stored in the separate list. To bring it up use Open Sideboard action from toolbar or view menu of Deck view.
 Drag and drop cards to sideboard from other sources same as for main deck. If you want to see sideboard and main deck at 
-the same time drag sideboard view to the bottom (and have main on the top). Sideboard is linked the the main deck, tabs like Legality and Export
+the same time drag sideboard view to the bottom (and have main on the top). Sideboard is linked to the main deck, tabs like Legality and Export
 are also looking at sideboard cards (while tabs like Mana Curve don't). Operations like deck Rename or Delete will also affect its sideboard.
 
 <h2> Storage and Internet </h2>
@@ -132,18 +127,16 @@ from internet and cached in workspace as well. If you choose to do so you can wo
 are settings to allow a redirect proxy. 
 <br><br>
 If you want to host your decks on the cloud you can do so by enabling syncronization of your workspace or its subfolders
-into the cloud storage such as box, dropbox, google drive, etc. Syncing whole workspace is probably a not a good idea since it 
+into the cloud storage such as onedrive or google drive. Syncing whole workspace is probably a not a good idea since it 
 contains cached images which would take majority of the space. Next option is to sync workspace/magiccards folder which
 is all your cards and database. See <a href="../tasks/sync.html">Setting up cloud sync or version control</a>
 for more details. 
 
 <br><br>
-It is recommended to backup your data once in a while by zipping contents of magiccards folder.
+It is recommended to backup your data once in a while by zipping workspace contents folder.
 You can also use File->Backup action that does that.
 <br><br>
-If you have issues with software you can send a bug Help->Send Bug or Feature Request and attach the log file
-found at workspace/.metadata/.log if this is a bug.
-
+If you have issues with software, please access GitHub web site and let us know!
 
 <h2> Other stuff </h2>
 Some other actions available from main menu, context menu (right click) or from view menu (triangle button in the view header  <img src="../screenshots/icons/view_menu.gif" alt="triangle button"/>).

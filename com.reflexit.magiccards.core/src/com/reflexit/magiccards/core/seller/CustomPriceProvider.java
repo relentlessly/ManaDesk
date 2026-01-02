@@ -43,13 +43,13 @@ public class CustomPriceProvider extends AbstractPriceProvider {
 		return true;
 	}
 
-	private void loadPrices(InputStream st) {
+	public void loadPrices(InputStream st) {
 		MagicLogger.traceStart("loadPrices");
 		try {
 			PriceProviderStoreObject store = new PricesXmlStreamReader().load(st);
 			if (store.properties != null)
 				getProperties().putAll(store.properties);
-			HashMap<String, Float> map = getPriceMap();
+			HashMap<String, String> map = getPriceMap();
 			if (store.map != null) {
 				map.clear();
 				map.putAll(store.map);
@@ -75,7 +75,7 @@ public class CustomPriceProvider extends AbstractPriceProvider {
 
 	@Override
 	public void save() throws IOException {
-		if (getURL() != null)
-			super.save();
+		//	!!! RD if (getURL() != null)
+		super.save();
 	}
 }

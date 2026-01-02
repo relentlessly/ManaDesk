@@ -65,7 +65,7 @@ public class EditMagicCardPhysicalDialog extends EditCardsPropertiesDialog {
 	@Override
 	protected void createBodyArea(Composite parent) {
 		super.createBodyArea(parent);
-		createLinkToCardPritingEditor();
+		// !!! RD createLinkToCardPritingEditor();
 	}
 
 	public void createLinkToCardPritingEditor() {
@@ -94,7 +94,7 @@ public class EditMagicCardPhysicalDialog extends EditCardsPropertiesDialog {
 		new Job("Updating edited cards") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				HashSet<ICardField> set = new HashSet<ICardField>();
+				HashSet<ICardField> set = new HashSet<>();
 				for (Iterator<MagicCardPhysical> iterator = cards.iterator(); iterator.hasNext();) {
 					MagicCardPhysical card = iterator.next();
 					editCard(card, store, false, set);
@@ -106,8 +106,7 @@ public class EditMagicCardPhysicalDialog extends EditCardsPropertiesDialog {
 		}.schedule();
 	}
 
-	private void editCard(MagicCardPhysical card, PreferenceStore store, boolean update,
-			Set<ICardField> fieldSet) {
+	private void editCard(MagicCardPhysical card, PreferenceStore store, boolean update, Set<ICardField> fieldSet) {
 		boolean modified = false;
 		modified = setField(card, store, MagicCardField.COUNT, fieldSet) || modified;
 		modified = setField(card, store, MagicCardField.PRICE, fieldSet) || modified;
