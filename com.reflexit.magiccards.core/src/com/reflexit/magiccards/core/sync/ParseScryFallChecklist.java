@@ -398,8 +398,10 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 						if (price_foil == 0f) {
 							price_foil = -0.0001f;
 						}
-						priceStore.setDbPrice(frontCard, price, price_foil);
-						priceProvider.setDbPrice(frontCard.getCardId(), price, price_foil, CurrencyConvertor.USD);
+						// !!! RD 
+						String priceStr = String.valueOf(price) + ":" + String.valueOf(price_foil);
+						priceStore.setDbPrice(frontCard, priceStr);
+						priceProvider.setDbPrice(frontCard.getCardId(), priceStr, CurrencyConvertor.USD);
 
 					}
 				}
@@ -478,14 +480,14 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 				frontCard.set(MagicCardField.LEGALITY, legalitiesString);
 			}
 			if (gids != null && gids.size() > 0) {
-				frontCard.set(MagicCardField.GATHERERID, gids.get(0).toString());
+				frontCard.setGathererCardId(gids.get(0).toString());
 			}
 
 			if (!generateFlat) {
 				if (tcgId != null) {
-					frontCard.set(MagicCardField.TCGID, tcgId);
+					frontCard.setTcgCardId(tcgId.toString());
 				} else if (tcgEtchedId != null) {
-					frontCard.set(MagicCardField.TCGID, tcgEtchedId);
+					frontCard.setTcgCardId(tcgEtchedId.toString());
 				}
 			}
 
@@ -609,14 +611,14 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			backCard.set(MagicCardField.FLIPID, frontCard.getCardId());
 
 			if (gids != null && gids.size() > 0) {
-				frontCard.set(MagicCardField.GATHERERID, gids.get(0).toString());
+				frontCard.setGathererCardId(gids.get(0).toString());
 			}
 
 			if (!generateFlat) {
 				if (tcgId != null) {
-					frontCard.set(MagicCardField.TCGID, tcgId);
+					frontCard.setTcgCardId(tcgId.toString());
 				} else if (tcgEtchedId != null) {
-					frontCard.set(MagicCardField.TCGID, tcgEtchedId);
+					frontCard.setTcgCardId(tcgEtchedId.toString());
 				}
 			}
 

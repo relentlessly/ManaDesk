@@ -270,7 +270,7 @@ public abstract class AbstractMagicCard implements ICard, ICardModifiable, IMagi
 
 	@Override
 	public float getDbPrice() {
-		return getFloat(MagicCardField.DBPRICE);
+		return getFloat(MagicCardField.DBPRICE); // !!! RD Probably not ok but current not used
 	}
 
 	@Override

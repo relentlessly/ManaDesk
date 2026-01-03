@@ -15,7 +15,7 @@ import com.reflexit.magiccards.db.DbActivator;
 import junit.framework.TestCase;
 
 public class EditionsTest extends TestCase {
-	private static final int EDITIONS_SIZE = 945;
+	private static final int EDITIONS_SIZE = 946;
 	private static final String EDITIONS_FILE = Editions.EDITIONS_FILE;
 	protected Editions editions;
 
@@ -160,17 +160,10 @@ public class EditionsTest extends TestCase {
 			String type = edition.getType();
 			assertNotNull(type);
 			assertFalse(type.isEmpty());
-			assertTrue("Expected type but was " + type + " in " + edition, type.equals("Core")
-					|| type.equals("Expansion")
-					|| type.equals("Reprint")
-					|| type.equals("Starter")
-					|| type.equals("Online")
-					|| type.equals("Modifiers")
-					|| type.equals("Un_set")
-					|| type.equals("Promo")
-					|| type.equals("Other")						
-					|| type.equals("Token")						
-			);
+			assertTrue("Expected type but was " + type + " in " + edition,
+					type.equals("Core") || type.equals("Expansion") || type.equals("Reprint") || type.equals("Starter")
+							|| type.equals("Online") || type.equals("Modifiers") || type.equals("Un_set")
+							|| type.equals("Promo") || type.equals("Other") || type.equals("Token"));
 			assertNotNull("Bad date " + edition, edition.getReleaseDate());
 			Date now = new Date();
 			assertFalse("Release date in future " + edition, now.before(edition.getReleaseDate()));

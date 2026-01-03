@@ -22,9 +22,7 @@ public interface IDbPriceStore {
 
 	float getDbPriceFoil(IMagicCard card);
 
-	void setDbPrice(IMagicCard card, float price);
-
-	void setDbPrice(IMagicCard card, float price, float price_foil);
+	void setDbPrice(IMagicCard card, String prices);
 
 	boolean isInitialized();
 

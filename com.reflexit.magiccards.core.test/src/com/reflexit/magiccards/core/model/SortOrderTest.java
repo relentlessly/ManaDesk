@@ -1,11 +1,11 @@
 package com.reflexit.magiccards.core.model;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
 import com.reflexit.magiccards.core.model.abs.ICardField;
 import com.reflexit.unittesting.CardGenerator;
+
+import junit.framework.TestCase;
 
 public class SortOrderTest extends TestCase {
 	private IMagicCard theCard;
@@ -15,7 +15,7 @@ public class SortOrderTest extends TestCase {
 	public MagicCardPhysical preset1(MagicCardPhysical card) {
 		card.setCount(1);
 		card.setSpecialTag("foil");
-		card.setDbPrice(1.0f);
+		card.setDbPrice("1.0:2.0");
 		card.set(MagicCardField.RATING, "1");
 		card.set(MagicCardField.TOUGHNESS, "1.0");
 		card.set(MagicCardField.POWER, "1.0");

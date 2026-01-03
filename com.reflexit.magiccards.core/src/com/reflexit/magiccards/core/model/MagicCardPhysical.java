@@ -373,8 +373,8 @@ public class MagicCardPhysical extends AbstractMagicCard implements ICardModifia
 		return location.isSideboard();
 	}
 
-	public void setDbPrice(float dbprice) {
-		getCard().setDbPrice(dbprice);
+	public void setDbPrice(String prices) {
+		getCard().setDbPrice(prices);
 	}
 
 	@Override
@@ -596,4 +596,5 @@ public class MagicCardPhysical extends AbstractMagicCard implements ICardModifia
 			setDate(dd);
 		}
 	}
+
 }

@@ -37,7 +37,7 @@ public class MagicDbView extends AbstractSingleControlCardsView {
 	protected MenuManager addToDeck;
 	protected IDeckAction copyToDeck;
 	protected Action exportDatabase;
-// !!! RD	protected Action edit;
+	// !!! RD	protected Action edit;
 
 	public MagicDbView() {
 	}
@@ -164,7 +164,7 @@ public class MagicDbView extends AbstractSingleControlCardsView {
 				}
 				MagicCard mc = ((MagicCard) card).cloneCard();
 				mc.setLegalityMap(null);
-				mc.setDbPrice(0);
+				mc.setDbPrice("0:0");
 				TextPrinter.print(mc, ps);
 			}
 		}
@@ -192,7 +192,7 @@ public class MagicDbView extends AbstractSingleControlCardsView {
 		super.fillContextMenu(manager);
 		manager.add(this.addToDeck);
 		manager.add(this.actionCopy);
-// !!! RD		manager.add(this.edit);
+		// !!! RD		manager.add(this.edit);
 	}
 
 	@Override

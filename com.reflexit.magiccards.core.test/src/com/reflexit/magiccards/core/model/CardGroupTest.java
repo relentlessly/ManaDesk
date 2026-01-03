@@ -1,6 +1,7 @@
 package com.reflexit.magiccards.core.model;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,7 +118,7 @@ public class CardGroupTest extends TestCase {
 	}
 
 	public void testGetBaseSPrice() {
-		groupAndTest(MagicCardField.DBPRICE, "1.2", 3 * 1.2f);
+		groupAndTest(MagicCardField.DBPRICE, "1.2:3.2f");
 	}
 
 	public void testGetBaseLang() {
@@ -425,7 +426,7 @@ public class CardGroupTest extends TestCase {
 	public void preset1(MagicCardPhysical card) {
 		card.setCount(1);
 		card.setSpecial("foil");
-		card.setDbPrice(1.0f);
+		card.setDbPrice("1.0:2.0");
 		card.set(MagicCardField.RATING, "1");
 		card.set(MagicCardField.TOUGHNESS, "1.0");
 		card.set(MagicCardField.POWER, "1.0");
@@ -437,7 +438,7 @@ public class CardGroupTest extends TestCase {
 	public void preset2(MagicCardPhysical card) {
 		card.setCount(1);
 		card.setSpecial("foil");
-		card.setDbPrice(1.0f);
+		card.setDbPrice("1.0:2.0");
 		card.set(MagicCardField.RATING, "1");
 		card.set(MagicCardField.TOUGHNESS, null);
 		card.set(MagicCardField.POWER, null);
@@ -513,7 +514,7 @@ public class CardGroupTest extends TestCase {
 		assertEquals(loc, group.getLocation());
 		assertEquals(true, group.isOwn());
 	}
-	
+
 	public void testNameGroupPhy() {
 		MagicCard m = (MagicCard) generateCard();
 		group = new CardGroup(MagicCardField.NAME, m.getName());

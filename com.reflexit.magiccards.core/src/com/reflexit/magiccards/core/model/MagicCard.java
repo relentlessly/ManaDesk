@@ -31,6 +31,8 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 	private String num;
 	private String rulings;
 	private String text;
+	private String gathererId;
+	private String tcgId;
 	private float rating;
 	private transient String colorType = "costless";
 	private transient int cmc = 0;
@@ -217,14 +219,14 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 	@Override
 	public float getDbPrice() {
 		String special = this.getSpecial();
-		if (special != null && special.contains("foil") || text.contains("Finishes: foil:")) {
+		if (special != null && special.contains("foil") || text != null && text.contains("Finishes: foil:")) {
 			return DataManager.getDBPriceStore().getDbPriceFoil(this);
 		}
 		return DataManager.getDBPriceStore().getDbPrice(this);
 	}
 
-	public void setDbPrice(float dbprice) {
-		DataManager.getDBPriceStore().setDbPrice(this, dbprice);
+	public void setDbPrice(String prices) {
+		DataManager.getDBPriceStore().setDbPrice(this, prices);
 	}
 
 	@Override
@@ -492,41 +494,36 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 
 	@Override
 	public int getGathererId() {
-		Integer gid = (Integer) getProperty(MagicCardField.GATHERERID);
-		if (gid != null)
-			return gid;
+		if (gathererId != null && !gathererId.isEmpty()) {
+			return Integer.parseInt(gathererId);
+		}
 		return super.getGathererId();
 	}
 
 	@Override
 	public int getTcgId() {
-		Integer gid = (Integer) getProperty(MagicCardField.TCGID);
-		if (gid != null)
-			return gid;
+		if (tcgId != null && !tcgId.isEmpty()) {
+			return Integer.parseInt(tcgId);
+		}
 		return super.getTcgId();
 	}
 
 	@Override
 	public String getGathererCardId() {
-		Object id = getProperty(MagicCardField.GATHERERID);
-
-		if (id != null) {
-			return id.toString();
-		} else {
-			return null;
-		}
-
+		return gathererId;
 	}
 
 	@Override
 	public String getTcgCardId() {
-		Object id = getProperty(MagicCardField.TCGID);
+		return tcgId;
+	}
 
-		if (id != null) {
-			return id.toString();
-		} else {
-			return null;
-		}
+	public void setGathererCardId(String value) {
+		this.gathererId = value;
+	}
+
+	public void setTcgCardId(String value) {
+		this.tcgId = value;
 	}
 
 	public String getPart() {

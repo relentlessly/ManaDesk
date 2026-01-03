@@ -2,14 +2,14 @@ package com.reflexit.magiccards.core.model;
 
 import java.util.HashMap;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
 import com.reflexit.magiccards.core.model.abs.ICard;
 import com.reflexit.magiccards.core.model.expr.BinaryExpr;
 import com.reflexit.magiccards.core.model.expr.Expr;
 import com.reflexit.unittesting.CardGenerator;
+
+import junit.framework.TestCase;
 
 public class MagicCardFilterTest extends TestCase {
 	MagicCardFilter filter;
@@ -230,7 +230,7 @@ public class MagicCardFilterTest extends TestCase {
 	}
 
 	public void testDBPRICE() {
-		genericFieldText(FilterField.DBPRICE, 2);
+		genericFieldText(FilterField.DBPRICE, "2");
 	}
 
 	public void testCOMMUNITYRATING() {
@@ -444,13 +444,13 @@ public class MagicCardFilterTest extends TestCase {
 		MagicCardPhysical c1 = mcpCost("{1}");
 		MagicCardPhysical c0 = mcpCost("");
 		MagicCardPhysical wc = mcpCost("{W}{1}");
-		MagicCardPhysical w = mcpCost("{W}");		
+		MagicCardPhysical w = mcpCost("{W}");
 		String colorless_id = Colors.getInstance().getPrefConstant(Colors.getColorName("{C}"));
 		setFilterTrue(colorless_id, ColorTypes.IDENTITY_ID);
 		checkFound(c2);
 		checkFound(c1);
 		checkNotFound(c0);
 		checkFound(wc);
-		checkNotFound(w);		
+		checkNotFound(w);
 	}
 }

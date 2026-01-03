@@ -174,8 +174,8 @@ public enum MagicCardField implements ICardField {
 		}
 
 		@Override
-		public void setM(MagicCard card, Object value) {
-			card.setDbPrice(castToFloat(value));
+		public void setStr(MagicCard card, String value) {
+			card.setDbPrice(value);
 		}
 
 		@Override
@@ -228,6 +228,7 @@ public enum MagicCardField implements ICardField {
 		};
 	},
 	COLLNUM("num") { // collector number value.e. 5/234
+
 		@Override
 		protected void setStr(MagicCard card, String value) {
 			card.setCollNumber(value);
@@ -276,8 +277,10 @@ public enum MagicCardField implements ICardField {
 		public Object get(IMagicCard card) {
 			return card.getEnglishCardId();
 		};
+
 	},
-	GATHERERID {
+	GATHERERID("gatheredId") {
+
 		@Override
 		public ICardVisitor getAggregator() {
 			return new CollisionAggregator(this, 0);
@@ -285,7 +288,7 @@ public enum MagicCardField implements ICardField {
 
 		@Override
 		public void setM(MagicCard card, Object value) {
-			card.setPropertyInteger(this, value);
+			card.setGathererCardId(value.toString());
 		}
 
 		@Override
@@ -299,7 +302,8 @@ public enum MagicCardField implements ICardField {
 		}
 
 	},
-	TCGID {
+	TCGID("tcgId") {
+
 		@Override
 		public ICardVisitor getAggregator() {
 			return new CollisionAggregator(this, 0);
@@ -307,7 +311,7 @@ public enum MagicCardField implements ICardField {
 
 		@Override
 		public void setM(MagicCard card, Object value) {
-			card.setPropertyInteger(this, value);
+			card.setTcgCardId(value.toString());
 		}
 
 		@Override

@@ -58,8 +58,7 @@ public class MagicXmlHandlerTest extends TestCase {
 
 	protected StringBuilder[] getContents(int sections) {
 		try {
-			return TestFileUtils.getContentsForTest("src", getClass(),
-					getName(), sections);
+			return TestFileUtils.getContentsForTest("src", getClass(), getName(), sections);
 		} catch (Exception e) {
 			fail(e.getMessage());
 			return null;
@@ -254,43 +253,44 @@ public class MagicXmlHandlerTest extends TestCase {
 		assertEquals("bla", p.getCustom());
 		assertNotNull(p.getDate());
 	}
-/*-
-  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<cards>
-  <name></name>
-  <key></key>
-  <comment></comment>
-  <type></type>
-  <list>
-    <mc>
-      <id>-39</id>
-      <name>name 39</name>
-      <cost>{4}</cost>
-      <type>type 39</type>
-      <power>4</power>
-      <toughness>*</toughness>
-      <oracleText>bla 39</oracleText>
-      <edition>set19</edition>
-      <rarity>Common</rarity>
-      <lang>Russian</lang>
-      <rating>2.39</rating>
-      <artist>Elena 39</artist>
-      <num>39b</num>
-      <text>bla &lt;br&gt; bla 39</text>
-      <properties>
-        <entry>
-          <string>SIDE</string>
-          <string>1</string>
-        </entry>
-        <entry>
-          <string>LEGALITY</string>
-          <string>Standard1;Modern</string>
-        </entry>
-      </properties>
-    </mc>
-  </list>
-</cards>
- */
+
+	/*-
+	  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<cards>
+	  <name></name>
+	  <key></key>
+	  <comment></comment>
+	  <type></type>
+	  <list>
+	<mc>
+	  <id>-39</id>
+	  <name>name 39</name>
+	  <cost>{4}</cost>
+	  <type>type 39</type>
+	  <power>4</power>
+	  <toughness>*</toughness>
+	  <oracleText>bla 39</oracleText>
+	  <edition>set19</edition>
+	  <rarity>Common</rarity>
+	  <lang>Russian</lang>
+	  <rating>2.39</rating>
+	  <artist>Elena 39</artist>
+	  <num>39b</num>
+	  <text>99bla &lt;br&gt; bla 39</text>
+	  <properties>
+	    <entry>
+	      <string>SIDE</string>
+	      <string>1</string>
+	    </entry>
+	    <entry>
+	      <string>LEGALITY</string>
+	      <string>Standard1;Modern</string>
+	    </entry>
+	  </properties>
+	</mc>
+	  </list>
+	</cards>
+	 */
 	public void testXmlGenMC() {
 		String xml1 = getAboveComment().trim();
 		MagicCard card = CardGenerator.genMagicCard(39);

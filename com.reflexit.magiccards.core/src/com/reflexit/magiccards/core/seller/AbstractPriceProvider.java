@@ -124,23 +124,23 @@ public class AbstractPriceProvider implements IPriceProvider {
 	}
 
 	@Override
-	public synchronized void setDbPrice(String id, float price, float price_foil, Currency cur) {
-		if (id == null || id.equals("0") || (price < -0.1f && price_foil < -0.1f))
-			return;
-		if (price == 0 && price_foil == 0)
+	public synchronized void setDbPrice(String id, String prices, Currency cur) {
+		if (prices.equals("0:0"))
 			priceMap.remove(id);
 		else {
+			/* !!! RD Ignore Conversion for now 
 			float curr = CurrencyConvertor.convertFromInto(price, cur, getCurrency());
 			float currF = CurrencyConvertor.convertFromInto(price_foil, cur, getCurrency());
-			priceMap.put(id, String.valueOf(curr) + ":" + String.valueOf(currF));
+			*/
+			priceMap.put(id, prices);
 		}
 	}
 
 	@Override
-	public synchronized void setDbPrice(IMagicCard magicCard, float price, float price_foil, Currency cur) {
+	public synchronized void setDbPrice(IMagicCard magicCard, String prices, Currency cur) {
 		String id = magicCard.getCardId();
 
-		setDbPrice(id, price, price_foil, cur);
+		setDbPrice(id, prices, cur);
 	}
 
 	@Override
