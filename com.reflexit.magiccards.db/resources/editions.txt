@@ -561,6 +561,7 @@ MagicFest 2020|PF20||January 2020|Promo|MagicFest 2020||
 MagicFest 2023|PF23||July 2023|Promo|MagicFest 2023||
 MagicFest 2024|PF24||January 2024|Promo|MagicFest 2024||
 MagicFest 2025|PF25||January 2025|Promo|MagicFest 2025||
+MagicFest 2026|PF26||January 2026|Promo|MagicFest 2026||
 March of the Machine|MOM||April 2023|Expansion|March of the Machine||
 March of the Machine Art Series|AMOM||April 2023|Other|March of the Machine Art Series||
 March of the Machine Commander|MOC||April 2023|Other|Commander||
