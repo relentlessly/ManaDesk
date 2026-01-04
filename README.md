@@ -1,5 +1,5 @@
-# MAFork
-MA Fork
+# ManaDesk
+ManaDesk
 
 
 This project is a fork of: https://sourceforge.net/projects/mtgbrowser/
