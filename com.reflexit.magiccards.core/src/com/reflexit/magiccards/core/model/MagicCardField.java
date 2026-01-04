@@ -174,8 +174,8 @@ public enum MagicCardField implements ICardField {
 		}
 
 		@Override
-		public void setStr(MagicCard card, String value) {
-			card.setDbPrice(value);
+		public void setM(MagicCard card, Object value) {
+			card.setDbPrice(castToFloat(value));
 		}
 
 		@Override

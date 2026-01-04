@@ -148,8 +148,13 @@ public class DbPricesMultiFileStore implements IDbPriceStore {
 
 	// Set standard and foil price
 	@Override
-	public synchronized void setDbPrice(IMagicCard card, String prices) {
-		current.setDbPrice(card, prices, CurrencyConvertor.getCurrency());
+	public synchronized void setDbPrice(IMagicCard card, float price) {
+		current.setDbPrice(card, price, CurrencyConvertor.getCurrency());
+	}
+
+	@Override
+	public synchronized void setDbPriceFoil(IMagicCard card, float price) {
+		current.setDbPriceFoil(card, price, CurrencyConvertor.getCurrency());
 	}
 
 	@Override

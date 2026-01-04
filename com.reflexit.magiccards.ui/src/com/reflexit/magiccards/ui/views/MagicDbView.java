@@ -164,7 +164,7 @@ public class MagicDbView extends AbstractSingleControlCardsView {
 				}
 				MagicCard mc = ((MagicCard) card).cloneCard();
 				mc.setLegalityMap(null);
-				mc.setDbPrice("0:0");
+				mc.setDbPrice(0);
 				TextPrinter.print(mc, ps);
 			}
 		}

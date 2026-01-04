@@ -398,10 +398,10 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 						if (price_foil == 0f) {
 							price_foil = -0.0001f;
 						}
-						// !!! RD 
-						String priceStr = String.valueOf(price) + ":" + String.valueOf(price_foil);
-						priceStore.setDbPrice(frontCard, priceStr);
-						priceProvider.setDbPrice(frontCard.getCardId(), priceStr, CurrencyConvertor.USD);
+						priceStore.setDbPrice(frontCard, price);
+						priceStore.setDbPriceFoil(frontCard, price_foil);
+						priceProvider.setDbPrice(frontCard.getCardId(), price, CurrencyConvertor.USD);
+						priceProvider.setDbPriceFoil(frontCard.getCardId(), price_foil, CurrencyConvertor.USD);
 
 					}
 				}
@@ -741,11 +741,17 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 
 		BufferedInputStream st;
 		try {
-			st = new BufferedInputStream(new FileInputStream(new File(
-					"C:\\Dev\\runtime-magic.product\\magiccards\\MagicDBScry\\prices\\TCG_Player__Medium_.xml")),
-					FileUtils.DEFAULT_BUFFER_SIZE);
+			File pricesDir = DataManager.getInstance().getPricesDir();
 
-			priceProvider.loadPrices(st);
+			// !!! RD For now, hardcoded
+			String fileLocation = pricesDir + "\\TCG_Player__Medium_.xml";
+			if (new File(fileLocation).exists()) {
+				st = new BufferedInputStream(new FileInputStream(new File(fileLocation)),
+						FileUtils.DEFAULT_BUFFER_SIZE);
+
+				priceProvider.loadPrices(st);
+			}
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

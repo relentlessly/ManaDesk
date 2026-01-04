@@ -262,32 +262,32 @@ public class MagicXmlHandlerTest extends TestCase {
 	  <comment></comment>
 	  <type></type>
 	  <list>
-	<mc>
-	  <id>-39</id>
-	  <name>name 39</name>
-	  <cost>{4}</cost>
-	  <type>type 39</type>
-	  <power>4</power>
-	  <toughness>*</toughness>
-	  <oracleText>bla 39</oracleText>
-	  <edition>set19</edition>
-	  <rarity>Common</rarity>
-	  <lang>Russian</lang>
-	  <rating>2.39</rating>
-	  <artist>Elena 39</artist>
-	  <num>39b</num>
-	  <text>99bla &lt;br&gt; bla 39</text>
-	  <properties>
-	    <entry>
-	      <string>SIDE</string>
-	      <string>1</string>
-	    </entry>
-	    <entry>
-	      <string>LEGALITY</string>
-	      <string>Standard1;Modern</string>
-	    </entry>
-	  </properties>
-	</mc>
+	    <mc>
+	      <id>-39</id>
+	      <name>name 39</name>
+	      <cost>{4}</cost>
+	      <type>type 39</type>
+	      <power>4</power>
+	      <toughness>*</toughness>
+	      <oracleText>bla 39</oracleText>
+	      <edition>set19</edition>
+	      <rarity>Common</rarity>
+	      <lang>Russian</lang>
+	      <rating>2.39</rating>
+	      <artist>Elena 39</artist>
+	      <num>39b</num>
+	      <text>bla &lt;br&gt; bla 39</text>
+	      <properties>
+	        <entry>
+	          <string>SIDE</string>
+	          <string>1</string>
+	        </entry>
+	        <entry>
+	          <string>LEGALITY</string>
+	          <string>Standard1;Modern</string>
+	        </entry>
+	      </properties>
+	    </mc>
 	  </list>
 	</cards>
 	 */

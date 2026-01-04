@@ -124,23 +124,51 @@ public class AbstractPriceProvider implements IPriceProvider {
 	}
 
 	@Override
-	public synchronized void setDbPrice(String id, String prices, Currency cur) {
-		if (prices.equals("0:0"))
+	public synchronized void setDbPrice(String id, float price, Currency cur) {
+
+		float curr = CurrencyConvertor.convertFromInto(price, cur, getCurrency());
+		float currF = getDbPriceFoil(id, getCurrency());
+		if (currF != 0) {
+			currF = CurrencyConvertor.convertFromInto(currF, cur, getCurrency());
+		}
+		if (curr == 0 && currF == 0) {
 			priceMap.remove(id);
-		else {
-			/* !!! RD Ignore Conversion for now 
-			float curr = CurrencyConvertor.convertFromInto(price, cur, getCurrency());
-			float currF = CurrencyConvertor.convertFromInto(price_foil, cur, getCurrency());
-			*/
+		} else {
+			String prices = String.valueOf(curr) + ":" + String.valueOf(currF);
+
 			priceMap.put(id, prices);
 		}
 	}
 
 	@Override
-	public synchronized void setDbPrice(IMagicCard magicCard, String prices, Currency cur) {
+	public synchronized void setDbPriceFoil(String id, float price, Currency cur) {
+
+		float curr = getDbPrice(id, getCurrency());
+		float currF = CurrencyConvertor.convertFromInto(price, cur, getCurrency());
+		if (curr != 0) {
+			curr = CurrencyConvertor.convertFromInto(curr, cur, getCurrency());
+		}
+		if (curr == 0 && currF == 0) {
+			priceMap.remove(id);
+		} else {
+			String prices = String.valueOf(curr) + ":" + String.valueOf(currF);
+
+			priceMap.put(id, prices);
+		}
+	}
+
+	@Override
+	public synchronized void setDbPrice(IMagicCard magicCard, float price, Currency cur) {
 		String id = magicCard.getCardId();
 
-		setDbPrice(id, prices, cur);
+		setDbPrice(id, price, cur);
+	}
+
+	@Override
+	public synchronized void setDbPriceFoil(IMagicCard magicCard, float price, Currency cur) {
+		String id = magicCard.getCardId();
+
+		setDbPriceFoil(id, price, cur);
 	}
 
 	@Override
@@ -159,8 +187,38 @@ public class AbstractPriceProvider implements IPriceProvider {
 	}
 
 	@Override
+	public synchronized float getDbPrice(String id, Currency cur) {
+		if (priceMap.containsKey(id)) {
+			String prices = priceMap.get(id);
+			int sep = prices.indexOf(":");
+			if (sep != -1) {
+				prices = prices.substring(0, sep);
+			}
+			float price = Float.valueOf(prices);
+			return CurrencyConvertor.convertFromInto(price, getCurrency(), cur);
+		}
+		return 0f;
+	}
+
+	@Override
 	public synchronized float getDbPriceFoil(IMagicCard card, Currency cur) {
 		String id = card.getCardId();
+		if (priceMap.containsKey(id)) {
+			String prices = priceMap.get(id);
+			int sep = prices.indexOf(":");
+			if (sep != -1 && sep < prices.length() - 1) {
+				prices = prices.substring(sep + 1);
+			} else {
+				prices = "-0.0001f";
+			}
+			float price = Float.valueOf(prices);
+			return CurrencyConvertor.convertFromInto(price, getCurrency(), cur);
+		}
+		return 0f;
+	}
+
+	@Override
+	public synchronized float getDbPriceFoil(String id, Currency cur) {
 		if (priceMap.containsKey(id)) {
 			String prices = priceMap.get(id);
 			int sep = prices.indexOf(":");

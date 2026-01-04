@@ -15,7 +15,7 @@ public class SortOrderTest extends TestCase {
 	public MagicCardPhysical preset1(MagicCardPhysical card) {
 		card.setCount(1);
 		card.setSpecialTag("foil");
-		card.setDbPrice("1.0:2.0");
+		card.setDbPrice(1.0f);
 		card.set(MagicCardField.RATING, "1");
 		card.set(MagicCardField.TOUGHNESS, "1.0");
 		card.set(MagicCardField.POWER, "1.0");

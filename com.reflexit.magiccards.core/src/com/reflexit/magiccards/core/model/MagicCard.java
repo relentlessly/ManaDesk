@@ -219,14 +219,25 @@ public class MagicCard extends AbstractMagicCard implements IMagicCard {
 	@Override
 	public float getDbPrice() {
 		String special = this.getSpecial();
-		if (special != null && special.contains("foil") || text != null && text.contains("Finishes: foil:")) {
+		if (special != null && special.contains("foil")) {
 			return DataManager.getDBPriceStore().getDbPriceFoil(this);
 		}
-		return DataManager.getDBPriceStore().getDbPrice(this);
+
+		// If basic price doesn't exist, check for the foil (useful for card that are always foil)
+		float price = DataManager.getDBPriceStore().getDbPrice(this);
+		if (price == -0.0001f) {
+			price = DataManager.getDBPriceStore().getDbPriceFoil(this);
+		}
+
+		return price;
 	}
 
-	public void setDbPrice(String prices) {
-		DataManager.getDBPriceStore().setDbPrice(this, prices);
+	public void setDbPrice(float price) {
+		DataManager.getDBPriceStore().setDbPrice(this, price);
+	}
+
+	public void setDbPriceFoil(float price) {
+		DataManager.getDBPriceStore().setDbPriceFoil(this, price);
 	}
 
 	@Override

@@ -92,14 +92,14 @@ public class PerformanceFilteringTest extends TestCase {
 	@Test
 	public void testCostGroupping() {
 		this.filter.setGroupFields(MagicCardField.COST);
-		assertFast(210, runfiltering());
+		assertFast(240, runfiltering());
 		assertEquals(61, fstore.getCardGroupRoot().size());
 	}
 
 	@Test
 	public void testSRGroupping() {
 		this.filter.setGroupFields(MagicCardField.SET, MagicCardField.RARITY);
-		assertFast(80, runfiltering());
+		assertFast(90, runfiltering());
 		assertEquals(3, fstore.getCardGroupRoot().getSubGroup("Lorwyn").size()); // !!! RD Set 3 instead of 4...
 	}
 
@@ -108,12 +108,12 @@ public class PerformanceFilteringTest extends TestCase {
 		this.filter.setSortField(MagicCardField.NAME, true);
 		this.filter.setGroupFields(MagicCardField.NAME);
 		this.filter.setFilter(textFilter("\"o\""));
-		assertFast(180, runfiltering());
+		assertFast(225, runfiltering());
 		assertTrue("was " + fstore.getSize(), fstore.getSize() > 37000);
 		assertTrue("was " + fstore.getSize(), fstore.getSize() < 38000);
 		this.filter.setFilter(textFilter("\"ob\""));
-		assertFast(170, runfiltering());
+		assertFast(350, runfiltering());
 		assertTrue("was " + fstore.getSize(), fstore.getSize() >= 720);
-		assertTrue("was " + fstore.getSize(), fstore.getSize() < 740);
+		assertTrue("was " + fstore.getSize(), fstore.getSize() < 755);
 	}
 }

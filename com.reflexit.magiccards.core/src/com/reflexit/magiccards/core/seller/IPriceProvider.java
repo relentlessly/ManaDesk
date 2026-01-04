@@ -31,14 +31,22 @@ public interface IPriceProvider extends IPriceProviderStore {
 
 	void save() throws IOException;
 
-	void setDbPrice(IMagicCard card, String prices, Currency cur);
+	void setDbPrice(IMagicCard card, float price, Currency cur);
 
-	void setDbPrice(String id, String prices, Currency cur);
+	void setDbPrice(String id, float price, Currency cur);
+
+	void setDbPriceFoil(IMagicCard card, float price, Currency cur);
+
+	void setDbPriceFoil(String id, float price, Currency cur);
 
 	float getDbPrice(IMagicCard card, Currency cur);
 
-	Currency getCurrency();
+	float getDbPrice(String id, Currency cur);
 
 	float getDbPriceFoil(IMagicCard card, Currency cur);
+
+	float getDbPriceFoil(String id, Currency cur);
+
+	Currency getCurrency();
 
 }
