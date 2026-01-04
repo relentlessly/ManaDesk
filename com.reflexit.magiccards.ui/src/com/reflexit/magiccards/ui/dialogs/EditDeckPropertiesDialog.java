@@ -35,6 +35,7 @@ public class EditDeckPropertiesDialog extends TitleAreaDialog {
 	private IStorageInfo info;
 	private Combo type;
 	private Button virtual;
+	private Button unsorted;
 	private Text text;
 	private Button protection;
 
@@ -76,6 +77,13 @@ public class EditDeckPropertiesDialog extends TitleAreaDialog {
 			virtual.setLayoutData(gd);
 		}
 		{
+			unsorted = new Button(comp, SWT.CHECK);
+			unsorted.setSelection(info.isUnsorted());
+			unsorted.setText("Unsorted");
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			unsorted.setLayoutData(gd);
+		}
+		{
 			protection = new Button(comp, SWT.CHECK);
 			protection.setSelection(info.isReadOnly());
 			protection.setText("Read Only");
@@ -114,6 +122,7 @@ public class EditDeckPropertiesDialog extends TitleAreaDialog {
 		if (!isReadOnly) {
 			info.setComment(text.getText());
 			info.setVirtual(virtual.getSelection());
+			info.setUnsorted(unsorted.getSelection());
 			info.setType(type.getText());
 		}
 	}

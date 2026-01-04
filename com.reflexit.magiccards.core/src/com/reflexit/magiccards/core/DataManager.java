@@ -126,6 +126,7 @@ public class DataManager {
 		if (store == null)
 			throw new NullPointerException();
 		boolean virtual = store.isVirtual();
+		boolean unsorted = store.isUnsorted();
 		ArrayList<IMagicCard> list = new ArrayList<>(cards.size());
 		boolean ownCopyAllowed = owncopy;
 		for (IMagicCard card : cards) {
@@ -208,6 +209,7 @@ public class DataManager {
 		if (store == null)
 			throw new NullPointerException();
 		boolean virtual = store.isVirtual();
+		boolean unsorted = store.isUnsorted();
 		ArrayList<IMagicCard> list = new ArrayList<>(cards.size());
 		for (Object card2 : cards) {
 			IMagicCard card = (IMagicCard) card2;
@@ -359,7 +361,7 @@ public class DataManager {
 		cardStore.update(card, fieldSet);
 		cardStore.setMergeOnAdd(false);
 		cardStore.add(card2);
-		cardStore.setMergeOnAdd(true);
+		cardStore.setMergeOnAdd(!cardStore.isUnsorted());
 		updateList(cardStore.getCards(card.getCardId()), fieldSet);
 		return card2;
 	}

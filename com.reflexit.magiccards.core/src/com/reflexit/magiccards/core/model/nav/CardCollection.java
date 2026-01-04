@@ -21,16 +21,18 @@ public class CardCollection extends CardElement {
 	transient private ICardStore<IMagicCard> store;
 	transient protected Boolean deck;
 	transient protected Boolean virtual;
+	transient protected Boolean unsorted;
 	transient protected boolean opening = false;
 
 	public CardCollection(String filename, CardOrganizer parent) {
-		this(filename, parent, null, null);
+		this(filename, parent, null, null, null);
 	}
 
-	public CardCollection(String filename, CardOrganizer parent, Boolean deck, Boolean virtual) {
+	public CardCollection(String filename, CardOrganizer parent, Boolean deck, Boolean virtual, Boolean unsorted) {
 		super(filename, parent, false);
 		this.deck = deck;
 		this.virtual = virtual;
+		this.unsorted = unsorted;
 		setParentInit(parent);
 		createFile();
 		parent.fireCreationEvent(this);
@@ -49,7 +51,7 @@ public class CardCollection extends CardElement {
 
 	@Override
 	public CardElement newElement(String name, CardOrganizer parent) {
-		return new CardCollection(name + ".xml", parent, null, null);
+		return new CardCollection(name + ".xml", parent, null, null, null);
 	}
 
 	public ICardStore<IMagicCard> getStore() {
@@ -64,7 +66,7 @@ public class CardCollection extends CardElement {
 			if (getStore() == null)
 				return null;
 		} catch (MagicException e) {
-			//MagicLogger.log(e);
+			// MagicLogger.log(e);
 			return null;
 		}
 		IStorage storage = ((IStorageContainer) getStore()).getStorage();
@@ -105,6 +107,9 @@ public class CardCollection extends CardElement {
 			if (virtual != null) {
 				info.setVirtual(virtual);
 			}
+			if (unsorted != null) {
+				info.setUnsorted(unsorted);
+			}
 		}
 	}
 
@@ -143,4 +148,15 @@ public class CardCollection extends CardElement {
 			return virtual;
 		return true;
 	}
+
+	public boolean isUnsorted() {
+		IStorageInfo info = getStorageInfo();
+		if (info != null) {
+			return info.isUnsorted();
+		}
+		if (unsorted != null)
+			return unsorted;
+		return true;
+	}
+
 }

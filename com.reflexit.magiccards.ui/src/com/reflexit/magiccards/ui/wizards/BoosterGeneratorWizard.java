@@ -151,9 +151,8 @@ public class BoosterGeneratorWizard extends NewCardCollectionWizard implements I
 	 * java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected void doFinish(final String containerName, final String name, boolean virtual,
-			final IProgressMonitor monitor)
-			throws CoreException {
+	protected void doFinish(final String containerName, final String name, boolean virtual, boolean unsorted,
+			final IProgressMonitor monitor) throws CoreException {
 		// create a sample file
 		monitor.beginTask("Creating " + name, 10);
 		ModelRoot root = getModelRoot();
@@ -163,7 +162,7 @@ public class BoosterGeneratorWizard extends NewCardCollectionWizard implements I
 		}
 		monitor.worked(1);
 		CardOrganizer parent = (CardOrganizer) resource;
-		final CardCollection col = new CardCollection(name + ".xml", parent, false, virtual);
+		final CardCollection col = new CardCollection(name + ".xml", parent, false, virtual, false);
 		populateLibrary(BoosterGeneratorWizard.this.sets, BoosterGeneratorWizard.this.packs, col,
 				new SubProgressMonitor(monitor, 7));
 		monitor.worked(1);

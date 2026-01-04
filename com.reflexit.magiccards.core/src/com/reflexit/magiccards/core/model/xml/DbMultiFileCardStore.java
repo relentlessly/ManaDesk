@@ -291,6 +291,11 @@ public class DbMultiFileCardStore extends AbstractMultiStore<IMagicCard> impleme
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public boolean isUnsorted() {
+		throw new UnsupportedOperationException();
+	}
+
 	public File getFile(final IMagicCard card) {
 		if (card instanceof MagicCard) {
 			return new File(XmlCardHolder.getDbFolder(), Location.fromCard(card)

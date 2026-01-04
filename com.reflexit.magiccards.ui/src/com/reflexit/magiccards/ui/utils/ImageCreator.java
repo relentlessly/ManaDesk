@@ -41,8 +41,8 @@ import com.reflexit.magiccards.ui.MagicUIActivator;
 public class ImageCreator {
 	public static final int SET_IMG_HEIGHT = 16;
 	public static final int SET_IMG_WIDTH = 32;
-	public static final int CARD_HEIGHT = 442;
-	public static final int CARD_WIDTH = 317;
+	public static final int CARD_HEIGHT = 408;
+	public static final int CARD_WIDTH = 293;
 	private static final String TEXT_ITALIC_FONT_KEY = "text_italic";
 	private static final String TEXT_FONT_KEY = "text";
 	private static final String TYPE_FONT_KEY = "type";

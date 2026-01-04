@@ -52,7 +52,8 @@ public class CollectionsContainer extends CardOrganizer {
 				if (name.endsWith(".xml")) {
 					if (el == null) {
 						boolean deck = checkType(mem);
-						CardCollection cardCollection = new CardCollection(name, this, deck, null);
+						boolean unsorted = checkSort(mem);
+						CardCollection cardCollection = new CardCollection(name, this, deck, null, unsorted);
 					}
 				}
 			}
@@ -79,12 +80,36 @@ public class CollectionsContainer extends CardOrganizer {
 		return false;
 	}
 
+	private boolean checkSort(File mem) {
+		try {
+			byte[] headerBytes = new byte[1000];
+			InputStream openStream = new FileInputStream(mem);
+			try {
+				int k = openStream.read(headerBytes);
+				if (k == -1)
+					return false;
+				String header = new String(headerBytes, 0, k);
+				if (header.contains("<property name=\"unsorted\" value=\"true\"/>")) {
+					return true;
+				} else {
+					return false;
+				}
+
+			} finally {
+				openStream.close();
+			}
+		} catch (Exception e) {
+			// skip
+		}
+		return false;
+	}
+
 	public CollectionsContainer addCollectionsContainer(String name) {
 		return (CollectionsContainer) newElement(name, this);
 	}
 
 	public CardCollection addDeck(String filename, boolean virtual) {
-		CardCollection d = new CardCollection(filename, this, true, virtual);
+		CardCollection d = new CardCollection(filename, this, true, virtual, false);
 		return d;
 	}
 

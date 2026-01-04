@@ -115,6 +115,11 @@ public class CollectionMultiFileCardStore extends AbstractMultiStore<IMagicCard>
 	}
 
 	@Override
+	public boolean isUnsorted() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public synchronized IMagicCard doAddCard(IMagicCard card) {
 		Location loc = getLocation();
 		if (card instanceof MagicCardPhysical)

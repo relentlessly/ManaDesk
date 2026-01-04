@@ -19,9 +19,8 @@ import com.reflexit.magiccards.core.model.abs.ICardField;
  * @author Alena
  *
  */
-public class CollectionCardStore extends AbstractCardStoreWithStorage<IMagicCard> implements
-		ICardStore<IMagicCard>,
-		ICardCollection<IMagicCard>, IStorageContainer<IMagicCard> {
+public class CollectionCardStore extends AbstractCardStoreWithStorage<IMagicCard>
+		implements ICardStore<IMagicCard>, ICardCollection<IMagicCard>, IStorageContainer<IMagicCard> {
 	protected HashCollectionPart hashpart;
 
 	public CollectionCardStore(IStorage<IMagicCard> storage) {
@@ -45,7 +44,39 @@ public class CollectionCardStore extends AbstractCardStoreWithStorage<IMagicCard
 	@Override
 	public IMagicCard doAddCard(IMagicCard card) {
 		Location loc = getLocation();
-		if (getMergeOnAdd()) {
+		if (isUnsorted()) {
+			// RD Never merge, except with the last card in the list
+
+			// !!! RD Check for last card, implementation not optimal
+			MagicCardPhysical lastCard = (MagicCardPhysical) this.getLast();
+			MagicCardPhysical cloneCard = null;
+			if (lastCard != null) {
+				cloneCard = (MagicCardPhysical) lastCard.cloneCard();
+				cloneCard.setCount(1); // Force to 1 to allow the comparaison to work				
+			}
+
+			MagicCardPhysical phi = (MagicCardPhysical) this.hashpart.getCard(card);
+			if (phi == null || // !!! RD not sure what to do... phi.isMigrated()
+					(cloneCard != null && !card.equals(cloneCard))) {
+				// New card, we must add it
+				if (phi == null || loc != null && !loc.equals(phi.getLocation())) {
+					phi = (MagicCardPhysical) createNewCard(card, loc);
+					this.hashpart.storeCard(phi);
+					if (this.storage.add(phi))
+						return phi;
+					else {
+						this.hashpart.removeCard(phi);
+						return null;
+					}
+				}
+
+			} else {
+				// Same card, just increment the count
+				lastCard.setCount(lastCard.getCount() + 1);
+				return lastCard;
+			}
+
+		} else if (getMergeOnAdd()) {
 			MagicCardPhysical phi = (MagicCardPhysical) this.hashpart.getCard(card);
 			if (phi == null || phi.isMigrated()) {
 				if (phi == null || loc != null && !loc.equals(phi.getLocation())) {

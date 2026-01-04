@@ -7,13 +7,12 @@ import com.reflexit.magiccards.core.model.nav.CardElement;
 import com.reflexit.magiccards.core.model.nav.CollectionsContainer;
 
 /**
- * This is a sample new wizard. Its role is to create a new file resource in the provided container. If the
- * container resource (a folder or
- * a project) is selected in the workspace when the wizard is opened, it will accept it as the target
- * container. The wizard creates one file
- * with the extension "element". If a sample multi-page editor (also available as a template) is registered
- * for the same extension, it will
- * be able to open it.
+ * This is a sample new wizard. Its role is to create a new file resource in the
+ * provided container. If the container resource (a folder or a project) is
+ * selected in the workspace when the wizard is opened, it will accept it as the
+ * target container. The wizard creates one file with the extension "element".
+ * If a sample multi-page editor (also available as a template) is registered
+ * for the same extension, it will be able to open it.
  */
 public class NewDeckWizard extends NewCardElementWizard implements INewWizard {
 	public static final String ID = "com.reflexit.magiccards.ui.wizards.NewDeckWizard";
@@ -35,8 +34,9 @@ public class NewDeckWizard extends NewCardElementWizard implements INewWizard {
 	}
 
 	@Override
-	protected CardElement doCreateCardElement(CollectionsContainer parent, String name, boolean virtual) {
-		CardCollection d = new CardCollection(name + ".xml", parent, true, virtual);
+	protected CardElement doCreateCardElement(CollectionsContainer parent, String name, boolean virtual,
+			boolean unsorted) {
+		CardCollection d = new CardCollection(name + ".xml", parent, true, virtual, false);
 		return d;
 	}
 }

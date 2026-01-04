@@ -43,6 +43,10 @@ public abstract class AbstractCardStore<T extends ICard> extends EventManager im
 				} catch (final MagicException e) {
 					MagicLogger.log(e);
 				} finally {
+					// !!! RD Update MergeOnAdd
+					/*
+					 * if (this.isUnsorted()) { mergeOnAdd = false; }
+					 */
 					setInitialized(true);
 				}
 			}
@@ -260,5 +264,20 @@ public abstract class AbstractCardStore<T extends ICard> extends EventManager im
 			list.add(t);
 		}
 		return list;
+	}
+
+	// !!! RD
+	@Override
+	public Object getLast() {
+
+		IStorage<T> storage = this.getStorage();
+		Object last = null;
+
+		// Search the last one
+		for (Object element : storage) {
+			last = element;
+		}
+
+		return last;
 	}
 }

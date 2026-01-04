@@ -119,6 +119,11 @@ public class MemoryCardStorage<T> extends AbstractStorage<T> {
 	}
 
 	@Override
+	public boolean isUnsorted() {
+		return false;
+	}
+
+	@Override
 	public String toString() {
 		return list.toString();
 	}

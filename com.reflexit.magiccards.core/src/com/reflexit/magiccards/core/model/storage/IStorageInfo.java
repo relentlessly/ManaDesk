@@ -18,7 +18,11 @@ public interface IStorageInfo {
 
 	public void setVirtual(boolean value);
 
+	public void setUnsorted(boolean value);
+
 	public boolean isVirtual();
+
+	public boolean isUnsorted();
 
 	public boolean isReadOnly();
 

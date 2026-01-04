@@ -16,6 +16,7 @@ import com.reflexit.magiccards.core.xml.StringCache;
 
 public class SingleFileCardStorage extends MemoryCardStorage<IMagicCard> implements IStorageInfo {
 	private static final transient String VIRTUAL = "virtual";
+	private static final transient String UNSORTED = "unsorted";
 	private static final transient String READ_ONLY = "readonly";
 	protected transient File file;
 	protected Location location;
@@ -122,10 +123,15 @@ public class SingleFileCardStorage extends MemoryCardStorage<IMagicCard> impleme
 		return Boolean.valueOf(getProperty(VIRTUAL));
 	}
 
+	@Override
+	public boolean isUnsorted() {
+		return Boolean.valueOf(getProperty(UNSORTED));
+	}
+
 	public void setName(String name) {
 		throw new UnsupportedOperationException();
-		//		doSetName(name);
-		//		autoSave();
+		// doSetName(name);
+		// autoSave();
 	}
 
 	protected final void doSetName(String name) {
@@ -162,7 +168,8 @@ public class SingleFileCardStorage extends MemoryCardStorage<IMagicCard> impleme
 
 	protected final boolean doSetType(String type) {
 		String x = StringCache.intern(type);
-		if (this.type == x) return false;
+		if (this.type == x)
+			return false;
 		this.type = x;
 		return true;
 	}
@@ -176,8 +183,13 @@ public class SingleFileCardStorage extends MemoryCardStorage<IMagicCard> impleme
 	public void setProperty(String key, String value) {
 		if (isReadOnly() && !key.equals(READ_ONLY))
 			throw new MagicException("Read Only");
+		/*
+		 * !!! RD Don't understand this if (isUnsorted() && !key.equals(UNSORTED)) throw
+		 * new MagicException("Unsorted");
+		 */
 		Object old = properties.setProperty(key, value);
-		if (old != null && old.equals(value)) return;
+		if (old != null && old.equals(value))
+			return;
 		autoSave();
 	}
 
@@ -185,6 +197,12 @@ public class SingleFileCardStorage extends MemoryCardStorage<IMagicCard> impleme
 	public void setVirtual(boolean value) {
 		accessCheck();
 		setProperty(VIRTUAL, String.valueOf(value));
+	}
+
+	@Override
+	public void setUnsorted(boolean value) {
+		accessCheck();
+		setProperty(UNSORTED, String.valueOf(value));
 	}
 
 	@Override

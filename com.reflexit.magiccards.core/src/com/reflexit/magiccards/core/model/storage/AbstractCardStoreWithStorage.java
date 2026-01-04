@@ -124,6 +124,15 @@ public abstract class AbstractCardStoreWithStorage<T extends ICard> extends Abst
 		return storage.isVirtual();
 	}
 
+	public void setUnsorted(boolean value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isUnsorted() {
+		return storage.isUnsorted();
+	}
+
 	@Override
 	public boolean contains(T card) {
 		return storage.contains(card);

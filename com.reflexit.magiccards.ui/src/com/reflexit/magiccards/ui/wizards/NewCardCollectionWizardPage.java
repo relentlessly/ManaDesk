@@ -15,9 +15,9 @@ import com.reflexit.magiccards.core.model.nav.CollectionsContainer;
 import com.reflexit.magiccards.core.model.nav.ModelRoot;
 
 /**
- * The "New" wizard page allows setting the container for the new file as well as the file name. The
- * page will only accept file name without the extension OR with the extension that matches the
- * expected one (deck).
+ * The "New" wizard page allows setting the container for the new file as well
+ * as the file name. The page will only accept file name without the extension
+ * OR with the extension that matches the expected one (deck).
  */
 public class NewCardCollectionWizardPage extends NewCardElementWizardPage {
 	/**
@@ -28,8 +28,8 @@ public class NewCardCollectionWizardPage extends NewCardElementWizardPage {
 	public NewCardCollectionWizardPage(ISelection selection) {
 		super(selection);
 		setTitle("Create a new " + getElementTypeName());
-		setDescription("This wizard creates a new " + getElementTypeName() +
-				" with a given name and place it in specified parent container.");
+		setDescription("This wizard creates a new " + getElementTypeName()
+				+ " with a given name and place it in specified parent container.");
 	}
 
 	@Override
@@ -49,7 +49,8 @@ public class NewCardCollectionWizardPage extends NewCardElementWizardPage {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.reflexit.magiccards.ui.wizards.NewCardElementWizardPage#dialogChanged()
+	 * @see
+	 * com.reflexit.magiccards.ui.wizards.NewCardElementWizardPage#dialogChanged()
 	 */
 	@Override
 	protected void dialogChanged() {
@@ -79,12 +80,23 @@ public class NewCardCollectionWizardPage extends NewCardElementWizardPage {
 	@Override
 	protected void createOptionsGroup(Composite container) {
 		virtual = new Button(container, SWT.CHECK);
-		virtual.setText("This " + getElementTypeName()
-				+ " is virtual (affect card ownership attribute and cards operations)");
-		virtual.setToolTipText("Virtual flag affect move/copy/inreaste/descrease operations on a collection. Also it automatically set flags to own for non-virtual collection.");
+		virtual.setText(
+				"This " + getElementTypeName() + " is virtual (affect card ownership attribute and cards operations)");
+		virtual.setToolTipText(
+				"Virtual flag affect move/copy/inreaste/descrease operations on a collection. Also it automatically set flags to own for non-virtual collection.");
+
+		unsorted = new Button(container, SWT.CHECK);
+		unsorted.setText("This " + getElementTypeName() + " is unsorted (affect card addition operations)");
+		unsorted.setToolTipText(
+				"Unsorted flag affect move/copy operations on a collection. This prevent identical cards to be merge by default.");
+// !!! RD		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+// !!! RD		gd.horizontalSpan = ((GridLayout) container.getLayout()).numColumns;
+
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = ((GridLayout) container.getLayout()).numColumns;
 		virtual.setLayoutData(gd);
+		unsorted.setLayoutData(gd);
+
 	}
 
 	@Override

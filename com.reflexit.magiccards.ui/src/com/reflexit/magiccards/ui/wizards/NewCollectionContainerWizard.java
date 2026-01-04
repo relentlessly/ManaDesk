@@ -31,12 +31,12 @@ public class NewCollectionContainerWizard extends NewCardElementWizard implement
 	}
 
 	/**
-	 * The worker method. It will find the container, create the file if missing or just replace its
-	 * contents, and open the editor on the newly created file.
+	 * The worker method. It will find the container, create the file if missing or
+	 * just replace its contents, and open the editor on the newly created file.
 	 */
 	@Override
-	protected void doFinish(String containerName, final String name, boolean virtual, IProgressMonitor monitor)
-			throws CoreException {
+	protected void doFinish(String containerName, final String name, boolean virtual, boolean unsorted,
+			IProgressMonitor monitor) throws CoreException {
 		// create a sample file
 		monitor.beginTask("Creating " + name, 2);
 		ModelRoot root = getModelRoot();
@@ -63,7 +63,8 @@ public class NewCollectionContainerWizard extends NewCardElementWizard implement
 	}
 
 	@Override
-	protected CardElement doCreateCardElement(CollectionsContainer parent, String name, boolean virtual) {
+	protected CardElement doCreateCardElement(CollectionsContainer parent, String name, boolean virtual,
+			boolean unsorted) {
 		return new CollectionsContainer(name, parent);
 	}
 }

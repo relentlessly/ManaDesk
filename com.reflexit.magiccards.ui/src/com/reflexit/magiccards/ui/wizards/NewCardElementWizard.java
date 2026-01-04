@@ -53,8 +53,7 @@ public abstract class NewCardElementWizard extends Wizard {
 	}
 
 	/**
-	 * @param element
-	 *            the element to set
+	 * @param element the element to set
 	 */
 	public void setElement(CardElement element) {
 		this.element = element;
@@ -70,20 +69,21 @@ public abstract class NewCardElementWizard extends Wizard {
 	}
 
 	/**
-	 * This method is called when 'Finish' button is pressed in the wizard. We will create an
-	 * operation and run it using wizard as execution context.
+	 * This method is called when 'Finish' button is pressed in the wizard. We will
+	 * create an operation and run it using wizard as execution context.
 	 */
 	@Override
 	public boolean performFinish() {
 		final String containerName = this.page.getContainerName();
 		final String fileName = this.page.getElementName();
 		final boolean virtual = page.isVirtual();
+		final boolean unsorted = page.isUnsorted();
 		beforeFinish();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doFinish(containerName, fileName, virtual, monitor);
+					doFinish(containerName, fileName, virtual, unsorted, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -122,11 +122,10 @@ public abstract class NewCardElementWizard extends Wizard {
 	 * @param monitor
 	 */
 	/**
-	 * The worker method. It will find the container, create the file if missing or just replace its contents,
-	 * and open the editor on the
-	 * newly created file.
+	 * The worker method. It will find the container, create the file if missing or
+	 * just replace its contents, and open the editor on the newly created file.
 	 */
-	protected void doFinish(String containerName, final String name, final boolean virtual,
+	protected void doFinish(String containerName, final String name, final boolean virtual, final boolean unsorted,
 			IProgressMonitor monitor) throws CoreException {
 		// create a sample file
 		monitor.beginTask("Creating " + name, 2);
@@ -140,17 +139,15 @@ public abstract class NewCardElementWizard extends Wizard {
 		Job job = new Job("Adding a deck/collection " + name) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				final CardElement col = doCreateCardElement(parent, name, virtual);
+				final CardElement col = doCreateCardElement(parent, name, virtual, unsorted);
 				setElement(col);
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getActivePage();
+						IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 						try {
 							IViewPart view = page.showView(CardsNavigatorView.ID);
-							view.getViewSite().getSelectionProvider()
-									.setSelection(new StructuredSelection(col));
+							view.getViewSite().getSelectionProvider().setSelection(new StructuredSelection(col));
 						} catch (PartInitException e) {
 							// ignore
 						}
@@ -168,8 +165,8 @@ public abstract class NewCardElementWizard extends Wizard {
 		monitor.done();
 	}
 
-	protected abstract CardElement doCreateCardElement(CollectionsContainer parent, String name,
-			boolean virtual);
+	protected abstract CardElement doCreateCardElement(CollectionsContainer parent, String name, boolean virtual,
+			boolean unsorted);
 
 	protected void throwCoreException(String message) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, "com.reflexit.magiccards.ui", IStatus.OK, message, null);
@@ -177,7 +174,8 @@ public abstract class NewCardElementWizard extends Wizard {
 	}
 
 	/**
-	 * We will accept the selection in the workbench to see if we can initialize from it.
+	 * We will accept the selection in the workbench to see if we can initialize
+	 * from it.
 	 *
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */

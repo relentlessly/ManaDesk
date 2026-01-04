@@ -108,6 +108,11 @@ public class ArrayCardStorage<T> extends AbstractStorage<T> {
 	}
 
 	@Override
+	public boolean isUnsorted() {
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return getList().toString();
 	}

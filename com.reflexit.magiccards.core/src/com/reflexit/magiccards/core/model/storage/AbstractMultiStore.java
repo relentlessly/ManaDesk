@@ -377,6 +377,11 @@ public abstract class AbstractMultiStore<T extends ICard> extends AbstractCardSt
 		}
 
 		@Override
+		public boolean isUnsorted() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
 		public void setLocation(Location location) {
 			throw new UnsupportedOperationException();
 		}

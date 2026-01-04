@@ -22,9 +22,9 @@ import com.reflexit.magiccards.core.model.abs.ICardCountable;
  * @author Alena
  *
  */
-public class MemoryCardStore<T extends ICard> extends AbstractCardStoreWithStorage<T> implements
-		ICardCountable {
-	private boolean virtutal = true;
+public class MemoryCardStore<T extends ICard> extends AbstractCardStoreWithStorage<T> implements ICardCountable {
+	private boolean virtual = true;
+	private boolean unsorted = false;
 
 	/**
 	 * creates empty card store
@@ -77,11 +77,23 @@ public class MemoryCardStore<T extends ICard> extends AbstractCardStoreWithStora
 
 	@Override
 	public boolean isVirtual() {
-		return virtutal;
+		return virtual;
 	}
 
 	@Override
 	public void setVirtual(boolean value) {
-		this.virtutal = value;
+		this.virtual = value;
 	}
+
+	@Override
+	public boolean isUnsorted() {
+		return unsorted;
+	}
+
+	@Override
+	public void setUnsorted(boolean value) {
+		this.unsorted = value;
+		this.mergeOnAdd = !value; // !!! RD Disable merge on add
+	}
+
 }

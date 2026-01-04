@@ -47,6 +47,7 @@ public abstract class NewCardElementWizardPage extends WizardPage {
 	private Text containerText;
 	private Text nameText;
 	protected Button virtual;
+	protected Button unsorted;
 	protected ISelection selection;
 
 	/**
@@ -161,7 +162,8 @@ public abstract class NewCardElementWizardPage extends WizardPage {
 	public abstract String getElementTypeName();
 
 	/**
-	 * Uses the standard container selection dialog to choose the new value for the container field.
+	 * Uses the standard container selection dialog to choose the new value for the
+	 * container field.
 	 */
 	private void handleBrowse() {
 		CardOrganizer root = getRootContainer();
@@ -222,6 +224,12 @@ public abstract class NewCardElementWizardPage extends WizardPage {
 	public boolean isVirtual() {
 		if (virtual != null)
 			return virtual.getSelection();
+		return false;
+	}
+
+	public boolean isUnsorted() {
+		if (unsorted != null)
+			return unsorted.getSelection();
 		return false;
 	}
 
