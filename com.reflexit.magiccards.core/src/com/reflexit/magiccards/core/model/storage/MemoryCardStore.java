@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.model.storage;
 
 import java.util.Collection;
@@ -16,12 +22,7 @@ import java.util.List;
 import com.reflexit.magiccards.core.model.abs.ICard;
 import com.reflexit.magiccards.core.model.abs.ICardCountable;
 
-/**
- * ArrayList based implementation for AbstractCardStore
- *
- * @author Alena
- *
- */
+
 public class MemoryCardStore<T extends ICard> extends AbstractCardStoreWithStorage<T> implements ICardCountable {
 	private boolean virtual = true;
 	private boolean unsorted = false;

@@ -14,6 +14,12 @@
  * for other information.
  * $
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     RÃ©mi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 /*
  * Created by: Elena Laskavaia
  * Created on: 2011-01-27
@@ -148,7 +154,7 @@ public class TestFileUtils {
 	        int numSections
 	) throws IOException, NoSuchMethodException {
 
-	    // 1. Trouver la classe qui déclare réellement la méthode de test
+	    // 1. Trouver la classe qui dÃ©clare rÃ©ellement la mÃ©thode de test
 	    while (clazz.getMethod(testName).getDeclaringClass() != clazz) {
 	        clazz = clazz.getSuperclass();
 	    }
@@ -175,7 +181,7 @@ public class TestFileUtils {
 	            }
 	        }
 
-	        // 4. Remonter dans la hiérarchie si nécessaire
+	        // 4. Remonter dans la hiÃ©rarchie si nÃ©cessaire
 	        Class<?> superclass = clazz.getSuperclass();
 	        if (superclass == null || !superclass.getPackage().equals(clazz.getPackage())) {
 	            throw new IOException("Test data not found for " + clazz.getName() + "." + testName);

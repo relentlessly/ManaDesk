@@ -1,3 +1,10 @@
+
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.model.nav;
 
 import java.io.File;
@@ -6,12 +13,7 @@ import java.io.InputStream;
 
 import com.reflexit.magiccards.core.model.Location;
 
-/**
- * Specific organizer for decks and collections
- *
- * @author Alena
- *
- */
+
 public class CollectionsContainer extends CardOrganizer {
 	public CollectionsContainer(String name, CardOrganizer parent) {
 		super(name, parent);

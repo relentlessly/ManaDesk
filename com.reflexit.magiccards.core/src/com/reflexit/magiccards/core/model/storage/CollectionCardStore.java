@@ -4,6 +4,12 @@
  *
  * Contributors: Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.model.storage;
 
 import java.util.Collection;
@@ -15,10 +21,7 @@ import com.reflexit.magiccards.core.model.MagicCardPhysical;
 import com.reflexit.magiccards.core.model.abs.ICardCountable;
 import com.reflexit.magiccards.core.model.abs.ICardField;
 
-/**
- * @author Alena
- *
- */
+
 public class CollectionCardStore extends AbstractCardStoreWithStorage<IMagicCard>
 		implements ICardStore<IMagicCard>, ICardCollection<IMagicCard>, IStorageContainer<IMagicCard> {
 	protected HashCollectionPart hashpart;

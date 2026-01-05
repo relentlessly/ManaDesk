@@ -1,3 +1,10 @@
+
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.ui.views.columns;
 
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -6,10 +13,7 @@ import org.eclipse.jface.viewers.EditingSupport;
 import com.reflexit.magiccards.core.model.MagicCardPhysical;
 import com.reflexit.magiccards.core.model.abs.ICardField;
 
-/**
- * @author Alena
- * 
- */
+
 public class StringEditorColumn extends GenColumn {
 	public StringEditorColumn(ICardField field, String columnName) {
 		super(field, columnName);

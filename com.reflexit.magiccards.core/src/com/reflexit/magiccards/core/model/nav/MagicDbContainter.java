@@ -1,11 +1,13 @@
+
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.model.nav;
 
-/**
- * Organizer for Scryfall database
- *
- * @author Alena
- *
- */
+
 public class MagicDbContainter extends CardOrganizer {
 	public MagicDbContainter(CardOrganizer parent) {
 		super(new LocationPath("MagicDBScry"), parent);

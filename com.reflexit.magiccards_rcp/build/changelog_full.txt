@@ -1,3 +1,5 @@
+# Contributors:
+#     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
 __NOTOC__
 == 1.4.0 ==
 changes in 1.4.0.11

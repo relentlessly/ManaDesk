@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.ui.views.editions;
 
 import java.io.FileNotFoundException;
@@ -56,9 +62,6 @@ import com.reflexit.magiccards.core.model.FilterField;
  * // when user pressed ok in dialog call this to store values in preference store
  * c.performApply();
  * </code>
- *
- * @author Alena
- *
  */
 public class EditionsComposite extends Composite {
 	private static final String SORT_DIRECTION = "set_sort_direction";
@@ -171,7 +174,7 @@ public class EditionsComposite extends Composite {
 	}
 
 	private void createColumnLabelProviders() {
-		columns = new ArrayList<AbstractEditionColumn>();
+		columns = new ArrayList<>();
 		columns.add(new EditionNameColumn());
 		columns.add(new AbbrColumn());
 		columns.add(new DateColumn());
@@ -268,7 +271,7 @@ public class EditionsComposite extends Composite {
 	public void initialize() {
 		this.treeViewer.setInput(Editions.getInstance());
 		Collection<Edition> names = Editions.getInstance().getEditions();
-		ArrayList<Edition> sel = new ArrayList<Edition>();
+		ArrayList<Edition> sel = new ArrayList<>();
 		for (Iterator<Edition> iterator = names.iterator(); iterator.hasNext();) {
 			Edition ed = iterator.next();
 			String abbr = ed.getMainAbbreviation();
@@ -354,7 +357,7 @@ public class EditionsComposite extends Composite {
 
 	private String[] getIds() {
 		Collection<String> names = Editions.getInstance().getNames();
-		ArrayList<String> res = new ArrayList<String>();
+		ArrayList<String> res = new ArrayList<>();
 		for (Iterator<String> iterator = names.iterator(); iterator.hasNext();) {
 			String ed = iterator.next();
 			String abbr = Editions.getInstance().getAbbrByName(ed);

@@ -8,6 +8,12 @@
  * Contributors :
  *    Alena Laskavaia - initial implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.ui.gallery;
 
 import java.util.ArrayList;
@@ -41,13 +47,7 @@ import com.reflexit.magiccards.ui.utils.ImageCreator;
 import com.reflexit.magiccards.ui.views.model.GroupExpandContentProvider;
 import com.reflexit.magiccards.ui.views.model.ISelectionTranslator;
 
-/**
- * This is super lazy viewer which works with non-lazy provider. It will not
- * create tree items or ask for labels of element until they are visible.
- * 
- * @author elaskavaia
- *
- */
+
 public class LazyGalleryTreeViewer extends GalleryTreeViewer implements ISelectionTranslator {
 	private static final String CHILDREN = "c";
 	private int expandToLevel;

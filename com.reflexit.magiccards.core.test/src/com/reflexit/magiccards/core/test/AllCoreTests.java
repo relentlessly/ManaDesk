@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.test;
 
 import junit.framework.JUnit4TestAdapter;
@@ -26,10 +32,7 @@ import com.reflexit.magiccards.core.sync.ParseGathererSearchChecklistTest;
 import com.reflexit.magiccards.core.sync.ParseGathererSearchStandardTest;
 import com.reflexit.magiccards.core.sync.ParseGathererSetsTest;
 
-/**
- * @author Alena
- *
- */
+
 public class AllCoreTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for com.reflexit.magiccards.core.test");

@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.ui.commands;
 
 import java.util.Properties;
@@ -34,10 +40,7 @@ import com.reflexit.magiccards.ui.preferences.PreferenceConstants;
 import com.reflexit.magiccards.ui.utils.CoreMonitorAdapter;
 import com.reflexit.magiccards.ui.views.MagicDbView;
 
-/**
- * @author Alena
- * 
- */
+
 public class UpdateDbHandler extends AbstractHandler {
 	/*
 	 * (non-Javadoc)

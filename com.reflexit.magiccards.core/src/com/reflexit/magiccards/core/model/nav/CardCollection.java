@@ -1,3 +1,10 @@
+
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.model.nav;
 
 import java.io.File;
@@ -11,12 +18,7 @@ import com.reflexit.magiccards.core.model.storage.IStorage;
 import com.reflexit.magiccards.core.model.storage.IStorageContainer;
 import com.reflexit.magiccards.core.model.storage.IStorageInfo;
 
-/**
- * It is object representing a Deck or Collection (but not the card it contains)
- *
- * @author Alena
- *
- */
+
 public class CardCollection extends CardElement {
 	transient private ICardStore<IMagicCard> store;
 	transient protected Boolean deck;
