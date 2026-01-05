@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.ui.wizards;
 
 import java.util.ArrayList;
@@ -39,10 +45,7 @@ import com.reflexit.magiccards.core.model.nav.ModelRoot;
 import com.reflexit.magiccards.ui.dialogs.CardNavigatorSelectionDialog;
 import com.reflexit.magiccards.ui.views.nav.CardsNavigatorContentProvider;
 
-/**
- * @author Alena
- *
- */
+
 public abstract class NewCardElementWizardPage extends WizardPage {
 	private Text containerText;
 	private Text nameText;

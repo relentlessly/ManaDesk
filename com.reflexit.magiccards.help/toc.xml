@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+-->
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="ManaDesk">

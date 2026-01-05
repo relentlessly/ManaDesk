@@ -1,3 +1,5 @@
+# Contributors:
+#     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
 This is beta release of ManaDesk 1.5.1,
 I switched platform to eclipse 4.6 (Neon) so resulting artifacts may contain lots of bugs. Appreciate any help testing especially
 on mac os. Please backup you cards or use a different workspace to test it.

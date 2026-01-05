@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.sync;
 
 import java.io.File;
@@ -26,10 +32,7 @@ import com.reflexit.magiccards.core.model.Editions;
 import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.MagicCardField;
 
-/**
- * @author Alena
- *
- */
+
 public class CardCache {
 	public static URL createSetImageURL(IMagicCard card, boolean upload) throws IOException {
 		String edition = card.getSet();

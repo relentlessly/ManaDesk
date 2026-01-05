@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.ui.views.lib;
 
 import java.util.ArrayList;
@@ -50,12 +56,7 @@ import com.reflexit.magiccards.ui.views.AbstractGroupPageCardsView;
 import com.reflexit.magiccards.ui.views.IViewPage;
 import com.reflexit.magiccards.ui.views.ViewPageGroup;
 
-/**
- * Cards view for personal cards (decks and collections)
- *
- * @author Alena
- *
- */
+
 public abstract class AbstractMyCardsView extends AbstractGroupPageCardsView implements ICardEventListener {
 	private final DataManager DM = DataManager.getInstance();
 	private Action delete;

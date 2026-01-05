@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.model.xml;
 
 import java.io.File;
@@ -22,10 +28,7 @@ import com.reflexit.magiccards.core.model.storage.AbstractMultiStore;
 import com.reflexit.magiccards.core.model.storage.CollectionCardStore;
 import com.reflexit.magiccards.core.model.storage.ICardCollection;
 
-/**
- * @author Alena
- *
- */
+
 public class CollectionMultiFileCardStore extends AbstractMultiStore<IMagicCard> implements
 		ICardCollection<IMagicCard> {
 	public CollectionMultiFileCardStore() {

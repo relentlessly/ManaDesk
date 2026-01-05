@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.model.storage;
 
 import java.io.IOException;
@@ -18,12 +24,7 @@ import java.util.List;
 
 import com.reflexit.magiccards.core.model.Location;
 
-/**
- * ArrayList based implementation for AbstractCardStore
- * 
- * @author Alena
- * 
- */
+
 public class MemoryCardStorage<T> extends AbstractStorage<T> {
 	protected List<T> list;
 	private Location location = Location.NO_WHERE;

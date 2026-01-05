@@ -1,4 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!--
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+-->
 <?artifactRepository version='1.1.0'?>
 <repository name='magic.product' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1'>
   <properties size='3'>

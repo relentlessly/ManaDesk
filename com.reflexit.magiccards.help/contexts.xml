@@ -1,3 +1,7 @@
+<!--
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+-->
 <contexts>
    <context id="viewcard">
       <description>Card Info is a view that shows information about a card. There is a link to the help content below.</description>

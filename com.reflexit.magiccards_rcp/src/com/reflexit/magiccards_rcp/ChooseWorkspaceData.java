@@ -9,6 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *     Eric Rizzo - added API to set the list of recent workspaces.
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards_rcp;
 
 import java.io.File;

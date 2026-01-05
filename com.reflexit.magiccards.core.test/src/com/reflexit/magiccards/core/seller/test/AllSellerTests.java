@@ -8,15 +8,18 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.seller.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-/**
- * @author Alena
- *
- */
+
 public class AllSellerTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for com.reflexit.magiccards.core.seller.test");

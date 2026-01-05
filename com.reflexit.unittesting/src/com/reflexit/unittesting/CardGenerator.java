@@ -4,6 +4,12 @@
  *
  * Contributors: Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.unittesting;
 
 import com.reflexit.magiccards.core.model.Edition;
@@ -14,10 +20,7 @@ import com.reflexit.magiccards.core.model.MagicCardField;
 import com.reflexit.magiccards.core.model.MagicCardPhysical;
 import com.reflexit.magiccards.core.model.Rarity;
 
-/**
- * @author Alena
- * 
- */
+
 public class CardGenerator {
 	static int id = 33;
 

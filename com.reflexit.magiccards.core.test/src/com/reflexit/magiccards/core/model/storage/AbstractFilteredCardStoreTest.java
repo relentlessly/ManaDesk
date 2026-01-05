@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.core.model.storage;
 
 import java.util.Arrays;
@@ -32,10 +38,7 @@ import com.reflexit.magiccards.core.model.MagicCardFilter;
 import com.reflexit.magiccards.core.test.assist.MemCardHandler;
 import com.reflexit.unittesting.CardGenerator;
 
-/**
- * @author Alena
- *
- */
+
 public class AbstractFilteredCardStoreTest extends TestCase {
 	private static final String INSTANT = "Instant";
 	private static final String ARTIFACT = "Artifact";

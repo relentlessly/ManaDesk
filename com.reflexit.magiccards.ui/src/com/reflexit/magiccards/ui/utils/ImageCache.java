@@ -1,3 +1,7 @@
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
 package com.reflexit.magiccards.ui.utils;
 
 import java.io.PrintWriter;
@@ -21,13 +25,6 @@ import com.reflexit.magiccards.core.model.utils.MRUCache;
 import com.reflexit.magiccards.core.sync.WebUtils;
 import com.reflexit.magiccards.ui.MagicUIActivator;
 
-/**
- * This class manages Card images, it is singleton and its resposible for
- * disposing them. Do not dispose these images!
- * 
- * @author elaskavaia
- *
- */
 public class ImageCache {
 	public final Image CARD_NOT_FOUND_IMAGE_TEMPLATE = ImageCreator.getInstance().getCardNotFoundImageTemplate();
 	public static ImageCache INSTANCE = new ImageCache();

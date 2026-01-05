@@ -1,4 +1,8 @@
 package com.reflexit.magiccards.ui.exportWizards;
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
 
 import java.io.File;
 import java.io.IOException;

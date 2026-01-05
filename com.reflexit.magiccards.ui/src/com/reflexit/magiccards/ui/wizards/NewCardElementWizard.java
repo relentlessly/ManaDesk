@@ -8,6 +8,12 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
+
+/*
+ * Contributors:
+ *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
+
 package com.reflexit.magiccards.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,10 +45,7 @@ import com.reflexit.magiccards.core.model.nav.ModelRoot;
 import com.reflexit.magiccards.ui.MagicUIActivator;
 import com.reflexit.magiccards.ui.views.nav.CardsNavigatorView;
 
-/**
- * @author Alena
- *
- */
+
 public abstract class NewCardElementWizard extends Wizard {
 	protected NewCardElementWizardPage page;
 	protected ISelection selection;
