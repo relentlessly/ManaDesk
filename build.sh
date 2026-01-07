@@ -4,7 +4,7 @@
 
 #build script, only works on linux
 #needs maven 3.3.9 and java compiler 17+ installed
-export JAVA_HOME=/usr/lib/jvm/java-1.17.0-openjdk-amd64/
+export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64/
 PATH=$JAVA_HOME/bin:$PATH
 mvn -DskipTests -f com.reflexit.magiccards.parent/pom.xml clean verify
 
