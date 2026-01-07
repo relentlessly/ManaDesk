@@ -4,13 +4,13 @@
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
 -->
 <?compositeMetadataRepository version='1.0.0'?>
-<repository name='Composite Site Example 1.0.x' type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository' version='1.0.0'>
-  <properties size='2'>
-    <property name='p2.timestamp' value='1615539125093'/>
-    <property name='p2.atomic.composite.loading' value='false'/>
+<repository name="Composite Site Example 1.0.x" type="org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository" version="1.0.0">
+  <properties size="2">
+    <property name="p2.timestamp" value="1615539125093"/>
+    <property name="p2.atomic.composite.loading" value="false"/>
   </properties>
-  <children size='2'>
-    <child location='../../releases/0.0.5.v20251226-1002'/>
-    <child location='../../releases/0.0.9.v20260105-0939'/>
+  <children size="4">
+    <child location="../../releases/0.0.5.v20251226-1002"/>
+    <child location="../../releases/0.0.9.v20260105-0939"/>
   </children>
 </repository>
