@@ -2,13 +2,54 @@
 #     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
 #!/bin/bash
 
+version=0.9.0
+release=false
+while getopts "h?vr:" opt; do
+  case "$opt" in
+    h|\?)
+      show_help
+      exit 0
+      ;;
+    v)  version=$OPTARG
+      ;;
+    r)  release=true
+      ;;
+  esac
+done
+shift $((OPTIND-1))
+
 #build script, only works on linux
 #needs maven 3.3.9 and java compiler 17+ installed
 export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64/
 PATH=$JAVA_HOME/bin:$PATH
 mvn -f com.reflexit.magiccards.parent/pom.xml clean verify
-
-
+if [ "$release" = true ] ; then
+	# setup release files for self update
+	datestring=$(date '+%Y%m%d')
+	time=$(date '+%H%M')
+	targetdir=./updates/releases/${version}v${datestring}-${time}
+	mkdir $targetdir
+	# insert line into updates/0.x/compositeArtifacts.xml, and compositeContent.xml
+	# create and destroy a venv, to install lxml and do the xml modifications
+	python3 -m venv venv_buildscript
+	source venv_buildscript/bin/activate
+	python3 -m pip install lxml
+	python3 build.py --version ${version} --date ${datestring} --time ${time}
+	deactivate # exit venv
+	rm -rf venv_buildscript
+	# copy artifacts into created directory
+	cp -R ./com.reflexit.magiccards.product/target/repository/features $targetdir/
+	cp -R ./com.reflexit.magiccards.product/target/repository/plugins $targetdir/
+	cp -R ./com.reflexit.magiccards.product/target/repository/artifacts.xml.xz $targetdir/
+	cp -R ./com.reflexit.magiccards.product/target/repository/content.xml.xz $targetdir/
+	cp -R ./com.reflexit.magiccards.product/target/repository/p2.index $targetdir/
+	# extract the artifacts.xml from artifacts.xml.xz or artifacts.jar, the same with content.xml
+	# run in subshell to not have cd affect current directory
+	(cd ./com.reflexit.magiccards.product/target/repository && jar -xf artifacts.jar)
+	(cd ./com.reflexit.magiccards.product/target/repository && jar -xf content.jar)
+	cp ./com.reflexit.magiccards.product/target/repository/artifacts.xml $targetdir/ 
+	cp ./com.reflexit.magiccards.product/target/repository/content.xml $targetdir/ 
+fi
 #This adds java to bundles, java runtime (1.8 +) has to be downloaded and extracted in $JAVADIR using this convention
 # linux.gtk.x86_64/MagicAssistant/jre/
 # win32.win32.x86_64/MagicAssistant/jre
