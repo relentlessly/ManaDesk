@@ -64,10 +64,10 @@ Avacyn Restored|AVR||May 2012|Expansion|Innistrad||
 Avacyn Restored Promos|PAVR||April 2012|Promo|Innistrad||
 Avacyn Restored Tokens|TAVR||May 2012|Token|Innistrad||
 Avatar: The Last Airbender|TLA||November 2025|Expansion|Avatar: The Last Airbender||
-Avatar: the Last Airbender Art Cards|ATLA||November 2025|Other|Avatar: the Last Airbender Art Cards||
+Avatar: the Last Airbender Art Series|ATLA||November 2025|Other|Avatar: the Last Airbender Art Series||
 Avatar: The Last Airbender Beginner Box Front Cards|FTLA||November 2025|Other|Avatar: The Last Airbender Beginner Box Front Cards||
 Avatar: The Last Airbender Eternal|TLE||November 2025|Other|Avatar: The Last Airbender Eternal||
-Avatar: the Last Airbender Eternal Art Cards|ATLE||November 2025|Other|Avatar: the Last Airbender Eternal Art Cards||
+Avatar: the Last Airbender Eternal Art Series|ATLE||November 2025|Other|Avatar: the Last Airbender Eternal Art Series||
 Avatar: The Last Airbender Eternal Tokens|TTLE||November 2025|Token|Avatar: The Last Airbender Eternal Tokens||
 Avatar: The Last Airbender Jumpstart Front Cards|JTLA||November 2025|Other|Avatar: The Last Airbender Jumpstart Front Cards||
 Avatar: The Last Airbender Promos|PTLA||November 2025|Promo|Avatar: The Last Airbender Promos||
@@ -575,6 +575,7 @@ March of the Machine: The Aftermath Promos|PMAT||November 2023|Promo|March of th
 Marvel Legends Series Inserts|LMAR||September 2025|Promo|Marvel Legends Series Inserts||
 Marvel Universe|MAR||September 2025|Other|Marvel Universe||
 Marvel's Spider-Man|SPM||September 2025|Expansion|Marvel's Spider-Man||
+Marvel's Spider-Man Art Series|ASPM||September 2025|Other|Marvel's Spider-Man Art Series||
 Marvel's Spider-Man Eternal|SPE||September 2025|Other|Marvel's Spider-Man Eternal||
 Marvel's Spider-Man Promos|PSPM||September 2025|Promo|Marvel's Spider-Man Promos||
 Marvel's Spider-Man Tokens|TSPM||September 2025|Token|Marvel's Spider-Man Tokens||
@@ -910,6 +911,7 @@ Wizards Play Network 2022|PW22||March 2022|Promo|Wizards Play Network 2022||
 Wizards Play Network 2023|PW23||January 2023|Promo|Wizards Play Network 2023||
 Wizards Play Network 2024|PW24||January 2024|Promo|Wizards Play Network 2024||
 Wizards Play Network 2025|PW25||January 2025|Promo|Wizards Play Network 2025||
+Wizards Play Network 2026|PW26||January 2026|Promo|Wizards Play Network 2026||
 WOE Japanese Promo Tokens|WWOE||September 2023|Token|WOE Japanese Promo Tokens||
 World Championship Decks 1997|WC97||August 1997|Other|World Championship Decks 1997||
 World Championship Decks 1998|WC98||August 1998|Other|World Championship Decks 1998||
