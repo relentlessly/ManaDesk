@@ -33,7 +33,7 @@ public class OpenSideboardAction extends ImageAction {
 		CollectionsContainer parent = (CollectionsContainer) deck.getParent();
 		CardCollection s;
 		if (!deck.getParent().contains(sideboard)) {
-			s = parent.addDeck(sideboard.getBaseFileName(), deck.isVirtual());
+			s = parent.addDeck(sideboard.getBaseFileName(), true, deck.isVirtual());
 		} else {
 			s = (CardCollection) parent.findChield(sideboard);
 		}

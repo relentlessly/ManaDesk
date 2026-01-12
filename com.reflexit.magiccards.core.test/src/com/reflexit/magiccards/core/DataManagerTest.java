@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -68,8 +67,7 @@ public class DataManagerTest extends TestCase {
 
 	public CardCollection createDeck(boolean vir) {
 		i++;
-		CardCollection deck2 = dm.getModelRoot().getDeckContainer()
-				.addDeck("bla" + i, vir);
+		CardCollection deck2 = dm.getModelRoot().getDeckContainer().addDeck("bla" + i, false, vir);
 		ICardStore<IMagicCard> store2 = deck2.getStore();
 		assertNotNull(store2);
 		return deck2;
@@ -77,8 +75,8 @@ public class DataManagerTest extends TestCase {
 
 	public MagicCardPhysical phyCard(String cardId, Location loc) {
 		IMagicCard base = dm.getMagicDBStore().getCard(cardId);
-		assertNotNull("Cannot find " + cardId + " " + FileUtils.getMagicCardsDir() + " "
-				+ dm.getMagicDBStore().size(), base);
+		assertNotNull("Cannot find " + cardId + " " + FileUtils.getMagicCardsDir() + " " + dm.getMagicDBStore().size(),
+				base);
 		MagicCardPhysical card = new MagicCardPhysical(base, loc);
 		card.setOwn(true);
 		card.setCount(1);
@@ -144,8 +142,7 @@ public class DataManagerTest extends TestCase {
 		assertEquals(1, store2.size());
 		MagicCardPhysical card1 = getFirst();
 		assertNotEquals(card, card1);
-		assertTrue(card + " vs " + card1, card.getBase()
-				.equals(card1.getBase()));
+		assertTrue(card + " vs " + card1, card.getBase().equals(card1.getBase()));
 		assertFalse(card.isOwn() == card1.isOwn());
 	}
 

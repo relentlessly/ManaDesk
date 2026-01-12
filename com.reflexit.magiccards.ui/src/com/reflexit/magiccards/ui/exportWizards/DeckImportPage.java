@@ -116,6 +116,7 @@ public class DeckImportPage extends WizardDataTransferPage {
 	private Combo typeCombo;
 	private Button virtualCards;
 	private Text deckText;
+	private boolean isDeck = true;
 	private MagicToolkit toolkit;
 	// data elements
 	private PreferenceStore store;
@@ -374,7 +375,7 @@ public class DeckImportPage extends WizardDataTransferPage {
 		return categorizedErrors;
 	}
 
-	protected void createNewDeck(final String base, boolean virtual, CollectionsContainer resource) {
+	protected void createNewDeck(final String base, boolean isDeck, boolean virtual, CollectionsContainer resource) {
 		int attempts = 1000;
 		Location newloc = Location.createLocation(base);
 		while (resource.contains(newloc) && attempts-- > 0) {
@@ -382,7 +383,7 @@ public class DeckImportPage extends WizardDataTransferPage {
 		}
 		if (attempts <= 0)
 			throw new IllegalArgumentException("Cannot generate deck name");
-		this.element = resource.addDeck(newloc.getBaseFileName(), virtual);
+		this.element = resource.addDeck(newloc.getBaseFileName(), isDeck, virtual);
 	}
 
 	protected String getNewDeckName() {
@@ -472,8 +473,10 @@ public class DeckImportPage extends WizardDataTransferPage {
 		intoDeck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (intoDeck.getSelection())
+				if (intoDeck.getSelection()) {
 					deckText.setText(getDeckContainer().getLocation().getPath() + "/" + AUTO_NAME);
+					isDeck = true;
+				}
 			}
 		});
 		intoCollection = new Button(buttons, SWT.RADIO);
@@ -481,8 +484,10 @@ public class DeckImportPage extends WizardDataTransferPage {
 		intoCollection.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (intoCollection.getSelection())
+				if (intoCollection.getSelection()) {
 					deckText.setText(getCollectionContainer().getLocation().getPath() + "/" + AUTO_NAME);
+					isDeck = false;
+				}
 			}
 		});
 		intoExisting = new Button(group, SWT.RADIO);
@@ -514,7 +519,7 @@ public class DeckImportPage extends WizardDataTransferPage {
 		// });
 		// deck options
 		virtualCards = new Button(group, SWT.CHECK);
-		virtualCards.setText("Imported cards will be virtual");
+		virtualCards.setText("Imported cards will be virtual if Ownership not specified");
 		virtualCards.setSelection(false);
 		virtualCards.setLayoutData(spanAll.create());
 		// db import
@@ -652,9 +657,9 @@ public class DeckImportPage extends WizardDataTransferPage {
 	public void setInputChoice(ImportSource inputChoice) {
 		this.inputChoice = inputChoice;
 		fileRadio.setSelection(inputChoice == ImportSource.FILE);
-// !!! RD		clipboardRadio.setSelection(inputChoice == ImportSource.TEXT);
+		// !!! RD		clipboardRadio.setSelection(inputChoice == ImportSource.TEXT);
 		// inputRadio.setSelection(inputChoice == ImportSource.INPUT);
-// !!! RD 		urlRadio.setSelection(inputChoice == ImportSource.URL);
+		// !!! RD 		urlRadio.setSelection(inputChoice == ImportSource.URL);
 	}
 
 	private void selectReportType(final ReportType type) {
@@ -921,7 +926,7 @@ public class DeckImportPage extends WizardDataTransferPage {
 		}
 		if (inputChoice == ImportSource.URL) {
 			if (urlText.getText().isEmpty()) {
-//				setErrorMessage("URL is selected but empty");
+				//				setErrorMessage("URL is selected but empty");
 				return true;
 			}
 			try {
@@ -995,7 +1000,8 @@ public class DeckImportPage extends WizardDataTransferPage {
 					if (resolve) {
 						ImportUtils.resolve(importData.getList());
 						if (element instanceof CollectionsContainer) {
-							createNewDeck(getNewDeckName(), importData.isVirtual(), (CollectionsContainer) element);
+							createNewDeck(getNewDeckName(), isDeck, importData.isVirtual(),
+									(CollectionsContainer) element);
 						}
 						if (!(element instanceof CardCollection)) {
 							throw new IllegalArgumentException("Cannot import into " + element);

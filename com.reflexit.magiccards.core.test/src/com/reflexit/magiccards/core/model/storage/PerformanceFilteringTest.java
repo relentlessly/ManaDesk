@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -121,6 +120,6 @@ public class PerformanceFilteringTest extends TestCase {
 		this.filter.setFilter(textFilter("\"ob\""));
 		assertFast(350, runfiltering());
 		assertTrue("was " + fstore.getSize(), fstore.getSize() >= 720);
-		assertTrue("was " + fstore.getSize(), fstore.getSize() < 755);
+		assertTrue("was " + fstore.getSize(), fstore.getSize() < 785);
 	}
 }

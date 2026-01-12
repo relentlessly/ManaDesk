@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -415,7 +414,9 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			}
 		}
 
-		priceString = BuildPrice((JSONObject) elem.get("prices"));
+		if (!generateFlat) {
+			priceString = BuildPrice((JSONObject) elem.get("prices"));
+		}
 
 		JSONObject relatedUri = (JSONObject) elem.get("related_uris");
 		String gathererUriString = "";

@@ -40,12 +40,6 @@
              id="com.reflexit.magiccards.ui.preferences.DeckViewPreferencePage"
              name="View: Deck/Cards">
        </page>
-       <page
-             category="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
-             class="com.reflexit.magiccards.ui.preferences.CollectorViewPreferencePage"
-             id="com.reflexit.magiccards.ui.preferences.CollectorViewPreferencePage"
-             name="View: Collector">
-       </page>
        
        <page
             name="Card Export"
@@ -54,6 +48,12 @@
             category="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
             >
       </page>
+       <page
+             category="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
+             class="com.reflexit.magiccards.ui.preferences.CollectorViewPreferencePage"
+             id="com.reflexit.magiccards.ui.preferences.CollectorViewPreferencePage"
+             name="View: Collector">
+       </page>      
       <!-- !!! RD 
        <page
              category="com.reflexit.magiccards.ui.preferences.MagicPreferencePage"
