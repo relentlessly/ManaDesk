@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -12,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import com.reflexit.magiccards.core.model.Location;
-
 
 public class CollectionsContainer extends CardOrganizer {
 	public CollectionsContainer(String name, CardOrganizer parent) {
@@ -110,8 +108,8 @@ public class CollectionsContainer extends CardOrganizer {
 		return (CollectionsContainer) newElement(name, this);
 	}
 
-	public CardCollection addDeck(String filename, boolean virtual) {
-		CardCollection d = new CardCollection(filename, this, true, virtual, false);
+	public CardCollection addDeck(String filename, boolean isDeck, boolean virtual) {
+		CardCollection d = new CardCollection(filename, this, isDeck, virtual, false);
 		return d;
 	}
 

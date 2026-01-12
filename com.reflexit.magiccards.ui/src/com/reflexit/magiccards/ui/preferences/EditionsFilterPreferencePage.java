@@ -7,7 +7,6 @@ package com.reflexit.magiccards.ui.preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -18,9 +17,9 @@ import com.reflexit.magiccards.ui.views.editions.EditionsComposite;
 
 public class EditionsFilterPreferencePage extends AbstractFilterPreferencePage {
 	private static final String FORMAT_NONE = "None";
-	public static final String LAST_SET = "onlyLastSet";
+	// !!! RD 	public static final String LAST_SET = "onlyLastSet";
 	private EditionsComposite comp;
-	private Button onlyLastSet;
+	// !!! RD	private Button onlyLastSet;
 
 	public EditionsFilterPreferencePage(CardFilterDialog cardFilterDialog) {
 		super(cardFilterDialog);
@@ -67,7 +66,7 @@ public class EditionsFilterPreferencePage extends AbstractFilterPreferencePage {
 		super.performOk();
 		if (this.comp != null) {
 			this.comp.performApply();
-			getPreferenceStore().setValue(LAST_SET, onlyLastSet.getSelection());
+			// !!! RD Not used anymore getPreferenceStore().setValue(LAST_SET, onlyLastSet.getSelection());
 		}
 		return true;
 	}

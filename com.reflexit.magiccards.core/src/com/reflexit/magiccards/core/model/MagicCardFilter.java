@@ -27,7 +27,7 @@ public class MagicCardFilter implements Cloneable {
 	private Expr root = Expr.TRUE;
 	private SortOrder sortOrder = new SortOrder();
 	private GroupOrder groupOrder = new GroupOrder();
-	private boolean onlyLastSet = false;
+	// !!! RD Disable	private boolean onlyLastSet = false;
 	private boolean nameGroupping = true;
 
 	@Override
@@ -139,7 +139,7 @@ public class MagicCardFilter implements Cloneable {
 			FilterField ff) {
 		Expr ands = Expr.EMPTY;
 		Expr ors = Expr.EMPTY;
-		
+
 		for (String id : sp.getIds()) {
 			String value = map.get(id);
 			if (value == null || value.equals("false") || value.isEmpty()) {
@@ -149,12 +149,9 @@ public class MagicCardFilter implements Cloneable {
 				}
 			} else if (value.equals("true")) {
 				Expr expr = ff.valueExpr(sp.getNameById(id));
-				if (orOp)
-				{
+				if (orOp) {
 					ors = ors.or(expr);
-				}
-				else
-				{
+				} else {
 					ands = ands.and(expr);
 				}
 			} else
@@ -192,7 +189,6 @@ public class MagicCardFilter implements Cloneable {
 		return groupOrder.getTop();
 	}
 
-
 	public GroupOrder getGroupOrder() {
 		return groupOrder;
 	}
@@ -208,14 +204,15 @@ public class MagicCardFilter implements Cloneable {
 		return res;
 	}
 
+	/* !!! RD Disable 
 	public boolean isOnlyLastSet() {
 		return onlyLastSet;
 	}
-
+	
 	public void setOnlyLastSet(boolean onlyLastSet) {
 		this.onlyLastSet = onlyLastSet;
 	}
-
+	*/
 	public void setNoSort() {
 		sortOrder.clear();
 	}
@@ -229,7 +226,7 @@ public class MagicCardFilter implements Cloneable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + groupOrder.hashCode();
-		result = prime * result + (onlyLastSet ? 1231 : 1237);
+		result = prime * result + (false ? 1231 : 1237); // !!! RD onlyLastSet
 		result = prime * result + root.hashCode();
 		result = prime * result + ((sortOrder == null) ? 0 : sortOrder.hashCode());
 		return result;
@@ -242,8 +239,8 @@ public class MagicCardFilter implements Cloneable {
 		if (!(obj instanceof MagicCardFilter))
 			return false;
 		MagicCardFilter other = (MagicCardFilter) obj;
-		if (onlyLastSet != other.onlyLastSet)
-			return false;
+		/* !!! RD 		if (onlyLastSet != other.onlyLastSet)
+					return false;*/
 		if (!groupOrder.equals(other.groupOrder))
 			return false;
 		if (!sortOrder.equals(other.sortOrder))
@@ -274,8 +271,9 @@ public class MagicCardFilter implements Cloneable {
 				filteredList.add(elem);
 			}
 		}
-		if (isOnlyLastSet())
-			filteredList = removeSetDuplicates(filteredList);
+		/* !!! RD 		
+				if (isOnlyLastSet())
+					filteredList = removeSetDuplicates(filteredList);*/
 		// MagicLogger.traceEnd(key);
 		return filteredList.toArray(new ICard[filteredList.size()]);
 	}

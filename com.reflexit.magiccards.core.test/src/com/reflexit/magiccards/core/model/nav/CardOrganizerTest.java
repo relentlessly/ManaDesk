@@ -6,8 +6,6 @@
  *******************************************************************************/
 package com.reflexit.magiccards.core.model.nav;
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -20,6 +18,8 @@ import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.model.events.CardEvent;
 import com.reflexit.magiccards.core.model.events.ICardEventListener;
 import com.reflexit.unittesting.TestFileUtils;
+
+import junit.framework.TestCase;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class CardOrganizerTest extends TestCase {
@@ -70,7 +70,7 @@ public class CardOrganizerTest extends TestCase {
 				res[0] = true;
 			}
 		});
-		deckContainer.addDeck("test", false);
+		deckContainer.addDeck("test", true, false);
 		assertTrue("Event is not received", res[0]);
 	}
 }

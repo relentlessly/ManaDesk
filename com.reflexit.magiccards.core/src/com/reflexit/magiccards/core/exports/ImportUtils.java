@@ -101,7 +101,7 @@ public class ImportUtils {
 				if (maindeck != null) {
 					virtual = maindeck.isVirtual();
 				}
-				parent.addDeck(location.getBaseFileName(), virtual);
+				parent.addDeck(location.getBaseFileName(), true, virtual);
 			}
 		}
 	}
