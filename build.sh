@@ -4,7 +4,7 @@
 
 version=0.9.0
 release=false
-while getopts "h?vr:" opt; do
+while getopts "h?v:r" opt; do
   case "$opt" in
     h|\?)
       show_help
@@ -23,8 +23,9 @@ shift $((OPTIND-1))
 export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64/
 PATH=$JAVA_HOME/bin:$PATH
 mvn -f com.reflexit.magiccards.parent/pom.xml clean verify
-if [ "$release" = true ] ; then
+if [ "$release"=true ] ; then
 	# setup release files for self update
+	echo "Creating Release version ${version}"
 	datestring=$(date '+%Y%m%d')
 	time=$(date '+%H%M')
 	targetdir=./updates/releases/${version}v${datestring}-${time}
@@ -34,7 +35,7 @@ if [ "$release" = true ] ; then
 	python3 -m venv venv_buildscript
 	source venv_buildscript/bin/activate
 	python3 -m pip install lxml
-	python3 build.py --version ${version} --date ${datestring} --time ${time}
+	python3 build.py --version $version --date $datestring --time $time
 	deactivate # exit venv
 	rm -rf venv_buildscript
 	# copy artifacts into created directory
