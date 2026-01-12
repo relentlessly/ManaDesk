@@ -88,7 +88,7 @@
    </configurations>
 
    <repositories>
-      <repository location="https://raw.githubusercontent.com/BKurler/MAFork/refs/heads/master/updates/" name="" enabled="true" />
+      <repository location="https://raw.githubusercontent.com/BKurler/ManaDesk/refs/heads/main/updates/" name="" enabled="true" />
    </repositories>
 
    <preferencesInfo>

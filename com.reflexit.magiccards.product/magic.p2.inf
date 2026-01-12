@@ -1,5 +1,5 @@
 instructions.configure=\
-   addRepository(name:ManaDesk Update Site,type:0,location:https${#58}//raw.githubusercontent.com/BKurler/MAFork/refs/heads/master/updates/);\
+   addRepository(name:ManaDesk Update Site,type:0,location:https${#58}//raw.githubusercontent.com/BKurler/ManaDesk/refs/heads/main/updates/);\
    setProgramProperty(propName:osgi.instance.area.default,propValue:@user.home/ManaDeskWorkspace);
 properties.0.name = org.eclipse.equinox.p2.description
 properties.0.value = ManaDesk\nSee what is new at http://www.magicfork.ca/ChangeLog.html\n\
