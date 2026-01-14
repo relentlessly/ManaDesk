@@ -87,7 +87,6 @@ import com.reflexit.magiccards.ui.dnd.CopySupport;
 import com.reflexit.magiccards.ui.dnd.MagicCardTransfer;
 import com.reflexit.magiccards.ui.gallery.SplitGalleryViewer;
 import com.reflexit.magiccards.ui.preferences.CustomGroupsPreferencePage;
-import com.reflexit.magiccards.ui.preferences.EditionsFilterPreferencePage;
 import com.reflexit.magiccards.ui.preferences.PreferenceConstants;
 import com.reflexit.magiccards.ui.preferences.PreferenceInitializer;
 import com.reflexit.magiccards.ui.utils.WaitUtils;
@@ -845,7 +844,7 @@ public abstract class AbstractMagicCardsListControl extends AbstractViewPage
 			quickFilter.setPreferenceStore(store);
 		HashMap<String, String> map = storeToMap(store);
 		filter.update(map);
-		filter.setOnlyLastSet(store.getBoolean(EditionsFilterPreferencePage.LAST_SET));
+// !!! RD 	filter.setOnlyLastSet(store.getBoolean(EditionsFilterPreferencePage.LAST_SET));
 		IPersistentPreferenceStore viewSettings = getPresentaionPreferenceStore();
 		String fields = viewSettings.getString(PreferenceConstants.GROUP_FIELD);
 		GroupOrder groupOrder = new GroupOrder(fields);

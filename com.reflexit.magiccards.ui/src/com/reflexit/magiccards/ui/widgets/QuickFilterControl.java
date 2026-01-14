@@ -26,7 +26,6 @@ import com.reflexit.magiccards.core.model.Colors;
 import com.reflexit.magiccards.core.model.Editions;
 import com.reflexit.magiccards.core.model.FilterField;
 import com.reflexit.magiccards.ui.MagicUIActivator;
-import com.reflexit.magiccards.ui.preferences.EditionsFilterPreferencePage;
 import com.reflexit.magiccards.ui.utils.SymbolConverter;
 import com.reflexit.magiccards.ui.utils.WaitUtils;
 
@@ -185,7 +184,7 @@ public class QuickFilterControl extends Composite {
 			String id = iterator.next();
 			store.setToDefault(id);
 		}
-		store.setToDefault(EditionsFilterPreferencePage.LAST_SET);
+		// !!! RD store.setToDefault(EditionsFilterPreferencePage.LAST_SET);
 	}
 
 	private void createSearchField(Composite toolbar) {
