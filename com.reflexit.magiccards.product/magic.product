@@ -22,6 +22,8 @@
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=30000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=3
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=15000
+-Djdk.xml.maxGeneralEntitySizeLimit=0
+-Djdk.xml.totalEntitySizeLimit=0
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
