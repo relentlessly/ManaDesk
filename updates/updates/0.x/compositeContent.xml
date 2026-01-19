@@ -12,8 +12,8 @@
   <children size="5">
     <child location="../../releases/0.0.5.v20251226-1002"/>
     <child location="../../releases/0.0.9.v20260105-0939"/>
-    <child location="../../releases/0.9.1.v20260111-2205"/>
-    <child location="../../releases/0.9.2.v20260114-2142"/>
-    <child location="../../releases/0.9.3.v20260118-1812"/>
+    <child location="../../releases/0.9.1v20260111-2205"/>
+    <child location="../../releases/0.9.2v20260114-2142"/>
+    <child location="../../releases/0.9.3v20260118-1812"/>
   </children>
 </repository>
