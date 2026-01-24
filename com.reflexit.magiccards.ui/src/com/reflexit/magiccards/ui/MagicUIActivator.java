@@ -151,6 +151,19 @@ public class MagicUIActivator extends AbstractUIPlugin {
 		}
 	}
 
+	// Add this method inside MagicUIActivator (class body)
+	public static void log(String message, Throwable t) {
+		try {
+			IStatus status = new Status(IStatus.ERROR, MagicUIActivator.PLUGIN_ID, message, t);
+			MagicUIActivator.getDefault().getLog().log(status);
+		} catch (Throwable ignored) {
+			// Fallback: if logging infrastructure is not available, print to stderr
+			System.err.println("LOG: " + message);
+			if (t != null)
+				t.printStackTrace(System.err);
+		}
+	}
+
 	public static Image getImage(String key) {
 		if (getDefault() == null) {
 			try {

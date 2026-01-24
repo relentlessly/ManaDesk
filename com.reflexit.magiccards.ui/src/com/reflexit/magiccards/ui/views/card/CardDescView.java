@@ -97,6 +97,8 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 	// !!! RD 	private Action edit;
 	private Image cardImage;
 	private IWebBrowser browser;
+	// ensure this field exists in the class
+	private IMagicCard card;
 
 	public class LoadCardJob extends Job {
 		private IMagicCard jCard;
@@ -233,6 +235,7 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 				return Status.CANCEL_STATUS;
 
 			ImageData remoteData = null;
+			ImageData fullData = null;
 			IOException e = null;
 
 			try {
@@ -240,8 +243,24 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 					String path = ImageCreator.getInstance().createCardPath(card, isLoadingOnClickEnabled(),
 							forceUpdate);
 					boolean resize = asScanned == false;
-					// <-- background-safe: create ImageData, not Image
+					// background-safe: create ImageData, not Image
 					remoteData = ImageCreator.createCardImageData(path, resize);
+
+					// Try to also load the full (unresized) ImageData if possible.
+					// This is best-effort: if the resized flag was true above, we still attempt to load the original
+					// so the UI can scale up to the disk/original size later.
+					try {
+						// Only attempt if the path exists and resize was requested (otherwise remoteData already is full)
+						if (resize) {
+							fullData = ImageCreator.createCardImageData(path, false);
+						} else {
+							// remoteData already full-size
+							fullData = remoteData;
+						}
+					} catch (Throwable t) {
+						// ignore: fullData remains null and we will fallback to remoteData
+						fullData = null;
+					}
 				}
 			} catch (CachedImageNotFoundException e1) {
 				// skip
@@ -271,26 +290,39 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 			if (monitor.isCanceled() || !isStillNeeded(card))
 				return Status.CANCEL_STATUS;
 
-			// Passer à l'UI thread pour créer l'Image SWT et l'appliquer
-			final ImageData finalData = remoteData;
+			// Pass to UI thread: first inform the panel about the ImageData (full + display)
+			final ImageData uiFullData = fullData;
+			final ImageData uiDisplayData = remoteData;
+
 			Display.getDefault().asyncExec(() -> {
 				try {
 					if (!isStillNeeded(card))
 						return;
-					// 1) créer l'image à partir de ImageData (UI thread)
+
+					// Let the panel keep the full-size ImageData (if available) for future resizes.
+					// The panel will create its own Image(s) from the ImageData as needed.
+					try {
+						if (panel != null && !panel.isDisposed()) {
+							panel.onImageDataLoaded(uiFullData, uiDisplayData);
+						}
+					} catch (Throwable t) {
+						MagicUIActivator.log("Error passing ImageData to panel");
+						MagicUIActivator.log(t);
+					}
+
+					// 1) create the SWT Image from the display ImageData (if any)
 					Image image = null;
 					try {
-						if (finalData != null) {
-							image = new Image(Display.getDefault(), finalData);
+						if (uiDisplayData != null) {
+							image = new Image(Display.getDefault(), uiDisplayData);
 						}
 					} catch (SWTException ex) {
 						MagicUIActivator.log("Failed to create Image from ImageData for: " + card);
 						image = null;
 					}
 
-					// 2) fallback "not found" si nécessaire (création dans UI)
+					// 2) fallback "not found" if necessary (creation in UI)
 					if (image == null || image.getBounds().width < 20) {
-						// si tu as createCardNotFoundImageData, utilise-la ; sinon utilise l'ancienne méthode qui retourne Image
 						if (ImageCreator.hasCreateCardNotFoundImageData()) {
 							ImageData notFoundData = ImageCreator.createCardNotFoundImageData(card);
 							if (notFoundData != null) {
@@ -299,14 +331,13 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 								image = new Image(Display.getDefault(), notFoundData);
 							}
 						} else {
-							// createCardNotFoundImage retourne Image et doit être appelé dans UI
 							if (image != null && !image.isDisposed())
 								image.dispose();
 							image = ImageCreator.getInstance().createCardNotFoundImage(card);
 						}
 					}
 
-					// 3) rotation (doit être faite dans UI car utilise Image/GC)
+					// 3) rotation (must be done in UI because it uses Image/GC)
 					String options = (String) card.get(MagicCardField.PART);
 					if (options != null && options.length() > 0 && image != null) {
 						int rotate = 0;
@@ -323,12 +354,12 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 						}
 					}
 
-					// 4) appliquer l'image (setImage doit gérer le remplacement / dispose de l'ancienne image)
+					// 4) apply the image (setImage must handle replacement / dispose of the old image)
 					if (isStillNeeded(card)) {
 						MagicLogger.trace("loadCardImage set image start (UI thread)");
 						setImage(card, image);
 					} else {
-						// si plus nécessaire, disposer l'image créée
+						// if no longer needed, dispose the created image
 						if (image != null && !image.isDisposed())
 							image.dispose();
 					}
@@ -493,10 +524,23 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 
 			@Override
 			public void run() {
+				// update local flag
 				asScanned = actionAsScanned.isChecked();
-				loadCardImage(new NullProgressMonitor(), panel.getCard(), false);
+
+				// inform the composite to prefer the disk/original size when requested
+				if (panel != null && !panel.isDisposed()) {
+					try {
+						panel.setForceOriginalSize(asScanned);
+					} catch (Throwable t) {
+						MagicUIActivator.log("Failed to set forceOriginalSize on panel", t);
+					}
+				}
+
+				// reload the image (background job) so the view updates to the new mode
+				loadCardImage(new NullProgressMonitor(), panel == null ? IMagicCard.DEFAULT : panel.getCard(), false);
 			}
 		};
+
 		/*
 		 * !!! RD this.open = new Action("Open card in browser", SWT.NONE) { { setImageDescriptor(MagicUIActivator.getImageDescriptor( "icons/clcl16/discovery.gif")); }
 		 * 

@@ -690,18 +690,42 @@ public class ImageCreator {
 	}
 
 	public static Image drawBorder(Image remoteImage, int border) {
+		if (remoteImage == null || remoteImage.isDisposed()) {
+			return null;
+		}
 		Rectangle bounds = remoteImage.getBounds();
 		Display display = Display.getDefault();
-		Image full = createTransparentImage(bounds.width + border * 2, bounds.height + border * 2);
-		GC gc = new GC(full);
-		// gc.setBackground(getBackground());
-		// gc.fillRectangle(0, 0, bounds.width + border * 2, bounds.height +
-		// border * 2);
-		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-		gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		gc.fillRoundRectangle(0, 0, bounds.width + border * 2, bounds.height + border * 2, border * 2, border * 2);
-		gc.drawImage(remoteImage, border, border);
-		gc.dispose();
+		if (display == null || display.isDisposed()) {
+			return null;
+		}
+
+		int fullW = bounds.width + border * 2;
+		int fullH = bounds.height + border * 2;
+
+		Image full = null;
+		GC gc = null;
+		try {
+			full = new Image(display, fullW, fullH);
+			gc = new GC(full);
+			// Draw a filled rounded rectangle background (black) and then the image
+			gc.setAntialias(SWT.ON);
+			gc.setInterpolation(SWT.HIGH);
+			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+			gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+			gc.fillRoundRectangle(0, 0, fullW, fullH, border * 2, border * 2);
+			gc.drawImage(remoteImage, 0, 0, bounds.width, bounds.height, border, border, bounds.width, bounds.height);
+		} catch (Throwable t) {
+			MagicUIActivator.log("drawBorder: error while drawing border");
+			MagicUIActivator.log(t);
+			if (full != null && !full.isDisposed()) {
+				full.dispose();
+				full = null;
+			}
+		} finally {
+			if (gc != null && !gc.isDisposed()) {
+				gc.dispose();
+			}
+		}
 		return full;
 	}
 
@@ -761,12 +785,38 @@ public class ImageCreator {
 	}
 
 	public static Image createTransparentImage(int width, int height) {
+		// Create an ImageData with an alpha channel directly (no temporary Image)
 		Display display = Display.getCurrent();
-		Image tmpImage = new Image(display, width, height);
-		ImageData id2 = tmpImage.getImageData();
-		id2.alphaData = new byte[width * height];
-		Image image = new Image(display, id2);
-		tmpImage.dispose();
+		if (display == null || display.isDisposed()) {
+			display = Display.getDefault();
+		}
+		if (display == null || display.isDisposed()) {
+			// No display available, fail gracefully
+			return null;
+		}
+
+		// Use a direct palette (32-bit) so alpha is preserved
+		PaletteData palette = new PaletteData(0xFF0000, 0xFF00, 0xFF);
+		ImageData id = new ImageData(width, height, 32, palette);
+
+		// Initialize alphaData to fully transparent (0) or fully opaque (255) as needed.
+		// Here we initialize to 0 (transparent) and callers can draw on it.
+		id.alphaData = new byte[width * height];
+		// By default Java byte array is zeroed, which means fully transparent.
+		// If you want fully opaque background, fill with (byte)255.
+
+		Image image = null;
+		try {
+			image = new Image(display, id);
+		} catch (SWTException ex) {
+			// If creation fails, log and return null
+			MagicUIActivator.log("createTransparentImage: failed to create Image from ImageData");
+			MagicUIActivator.log(ex);
+			if (image != null && !image.isDisposed()) {
+				image.dispose();
+			}
+			return null;
+		}
 		return image;
 	}
 
