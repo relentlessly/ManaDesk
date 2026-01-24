@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="ManaDesk" uid="com.reflexit.magiccards_rcp.product" id="com.reflexit.magiccards_rcp.product" application="com.reflexit.magiccards_rcp.application" version="0.9.1.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="ManaDesk" uid="com.reflexit.magiccards_rcp.product" id="com.reflexit.magiccards_rcp.product" application="com.reflexit.magiccards_rcp.application" version="0.9.3.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="splash.png"/>
@@ -22,6 +22,8 @@
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=30000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=3
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=15000
+-Djdk.xml.maxGeneralEntitySizeLimit=0
+-Djdk.xml.totalEntitySizeLimit=0
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
@@ -65,7 +67,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html   
  *******************************************************************************/
- 
+
  /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -77,7 +79,7 @@
    </plugins>
 
    <features>
-      <feature id="com.reflexit.magiccards.feature.rcp" version="0.9.1.qualifier"/>
+      <feature id="com.reflexit.magiccards.feature.rcp" version="0.9.3.qualifier"/>
    </features>
 
    <configurations>

@@ -21,7 +21,7 @@ from lxml import etree as eTree
 #     # elementTree = xml.etree.ElementTree.parse('./updates/updates/0.x/compositeContent.xml')
 
 def build_lxml(args,filename):
-    version_text = f'{args.version}.v{args.date}-{args.time}'
+    version_text = f'{args.version}v{args.date}-{args.time}'
 
     parser = eTree.XMLParser(remove_blank_text=True)
     elementTree = eTree.parse(filename,parser)
