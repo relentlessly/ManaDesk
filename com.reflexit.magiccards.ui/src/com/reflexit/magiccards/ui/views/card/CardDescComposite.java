@@ -16,16 +16,19 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationAdapter;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
@@ -57,6 +60,13 @@ class CardDescComposite extends Composite {
 	private PowerColumn toughProvider;
 	private Image transparentImageA;
 	private Image transparentImageB;
+
+	// --- scaling / debug fields ---
+	private static final boolean DEBUG = true; // set false to silence debug logs
+	private final int MIN_DISPLAY_WIDTH = 120; // minimum width in pixels (adjust to taste)
+	private final int SCALE_THRESHOLD_PX = 16; // minimum pixel change to trigger a rescale
+	private Image originalImageFull = null; // keep the original full-size image (owner)
+	private int lastAppliedWidth = -1; // last width we scaled to (for threshold)
 
 	// int width = 223, hight = 310;
 	int width = 265, hight = 370;
@@ -140,11 +150,16 @@ class CardDescComposite extends Composite {
 				}
 			});
 			swapVisibility(textBrowser, textBackup);
+
 		} catch (Throwable e) {
 			textBrowser = null;
 			MagicUIActivator.log(e);
 			swapVisibility(textBackup, textBrowser);
 		}
+		// at end of constructor
+		createImages();
+		installResizeHandler();
+
 	}
 
 	private void createImages() {
@@ -188,35 +203,283 @@ class CardDescComposite extends Composite {
 	}
 
 	private void setImage(Image remoteImage) {
-		if (imageControl.isDisposed())
-			return;
+		// This method takes ownership of remoteImage (same semantic as original code).
+		// It stores the full-size original in originalImageFull and displays a scaled
+		// version in the label according to available width, min/max and threshold.
 
-		// 1) Retirer l’image du widget AVANT de disposer l’ancienne
+		if (imageControl == null || imageControl.isDisposed()) {
+			// nothing to do
+			if (remoteImage != null && !remoteImage.isDisposed()) {
+				// caller expects us to take ownership; dispose to avoid leak
+				remoteImage.dispose();
+			}
+			return;
+		}
+
+		// 1) Dispose currently displayed image (but keep originalImageFull for re-scaling)
 		if (this.image != null && this.image != this.loadingImage && this.image != this.cardNotFound) {
-			imageControl.setImage(null); // ← OBLIGATOIRE
-			this.image.dispose();
+			try {
+				imageControl.setImage(null); // remove from widget before disposing
+			} catch (Throwable ignored) {
+			}
+			if (!this.image.isDisposed()) {
+				this.image.dispose();
+			}
 			this.image = null;
 		}
 
-		// 2) Si aucune nouvelle image, on s’arrête
-		if (remoteImage == null)
+		// 2) Dispose previous original full image if different and not special
+		if (this.originalImageFull != null && this.originalImageFull != remoteImage
+				&& this.originalImageFull != this.loadingImage && this.originalImageFull != this.cardNotFound) {
+			if (!this.originalImageFull.isDisposed()) {
+				this.originalImageFull.dispose();
+			}
+		}
+
+		// 3) If no new image, stop here (keep placeholders handled elsewhere)
+		if (remoteImage == null) {
+			this.originalImageFull = null;
+			lastAppliedWidth = -1;
 			return;
+		}
 
-		// 3) Appliquer la nouvelle image
-		this.image = remoteImage;
-		imageControl.setImage(this.image);
+		// 4) Store the full-size original (we own it now)
+		this.originalImageFull = remoteImage;
 
-		// 4) Ajuster la taille
+		// 5) Determine original size and available width
+		int origW = remoteImage.getBounds().width;
+		int origH = remoteImage.getBounds().height;
+		if (DEBUG) {
+			System.out.println("[CD] setImage() ENTER orig=" + origW + "x" + origH);
+		}
+
+		// compute available width from the imageControl parent (prefer parent client area)
+		Composite parent = imageControl.getParent();
+		int availW = -1;
+		if (parent != null && !parent.isDisposed()) {
+			availW = parent.getSize().x;
+			// if parent has margins or borders, subtract a small margin
+			availW = Math.max(0, availW - 8);
+		}
+		// fallback to control width if parent not sized yet
+		if (availW <= 0) {
+			availW = imageControl.getSize().x;
+		}
+		if (availW <= 0) {
+			// no layout yet: use original width (will be scaled later when layout happens)
+			availW = origW;
+		}
+
+		// 6) Clamp target width between MIN_DISPLAY_WIDTH and original width
+		int targetW = Math.max(MIN_DISPLAY_WIDTH, Math.min(availW, origW));
+
+		// 7) Threshold: avoid scaling if change is small
+		if (lastAppliedWidth > 0 && Math.abs(targetW - lastAppliedWidth) < SCALE_THRESHOLD_PX) {
+			if (DEBUG) {
+				System.out.println(
+						"[CD] setImage() skip scaling: targetW=" + targetW + " lastApplied=" + lastAppliedWidth);
+			}
+			// But still ensure layout hints reflect the original image if needed
+			GridData ld = (GridData) imageControl.getLayoutData();
+			if (ld != null) {
+				ld.minimumWidth = Math.min(origW, Math.max(MIN_DISPLAY_WIDTH, lastAppliedWidth));
+				ld.minimumHeight = Math.round(ld.minimumWidth * (origH / (float) origW));
+				ld.widthHint = ld.minimumWidth;
+				ld.heightHint = ld.minimumHeight;
+				if (!this.isDisposed())
+					this.layout(true, true);
+			}
+			// keep originalImageFull for future resizes
+			return;
+		}
+
+		// 8) Compute proportional height
+		int targetH = Math.round(origH * (targetW / (float) origW));
+
+		if (DEBUG) {
+			System.out.println("[CD] setImage() availW=" + availW + " -> target=" + targetW + "x" + targetH);
+		}
+
+		// 9) Create scaled ImageData using ImageCreator helper (preserves alpha)
+		ImageData scaledData = null;
+		try {
+			scaledData = ImageCreator.scaleImageDataWithGC(imageControl.getDisplay(), remoteImage.getImageData(),
+					targetW, targetH);
+		} catch (Throwable t) {
+			MagicUIActivator.log("Scaling failed, falling back to original image");
+			t.printStackTrace();
+		}
+
+		Image scaledImage = null;
+		if (scaledData != null) {
+			try {
+				scaledImage = new Image(imageControl.getDisplay(), scaledData);
+			} catch (SWTException ex) {
+				MagicUIActivator.log("Failed to create scaled Image from ImageData");
+				scaledImage = null;
+			}
+		}
+
+		// 10) If scaling failed, fall back to original (but still clamp hints)
+		if (scaledImage == null) {
+			if (DEBUG)
+				System.out.println("[CD] setImage() scaling returned null, using original image");
+			scaledImage = remoteImage; // use original as displayed image
+			// Note: originalImageFull already references remoteImage
+		} else {
+			// If we created a new scaledImage, we must not dispose originalImageFull here.
+			// originalImageFull remains the full-size owner for future resizes.
+		}
+
+		// 11) Apply scaled image to control and update layout hints
+		try {
+			imageControl.setImage(scaledImage);
+		} catch (Throwable ignored) {
+		}
+
 		GridData ld = (GridData) imageControl.getLayoutData();
-		ld.minimumWidth = this.image.getBounds().width + 1;
-		ld.minimumHeight = this.image.getBounds().height + 1;
+		if (ld == null) {
+			ld = new GridData(SWT.FILL, SWT.FILL, true, true);
+			imageControl.setLayoutData(ld);
+		}
+		ld.minimumWidth = scaledImage.getBounds().width + 1;
+		ld.minimumHeight = scaledImage.getBounds().height + 1;
 		ld.widthHint = ld.minimumWidth;
 		ld.heightHint = ld.minimumHeight;
 
-		// 5) Relayout en sécurité
+		// 12) Manage disposal: keep originalImageFull as the full-size owner,
+		// and keep this.image as the currently displayed image (scaled or original).
+		// Dispose previous displayed image already done at top.
+		this.image = scaledImage;
+
+		// 13) Update lastAppliedWidth and relayout
+		lastAppliedWidth = targetW;
 		if (!this.isDisposed()) {
 			this.layout(true, true);
 		}
+
+		if (DEBUG) {
+			System.out.println("[CD] setImage() EXIT applied=" + scaledImage.getBounds().width + "x"
+					+ scaledImage.getBounds().height + " lastAppliedWidth=" + lastAppliedWidth);
+		}
+	}
+
+	private void adjustImageToWidth(int availW) {
+		if (originalImageFull == null || originalImageFull.isDisposed()) {
+			if (DEBUG)
+				System.out.println("[CD] adjustImageToWidth() no original image -> skip");
+			return;
+		}
+		if (availW <= 0)
+			return;
+
+		int origW = originalImageFull.getBounds().width;
+		int origH = originalImageFull.getBounds().height;
+
+		// subtract small margin
+		int targetW = Math.max(MIN_DISPLAY_WIDTH, Math.min(availW - 8, origW));
+		if (targetW <= 0)
+			targetW = Math.min(origW, Math.max(MIN_DISPLAY_WIDTH, availW));
+
+		if (lastAppliedWidth > 0 && Math.abs(targetW - lastAppliedWidth) < SCALE_THRESHOLD_PX) {
+			if (DEBUG)
+				System.out.println("[CD] adjustImageToWidth() skip: targetW=" + targetW + " last=" + lastAppliedWidth);
+			return;
+		}
+
+		int targetH = Math.round(origH * (targetW / (float) origW));
+		if (DEBUG)
+			System.out.println("[CD] adjustImageToWidth() resizing to " + targetW + "x" + targetH);
+
+		ImageData scaledData = null;
+		try {
+			scaledData = ImageCreator.scaleImageDataWithGC(imageControl.getDisplay(), originalImageFull.getImageData(),
+					targetW, targetH);
+		} catch (Throwable t) {
+			MagicUIActivator.log("adjustImageToWidth: scaling failed");
+			t.printStackTrace();
+		}
+
+		Image newDisplayed = null;
+		if (scaledData != null) {
+			try {
+				newDisplayed = new Image(imageControl.getDisplay(), scaledData);
+			} catch (SWTException ex) {
+				MagicUIActivator.log("adjustImageToWidth: failed to create Image from scaled data");
+				newDisplayed = null;
+			}
+		}
+
+		if (newDisplayed == null) {
+			// fallback to original full image (clamped)
+			newDisplayed = originalImageFull;
+		}
+
+		// Dispose previous displayed image if it was a scaled instance (not the originalImageFull)
+		if (this.image != null && this.image != originalImageFull && this.image != loadingImage
+				&& this.image != cardNotFound) {
+			try {
+				imageControl.setImage(null);
+			} catch (Throwable ignored) {
+			}
+			if (!this.image.isDisposed())
+				this.image.dispose();
+		}
+
+		// Apply new displayed image
+		try {
+			imageControl.setImage(newDisplayed);
+		} catch (Throwable ignored) {
+		}
+
+		GridData ld = (GridData) imageControl.getLayoutData();
+		if (ld == null) {
+			ld = new GridData(SWT.FILL, SWT.FILL, true, true);
+			imageControl.setLayoutData(ld);
+		}
+		ld.minimumWidth = newDisplayed.getBounds().width + 1;
+		ld.minimumHeight = newDisplayed.getBounds().height + 1;
+		ld.widthHint = ld.minimumWidth;
+		ld.heightHint = ld.minimumHeight;
+
+		this.image = newDisplayed;
+		lastAppliedWidth = targetW;
+
+		if (!this.isDisposed())
+			this.layout(true, true);
+
+		if (DEBUG) {
+			System.out.println("[CD] adjustImageToWidth() applied " + newDisplayed.getBounds().width + "x"
+					+ newDisplayed.getBounds().height + " lastAppliedWidth=" + lastAppliedWidth);
+		}
+	}
+
+	private void installResizeHandler() {
+		final java.util.concurrent.atomic.AtomicInteger pending = new java.util.concurrent.atomic.AtomicInteger(0);
+		Composite parent = imageControl.getParent();
+		if (parent == null || parent.isDisposed())
+			return;
+
+		parent.addListener(SWT.Resize, e -> {
+			if (originalImageFull == null || originalImageFull.isDisposed())
+				return;
+			int availW = parent.getSize().x;
+			if (availW <= 0)
+				return;
+			// debounce
+			int id = pending.incrementAndGet();
+			Display display = parent.getDisplay();
+			display.timerExec(80, () -> {
+				if (id != pending.get())
+					return;
+				if (parent.isDisposed())
+					return;
+				int w = parent.getSize().x;
+				if (w <= 0)
+					return;
+				adjustImageToWidth(w);
+			});
+		});
 	}
 
 	private boolean logOnce = false;
@@ -369,10 +632,14 @@ class CardDescComposite extends Composite {
 
 	@Override
 	public void dispose() {
-		if (this.image != null) {
+		if (this.image != null && !this.image.isDisposed()) {
 			this.image.dispose();
 		}
 		this.image = null;
+		if (this.originalImageFull != null && !this.originalImageFull.isDisposed()) {
+			this.originalImageFull.dispose();
+		}
+		this.originalImageFull = null;
 		super.dispose();
 	}
 
