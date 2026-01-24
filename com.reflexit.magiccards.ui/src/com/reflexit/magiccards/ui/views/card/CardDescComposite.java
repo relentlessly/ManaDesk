@@ -16,7 +16,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationAdapter;
 import org.eclipse.swt.browser.LocationEvent;
@@ -66,15 +65,17 @@ class CardDescComposite extends Composite {
 	// Debounce / force flags
 	private final java.util.concurrent.atomic.AtomicInteger imageUpdatePending = new java.util.concurrent.atomic.AtomicInteger(
 			0);
-	private volatile boolean forceOriginalSize = false; // set by CardDescView when asScanned == true
+	// !!! RD private volatile boolean forceOriginalSize = false; // set by CardDescView when asScanned == true
 	private org.eclipse.swt.graphics.ImageData pendingDisplayData = null;
 
 	// --- scaling / debug fields ---
-	private static final boolean DEBUG = true; // set false to silence debug logs
+	private static final boolean DEBUG = false; // set false to silence debug logs
 	private final int MIN_DISPLAY_WIDTH = 120; // minimum width in pixels (adjust to taste)
 	private final int SCALE_THRESHOLD_PX = 16; // minimum pixel change to trigger a rescale
 	private Image originalImageFull = null; // keep the original full-size image (owner)
 	private int lastAppliedWidth = -1; // last width we scaled to (for threshold)
+	// unified border/margin used for image templates and layout calculations
+	private static final int IMAGE_BORDER = 10;
 
 	// int width = 223, hight = 310;
 	int width = 265, hight = 370;
@@ -165,23 +166,12 @@ class CardDescComposite extends Composite {
 			swapVisibility(textBackup, textBrowser);
 		}
 		// at end of constructor
-		createImages();
 		installResizeHandler();
 
 	}
 
-	// Call this from CardDescView when asScanned changes
-	public void setForceOriginalSize(boolean force) {
-		this.forceOriginalSize = force;
-		// trigger a re-evaluation if we already have an image
-		if (originalImageFull != null || originalImageOnDisk != null) {
-			// schedule a debounced update
-			scheduleApplyImageDebounced();
-		}
-	}
-
 	private void createImages() {
-		int border = 10;
+		int border = IMAGE_BORDER;
 
 		// Dispose previous images if present (defensive)
 		try {
@@ -324,25 +314,16 @@ class CardDescComposite extends Composite {
 
 		Display display = imageControl.getDisplay();
 
-		// Dispose currently displayed image (we own this.image)
-		try {
-			if (this.image != null && !this.image.isDisposed() && this.image != this.loadingImage
-					&& this.image != this.cardNotFound) {
-				try {
-					imageControl.setImage(null);
-				} catch (Throwable ignored) {
-				}
-				try {
-					this.image.dispose();
-				} catch (Throwable ignored) {
-				}
-				this.image = null;
-			}
-		} catch (Throwable ignored) {
-		}
+		// Dispose currently displayed image (we own this.image) BEFORE creating new UI copy
+		// but keep a reference to old so we can dispose it AFTER the swap
+		Image oldDisplayed = this.image;
 
 		// If no new image provided, clear hints and return
 		if (remoteImage == null) {
+			try {
+				imageControl.setImage(null);
+			} catch (Throwable ignored) {
+			}
 			GridData ld = (GridData) imageControl.getLayoutData();
 			if (ld != null) {
 				ld.minimumWidth = 0;
@@ -351,8 +332,16 @@ class CardDescComposite extends Composite {
 				ld.heightHint = SWT.DEFAULT;
 			}
 			lastAppliedWidth = -1;
+			this.image = null;
 			if (!this.isDisposed())
 				this.layout(true, true);
+			// dispose old after clearing
+			try {
+				if (oldDisplayed != null && !oldDisplayed.isDisposed() && oldDisplayed != loadingImage
+						&& oldDisplayed != cardNotFound)
+					oldDisplayed.dispose();
+			} catch (Throwable ignored) {
+			}
 			return;
 		}
 
@@ -368,12 +357,14 @@ class CardDescComposite extends Composite {
 		} catch (Throwable t) {
 			MagicUIActivator.log("setImage: failed to copy incoming image");
 			MagicUIActivator.log(t);
+			// fallback: use the incoming image if it's still valid
 			if (remoteImage != null && !remoteImage.isDisposed()) {
 				uiFull = remoteImage;
 			} else {
 				uiFull = null;
 			}
 		} finally {
+			// dispose the caller's image if we created a copy (caller shouldn't keep it)
 			if (uiFull != null && uiFull != remoteImage) {
 				try {
 					if (remoteImage != null && !remoteImage.isDisposed())
@@ -389,11 +380,10 @@ class CardDescComposite extends Composite {
 			return;
 		}
 
-		// Dispose previous originalImageFull if needed
+		// Replace originalImageFull with the new UI-owned full image (dispose previous)
 		try {
 			if (this.originalImageFull != null && !this.originalImageFull.isDisposed()
-					&& this.originalImageFull != uiFull && this.originalImageFull != loadingImage
-					&& this.originalImageFull != cardNotFound) {
+					&& this.originalImageFull != loadingImage && this.originalImageFull != cardNotFound) {
 				try {
 					this.originalImageFull.dispose();
 				} catch (Throwable ignored) {
@@ -418,15 +408,8 @@ class CardDescComposite extends Composite {
 		if (DEBUG)
 			System.out.println("[CD] setImage() ENTER orig=" + origW + "x" + origH);
 
-		// Determine available width
-		Composite parent = imageControl.getParent();
-		int availW = -1;
-		if (parent != null && !parent.isDisposed()) {
-			availW = parent.getSize().x;
-			availW = Math.max(0, availW - 8);
-		}
-		if (availW <= 0)
-			availW = imageControl.getSize().x;
+		// Determine available width using unified helper
+		int availW = computeAvailableWidth();
 		if (availW <= 0)
 			availW = origW;
 
@@ -436,14 +419,24 @@ class CardDescComposite extends Composite {
 			if (DEBUG)
 				System.out.println(
 						"[CD] setImage() skip scaling: targetW=" + targetW + " lastApplied=" + lastAppliedWidth);
+			// update layout hints to reflect current image size
 			GridData ld = (GridData) imageControl.getLayoutData();
-			if (ld != null) {
+			if (ld != null && this.image != null) {
 				ld.minimumWidth = Math.min(origW, Math.max(MIN_DISPLAY_WIDTH, lastAppliedWidth));
 				ld.minimumHeight = Math.round(ld.minimumWidth * (origH / (float) origW));
 				ld.widthHint = ld.minimumWidth;
 				ld.heightHint = ld.minimumHeight;
 				if (!this.isDisposed())
 					this.layout(true, true);
+			}
+			// dispose oldDisplayed if it is not the same as current image
+			try {
+				if (oldDisplayed != null && oldDisplayed != this.image && oldDisplayed != loadingImage
+						&& oldDisplayed != cardNotFound) {
+					if (!oldDisplayed.isDisposed())
+						oldDisplayed.dispose();
+				}
+			} catch (Throwable ignored) {
 			}
 			return;
 		}
@@ -452,6 +445,7 @@ class CardDescComposite extends Composite {
 		if (DEBUG)
 			System.out.println("[CD] setImage() availW=" + availW + " -> target=" + targetW + "x" + targetH);
 
+		// Create scaled image off-screen
 		ImageData scaledData = null;
 		try {
 			scaledData = ImageCreator.scaleImageDataWithGC(display, this.originalImageFull.getImageData(), targetW,
@@ -471,31 +465,77 @@ class CardDescComposite extends Composite {
 				scaledImage = null;
 			}
 		}
-		if (scaledImage == null)
+		if (scaledImage == null) {
+			// fallback to the full image
 			scaledImage = this.originalImageFull;
+		}
 
+		// Atomic swap: setRedraw(false) -> setImage -> update layout -> setRedraw(true)
 		try {
-			imageControl.setImage(scaledImage);
+			imageControl.setRedraw(false);
+			try {
+				imageControl.setImage(scaledImage);
+			} catch (Throwable ignored) {
+			}
+			GridData ld = (GridData) imageControl.getLayoutData();
+			if (ld == null) {
+				ld = new GridData(SWT.FILL, SWT.FILL, true, true);
+				imageControl.setLayoutData(ld);
+			}
+			ld.minimumWidth = scaledImage.getBounds().width + 1;
+			ld.minimumHeight = scaledImage.getBounds().height + 1;
+			ld.widthHint = ld.minimumWidth;
+			ld.heightHint = ld.minimumHeight;
+
+			// update reference to current displayed image
+			this.image = scaledImage;
+			lastAppliedWidth = targetW;
+			if (!this.isDisposed())
+				this.layout(true, true);
+		} finally {
+			try {
+				imageControl.setRedraw(true);
+			} catch (Throwable ignored) {
+			}
+		}
+
+		// Dispose old displayed image if it was a scaled instance (not the disk template)
+		try {
+			if (oldDisplayed != null && oldDisplayed != this.image && oldDisplayed != loadingImage
+					&& oldDisplayed != cardNotFound) {
+				if (!oldDisplayed.isDisposed())
+					oldDisplayed.dispose();
+			}
 		} catch (Throwable ignored) {
 		}
-		GridData ld = (GridData) imageControl.getLayoutData();
-		if (ld == null) {
-			ld = new GridData(SWT.FILL, SWT.FILL, true, true);
-			imageControl.setLayoutData(ld);
+
+		if (DEBUG) {
+			try {
+				System.out.println("[CD] setImage() EXIT applied=" + this.image.getBounds().width + "x"
+						+ this.image.getBounds().height + " lastAppliedWidth=" + lastAppliedWidth);
+			} catch (Throwable ignored) {
+			}
 		}
-		ld.minimumWidth = scaledImage.getBounds().width + 1;
-		ld.minimumHeight = scaledImage.getBounds().height + 1;
-		ld.widthHint = ld.minimumWidth;
-		ld.heightHint = ld.minimumHeight;
+	}
 
-		this.image = scaledImage;
-		lastAppliedWidth = targetW;
-		if (!this.isDisposed())
-			this.layout(true, true);
-
-		if (DEBUG)
-			System.out.println("[CD] setImage() EXIT applied=" + this.image.getBounds().width + "x"
-					+ this.image.getBounds().height + " lastAppliedWidth=" + lastAppliedWidth);
+	/**
+	 * Return the available width for the image area in pixels.
+	 * Uses the parent client area and subtracts a small consistent margin.
+	 */
+	private int computeAvailableWidth() {
+		if (imageControl == null || imageControl.isDisposed())
+			return width;
+		Composite parent = imageControl.getParent();
+		if (parent == null || parent.isDisposed()) {
+			return Math.max(1, imageControl.getSize().x);
+		}
+		// Use client area to avoid including sash/outer decorations
+		Rectangle client = parent.getClientArea();
+		int avail = client.width;
+		// Use the unified border constant so createImages() and layout use the same margin
+		final int MARGIN = IMAGE_BORDER;
+		avail = Math.max(1, avail - MARGIN);
+		return avail;
 	}
 
 	private void scheduleApplyImageDebounced() {
@@ -531,8 +571,8 @@ class CardDescComposite extends Composite {
 				toApply = null;
 			}
 
-			// If forceOriginalSize is requested, and we have disk image, create a copy of disk image and pass it
-			if (forceOriginalSize && originalImageOnDisk != null && !originalImageOnDisk.isDisposed()) {
+			// Max size is always size on disk
+			if (originalImageOnDisk != null && !originalImageOnDisk.isDisposed()) {
 				try {
 					if (toApply != null && toApply != originalImageOnDisk) {
 						// dispose the temporary toApply; we'll use disk copy
@@ -566,92 +606,120 @@ class CardDescComposite extends Composite {
 	}
 
 	private void adjustImageToWidth(int availW) {
+		if (imageControl == null || imageControl.isDisposed())
+			return;
 		if (originalImageFull == null || originalImageFull.isDisposed()) {
-			if (DEBUG)
-				System.out.println("[CD] adjustImageToWidth() no original image -> skip");
-			return;
+			// nothing to scale from; try to use disk original if present
+			if (originalImageOnDisk == null || originalImageOnDisk.isDisposed())
+				return;
 		}
-		if (availW <= 0)
-			return;
 
-		int origW = originalImageFull.getBounds().width;
-		int origH = originalImageFull.getBounds().height;
+		// Compute max allowed width (prefer disk/original)
+		int maxOrigW = (originalImageOnDisk != null && !originalImageOnDisk.isDisposed())
+				? originalImageOnDisk.getBounds().width
+				: (originalImageFull != null && !originalImageFull.isDisposed() ? originalImageFull.getBounds().width
+						: width);
 
-		// subtract small margin
-		int targetW = Math.max(MIN_DISPLAY_WIDTH, Math.min(availW - 8, origW));
-		if (targetW <= 0)
-			targetW = Math.min(origW, Math.max(MIN_DISPLAY_WIDTH, availW));
+		// Use computeAvailableWidth() for consistent measurement
+		int avail = computeAvailableWidth();
+		int targetW = Math.max(MIN_DISPLAY_WIDTH, Math.min(avail, maxOrigW));
 
+		// Threshold to avoid frequent small resizes
 		if (lastAppliedWidth > 0 && Math.abs(targetW - lastAppliedWidth) < SCALE_THRESHOLD_PX) {
 			if (DEBUG)
 				System.out.println("[CD] adjustImageToWidth() skip: targetW=" + targetW + " last=" + lastAppliedWidth);
 			return;
 		}
 
-		int targetH = Math.round(origH * (targetW / (float) origW));
-		if (DEBUG)
-			System.out.println("[CD] adjustImageToWidth() resizing to " + targetW + "x" + targetH);
+		// Choose best source to scale from: prefer disk image if it is large enough
+		Image scaleSource = originalImageFull;
+		try {
+			if (originalImageOnDisk != null && !originalImageOnDisk.isDisposed()) {
+				int diskW = originalImageOnDisk.getBounds().width;
+				if (diskW >= targetW)
+					scaleSource = originalImageOnDisk;
+			}
+		} catch (Throwable ignored) {
+		}
 
+		if (scaleSource == null || scaleSource.isDisposed())
+			return;
+
+		// Compute proportional height
+		int origW = Math.max(1, scaleSource.getBounds().width);
+		int origH = Math.max(1, scaleSource.getBounds().height);
+		int targetH = Math.round(origH * (targetW / (float) origW));
+
+		if (DEBUG)
+			System.out.println(
+					"[CD] adjustImageToWidth() scaling from " + origW + "x" + origH + " to " + targetW + "x" + targetH);
+
+		// Create scaled image off-screen
 		ImageData scaledData = null;
 		try {
-			scaledData = ImageCreator.scaleImageDataWithGC(imageControl.getDisplay(), originalImageFull.getImageData(),
+			scaledData = ImageCreator.scaleImageDataWithGC(imageControl.getDisplay(), scaleSource.getImageData(),
 					targetW, targetH);
 		} catch (Throwable t) {
-			MagicUIActivator.log("adjustImageToWidth: scaling failed");
-			t.printStackTrace();
+			MagicUIActivator.log("adjustImageToWidth: scaling failed", t);
+			scaledData = null;
 		}
 
 		Image newDisplayed = null;
 		if (scaledData != null) {
 			try {
 				newDisplayed = new Image(imageControl.getDisplay(), scaledData);
-			} catch (SWTException ex) {
-				MagicUIActivator.log("adjustImageToWidth: failed to create Image from scaled data");
+			} catch (Throwable t) {
+				MagicUIActivator.log("adjustImageToWidth: failed to create Image from scaled data", t);
 				newDisplayed = null;
 			}
 		}
-
 		if (newDisplayed == null) {
-			// fallback to original full image (clamped)
-			newDisplayed = originalImageFull;
+			// fallback to scaleSource (already UI-owned)
+			newDisplayed = scaleSource;
 		}
 
-		// Dispose previous displayed image if it was a scaled instance (not the originalImageFull)
-		if (this.image != null && this.image != originalImageFull && this.image != loadingImage
-				&& this.image != cardNotFound) {
+		// Atomic swap to avoid flicker
+		Image old = this.image;
+		try {
+			imageControl.setRedraw(false);
+			imageControl.setImage(newDisplayed);
+
+			GridData ld = (GridData) imageControl.getLayoutData();
+			if (ld == null) {
+				ld = new GridData(SWT.FILL, SWT.FILL, true, true);
+				imageControl.setLayoutData(ld);
+			}
+			ld.minimumWidth = newDisplayed.getBounds().width + 1;
+			ld.minimumHeight = newDisplayed.getBounds().height + 1;
+			ld.widthHint = ld.minimumWidth;
+			ld.heightHint = ld.minimumHeight;
+
+			this.image = newDisplayed;
+			if (!this.isDisposed())
+				this.layout(true, true);
+		} finally {
 			try {
-				imageControl.setImage(null);
+				imageControl.setRedraw(true);
 			} catch (Throwable ignored) {
 			}
-			if (!this.image.isDisposed())
-				this.image.dispose();
 		}
 
-		// Apply new displayed image
+		// Dispose old displayed image if it was a scaled instance (not the disk template)
 		try {
-			imageControl.setImage(newDisplayed);
+			if (old != null && old != this.image && old != loadingImage && old != cardNotFound) {
+				if (!old.isDisposed())
+					old.dispose();
+			}
 		} catch (Throwable ignored) {
 		}
 
-		GridData ld = (GridData) imageControl.getLayoutData();
-		if (ld == null) {
-			ld = new GridData(SWT.FILL, SWT.FILL, true, true);
-			imageControl.setLayoutData(ld);
-		}
-		ld.minimumWidth = newDisplayed.getBounds().width + 1;
-		ld.minimumHeight = newDisplayed.getBounds().height + 1;
-		ld.widthHint = ld.minimumWidth;
-		ld.heightHint = ld.minimumHeight;
-
-		this.image = newDisplayed;
 		lastAppliedWidth = targetW;
-
-		if (!this.isDisposed())
-			this.layout(true, true);
-
 		if (DEBUG) {
-			System.out.println("[CD] adjustImageToWidth() applied " + newDisplayed.getBounds().width + "x"
-					+ newDisplayed.getBounds().height + " lastAppliedWidth=" + lastAppliedWidth);
+			try {
+				System.out.println("[CD] adjustImageToWidth() applied=" + this.image.getBounds().width + "x"
+						+ this.image.getBounds().height + " lastAppliedWidth=" + lastAppliedWidth);
+			} catch (Throwable ignored) {
+			}
 		}
 	}
 
@@ -662,23 +730,23 @@ class CardDescComposite extends Composite {
 			return;
 
 		parent.addListener(SWT.Resize, e -> {
+			// If we don't have an image yet, nothing to do
 			if (originalImageFull == null || originalImageFull.isDisposed())
 				return;
-			int availW = parent.getSize().x;
-			if (availW <= 0)
-				return;
+
 			// debounce
 			int id = pending.incrementAndGet();
 			Display display = parent.getDisplay();
 			display.timerExec(80, () -> {
 				if (id != pending.get())
-					return;
+					return; // newer update scheduled
 				if (parent.isDisposed())
 					return;
-				int w = parent.getSize().x;
-				if (w <= 0)
+				// Use the unified computeAvailableWidth() so resize and selection use same measurement
+				int avail = computeAvailableWidth();
+				if (avail <= 0)
 					return;
-				adjustImageToWidth(w);
+				adjustImageToWidth(avail);
 			});
 		});
 	}
@@ -707,8 +775,15 @@ class CardDescComposite extends Composite {
 		if (card == IMagicCard.DEFAULT) {
 			return;
 		}
+		// If we already have a real image for this card, do not overwrite it with a placeholder.
+		if ((this.originalImageFull != null && !this.originalImageFull.isDisposed())
+				|| (this.originalImageOnDisk != null && !this.originalImageOnDisk.isDisposed())) {
+			if (DEBUG)
+				System.out.println("[CD] setLoadingImage() skip: real image already present");
+			return;
+		}
+
 		try {
-			// If we have a prepared loadingImage template, create a UI copy and use it.
 			Image template = this.loadingImage;
 			Image toApply = null;
 			if (template != null && !template.isDisposed()) {
@@ -721,7 +796,6 @@ class CardDescComposite extends Composite {
 				}
 			}
 
-			// If no template copy available, create a simple placeholder dynamically
 			if (toApply == null) {
 				try {
 					Image tmp = ImageCreator.createTransparentImage(width - 20, hight - 20);
@@ -735,7 +809,7 @@ class CardDescComposite extends Composite {
 							if (gc != null && !gc.isDisposed())
 								gc.dispose();
 						}
-						toApply = ImageCreator.drawBorder(tmp, 10);
+						toApply = ImageCreator.drawBorder(tmp, IMAGE_BORDER);
 						if (tmp != null && !tmp.isDisposed())
 							tmp.dispose();
 					}
@@ -746,9 +820,18 @@ class CardDescComposite extends Composite {
 				}
 			}
 
-			// Finally apply the image (setImage will take ownership of the passed Image)
 			if (toApply != null) {
-				setImage(toApply);
+				// Only apply if still needed for the same card
+				if (card == this.card) {
+					setImage(toApply);
+				} else {
+					// not the same card, dispose
+					try {
+						if (!toApply.isDisposed())
+							toApply.dispose();
+					} catch (Throwable ignored) {
+					}
+				}
 			}
 		} catch (RuntimeException e) {
 			MagicUIActivator.log(e);
@@ -874,14 +957,41 @@ class CardDescComposite extends Composite {
 
 	@Override
 	public void dispose() {
-		if (this.image != null && !this.image.isDisposed()) {
-			this.image.dispose();
+		try {
+			if (image != null && !image.isDisposed())
+				image.dispose();
+		} catch (Throwable ignored) {
 		}
-		this.image = null;
-		if (this.originalImageFull != null && !this.originalImageFull.isDisposed()) {
-			this.originalImageFull.dispose();
+		try {
+			if (originalImageFull != null && !originalImageFull.isDisposed())
+				originalImageFull.dispose();
+		} catch (Throwable ignored) {
 		}
-		this.originalImageFull = null;
+		try {
+			if (originalImageOnDisk != null && !originalImageOnDisk.isDisposed())
+				originalImageOnDisk.dispose();
+		} catch (Throwable ignored) {
+		}
+		try {
+			if (loadingImage != null && !loadingImage.isDisposed())
+				loadingImage.dispose();
+		} catch (Throwable ignored) {
+		}
+		try {
+			if (cardNotFound != null && !cardNotFound.isDisposed())
+				cardNotFound.dispose();
+		} catch (Throwable ignored) {
+		}
+		try {
+			if (transparentImageA != null && !transparentImageA.isDisposed())
+				transparentImageA.dispose();
+		} catch (Throwable ignored) {
+		}
+		try {
+			if (transparentImageB != null && !transparentImageB.isDisposed())
+				transparentImageB.dispose();
+		} catch (Throwable ignored) {
+		}
 		super.dispose();
 	}
 
@@ -933,6 +1043,27 @@ class CardDescComposite extends Composite {
 			MagicUIActivator.log("onImageDataLoaded: failed to create originalImageOnDisk");
 			MagicUIActivator.log(t);
 			originalImageOnDisk = null;
+		}
+
+		// If we just obtained the full/disk image, remove any placeholder currently shown
+		// so it cannot overwrite the final image later.
+		if (originalImageOnDisk != null && !originalImageOnDisk.isDisposed()) {
+			try {
+				if (imageControl != null && !imageControl.isDisposed()) {
+					Image cur = imageControl.getImage();
+					// If the widget currently shows one of our templates, clear it now.
+					if (cur == loadingImage || cur == cardNotFound) {
+						try {
+							imageControl.setImage(null);
+						} catch (Throwable ignored) {
+						}
+						// If our internal reference points to the placeholder, clear it too.
+						if (this.image == cur)
+							this.image = null;
+					}
+				}
+			} catch (Throwable ignored) {
+			}
 		}
 
 		// Create a small lightweight holder for the immediate display image data (we will create the Image in the debounced task)

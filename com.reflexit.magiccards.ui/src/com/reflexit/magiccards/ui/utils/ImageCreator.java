@@ -705,28 +705,43 @@ public class ImageCreator {
 		Image full = null;
 		GC gc = null;
 		try {
+			// create destination image once
 			full = new Image(display, fullW, fullH);
 			gc = new GC(full);
-			// Draw a filled rounded rectangle background (black) and then the image
-			gc.setAntialias(SWT.ON);
-			gc.setInterpolation(SWT.HIGH);
+			// improve quality where supported
+			try {
+				gc.setAntialias(SWT.ON);
+			} catch (Throwable ignored) {
+			}
+			try {
+				gc.setInterpolation(SWT.HIGH);
+			} catch (Throwable ignored) {
+			}
+
+			// draw background and the remote image into the destination
 			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 			gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 			gc.fillRoundRectangle(0, 0, fullW, fullH, border * 2, border * 2);
 			gc.drawImage(remoteImage, 0, 0, bounds.width, bounds.height, border, border, bounds.width, bounds.height);
+
+			return full;
 		} catch (Throwable t) {
-			MagicUIActivator.log("drawBorder: error while drawing border");
-			MagicUIActivator.log(t);
+			// on any error, ensure we don't leak the created image
 			if (full != null && !full.isDisposed()) {
-				full.dispose();
-				full = null;
+				try {
+					full.dispose();
+				} catch (Throwable ignored) {
+				}
 			}
+			throw t;
 		} finally {
 			if (gc != null && !gc.isDisposed()) {
-				gc.dispose();
+				try {
+					gc.dispose();
+				} catch (Throwable ignored) {
+				}
 			}
 		}
-		return full;
 	}
 
 	public static Image joinImages(Collection<Image> images, int max_width, int height) {
@@ -785,39 +800,23 @@ public class ImageCreator {
 	}
 
 	public static Image createTransparentImage(int width, int height) {
-		// Create an ImageData with an alpha channel directly (no temporary Image)
 		Display display = Display.getCurrent();
-		if (display == null || display.isDisposed()) {
+		if (display == null || display.isDisposed())
 			display = Display.getDefault();
-		}
-		if (display == null || display.isDisposed()) {
-			// No display available, fail gracefully
+		if (display == null || display.isDisposed())
 			return null;
-		}
 
-		// Use a direct palette (32-bit) so alpha is preserved
+		// Use 32-bit direct palette so alpha is supported
 		PaletteData palette = new PaletteData(0xFF0000, 0xFF00, 0xFF);
 		ImageData id = new ImageData(width, height, 32, palette);
+		id.alphaData = new byte[width * height]; // zero = fully transparent
 
-		// Initialize alphaData to fully transparent (0) or fully opaque (255) as needed.
-		// Here we initialize to 0 (transparent) and callers can draw on it.
-		id.alphaData = new byte[width * height];
-		// By default Java byte array is zeroed, which means fully transparent.
-		// If you want fully opaque background, fill with (byte)255.
-
-		Image image = null;
 		try {
-			image = new Image(display, id);
+			return new Image(display, id);
 		} catch (SWTException ex) {
-			// If creation fails, log and return null
-			MagicUIActivator.log("createTransparentImage: failed to create Image from ImageData");
-			MagicUIActivator.log(ex);
-			if (image != null && !image.isDisposed()) {
-				image.dispose();
-			}
+			MagicUIActivator.log("createTransparentImage: failed to create Image from ImageData", ex);
 			return null;
 		}
-		return image;
 	}
 
 	public static void setAlphaForManaCircles(ImageData fullImageData) {

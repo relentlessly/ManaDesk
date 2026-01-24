@@ -11,14 +11,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -91,8 +89,8 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 	private Label message;
 	private LoadCardJob loadCardJob;
 	private Action sync;
-	private Action actionAsScanned;
-	private boolean asScanned;
+	// !!! RD private Action actionAsScanned;
+	// !!! RD private boolean asScanned;
 	private Action open;
 	// !!! RD 	private Action edit;
 	private Image cardImage;
@@ -242,7 +240,7 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 				if (card.getCardId() != null) {
 					String path = ImageCreator.getInstance().createCardPath(card, isLoadingOnClickEnabled(),
 							forceUpdate);
-					boolean resize = asScanned == false;
+					boolean resize = true; // !!! RD asScanned == false;
 					// background-safe: create ImageData, not Image
 					remoteData = ImageCreator.createCardImageData(path, resize);
 
@@ -294,13 +292,14 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 			final ImageData uiFullData = fullData;
 			final ImageData uiDisplayData = remoteData;
 
+			// UI update (run on UI thread)
 			Display.getDefault().asyncExec(() -> {
 				try {
 					if (!isStillNeeded(card))
 						return;
 
-					// Let the panel keep the full-size ImageData (if available) for future resizes.
-					// The panel will create its own Image(s) from the ImageData as needed.
+					// First, inform the panel about the ImageData (full + display).
+					// The panel will keep the fullData for later resizes and can schedule the debounced apply.
 					try {
 						if (panel != null && !panel.isDisposed()) {
 							panel.onImageDataLoaded(uiFullData, uiDisplayData);
@@ -310,7 +309,15 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 						MagicUIActivator.log(t);
 					}
 
-					// 1) create the SWT Image from the display ImageData (if any)
+					// If we have fullData (original on disk), prefer to let the panel apply it (debounced).
+					// Avoid creating and showing the smaller displayData first to prevent the "small -> big" jump.
+					if (uiFullData != null) {
+						// panel.onImageDataLoaded already stored fullData and will schedule apply.
+						// Do not create the smaller image here.
+						return;
+					}
+
+					// Otherwise (no fullData), create the SWT Image from the display ImageData (if any)
 					Image image = null;
 					try {
 						if (uiDisplayData != null) {
@@ -321,7 +328,7 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 						image = null;
 					}
 
-					// 2) fallback "not found" if necessary (creation in UI)
+					// fallback "not found" if necessary (creation in UI)
 					if (image == null || image.getBounds().width < 20) {
 						if (ImageCreator.hasCreateCardNotFoundImageData()) {
 							ImageData notFoundData = ImageCreator.createCardNotFoundImageData(card);
@@ -337,7 +344,7 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 						}
 					}
 
-					// 3) rotation (must be done in UI because it uses Image/GC)
+					// rotation (must be done in UI because it uses Image/GC)
 					String options = (String) card.get(MagicCardField.PART);
 					if (options != null && options.length() > 0 && image != null) {
 						int rotate = 0;
@@ -354,7 +361,7 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 						}
 					}
 
-					// 4) apply the image (setImage must handle replacement / dispose of the old image)
+					// apply the image (setImage must handle replacement / dispose of the old image)
 					if (isStillNeeded(card)) {
 						MagicLogger.trace("loadCardImage set image start (UI thread)");
 						setImage(card, image);
@@ -486,7 +493,7 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 
 	private void fillLocalToolBar(IToolBarManager manager) {
 		// !!! RD manager.add(open);
-		manager.add(actionAsScanned);
+		// !!! RD manager.add(actionAsScanned);
 		// !!! RD manager.add(sync);
 		// !!! RD		manager.add(edit);
 	}
@@ -517,30 +524,21 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 		 * 
 		 * @Override public void run() { LoadCardJob job = new LoadCardJob(); job.setUser(true); job.schedule(); } };
 		 */
-		this.actionAsScanned = new Action("When depressed - scanned image is not scaled", IAction.AS_CHECK_BOX) {
-			{
-				setImageDescriptor(MagicUIActivator.getImageDescriptor("icons/clcl16/zoom_original.png"));
-			}
-
-			@Override
-			public void run() {
-				// update local flag
-				asScanned = actionAsScanned.isChecked();
-
-				// inform the composite to prefer the disk/original size when requested
-				if (panel != null && !panel.isDisposed()) {
-					try {
-						panel.setForceOriginalSize(asScanned);
-					} catch (Throwable t) {
-						MagicUIActivator.log("Failed to set forceOriginalSize on panel", t);
-					}
+		/*	this.actionAsScanned = new Action("When depressed - scanned image is not scaled", IAction.AS_CHECK_BOX) {
+				{
+					setImageDescriptor(MagicUIActivator.getImageDescriptor("icons/clcl16/zoom_original.png"));
 				}
-
-				// reload the image (background job) so the view updates to the new mode
-				loadCardImage(new NullProgressMonitor(), panel == null ? IMagicCard.DEFAULT : panel.getCard(), false);
-			}
-		};
-
+		
+				@Override
+				public void run() {
+					// Keep the UI state only. Do not change image loading or panel behavior.
+					asScanned = actionAsScanned.isChecked();
+		
+					// Optional: update the action state only, no reload, no panel flag changes.
+					// This makes the checkbox inert with respect to image scaling.
+				}
+			};
+		*/
 		/*
 		 * !!! RD this.open = new Action("Open card in browser", SWT.NONE) { { setImageDescriptor(MagicUIActivator.getImageDescriptor( "icons/clcl16/discovery.gif")); }
 		 * 
