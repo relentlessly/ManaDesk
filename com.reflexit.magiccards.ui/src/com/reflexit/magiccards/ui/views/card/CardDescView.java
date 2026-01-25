@@ -11,14 +11,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -91,12 +89,14 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 	private Label message;
 	private LoadCardJob loadCardJob;
 	private Action sync;
-	private Action actionAsScanned;
-	private boolean asScanned;
+	// !!! RD private Action actionAsScanned;
+	// !!! RD private boolean asScanned;
 	private Action open;
 	// !!! RD 	private Action edit;
 	private Image cardImage;
 	private IWebBrowser browser;
+	// ensure this field exists in the class
+	private IMagicCard card;
 
 	public class LoadCardJob extends Job {
 		private IMagicCard jCard;
@@ -233,15 +233,32 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 				return Status.CANCEL_STATUS;
 
 			ImageData remoteData = null;
+			ImageData fullData = null;
 			IOException e = null;
 
 			try {
 				if (card.getCardId() != null) {
 					String path = ImageCreator.getInstance().createCardPath(card, isLoadingOnClickEnabled(),
 							forceUpdate);
-					boolean resize = asScanned == false;
-					// <-- background-safe: create ImageData, not Image
+					boolean resize = true; // !!! RD asScanned == false;
+					// background-safe: create ImageData, not Image
 					remoteData = ImageCreator.createCardImageData(path, resize);
+
+					// Try to also load the full (unresized) ImageData if possible.
+					// This is best-effort: if the resized flag was true above, we still attempt to load the original
+					// so the UI can scale up to the disk/original size later.
+					try {
+						// Only attempt if the path exists and resize was requested (otherwise remoteData already is full)
+						if (resize) {
+							fullData = ImageCreator.createCardImageData(path, false);
+						} else {
+							// remoteData already full-size
+							fullData = remoteData;
+						}
+					} catch (Throwable t) {
+						// ignore: fullData remains null and we will fallback to remoteData
+						fullData = null;
+					}
 				}
 			} catch (CachedImageNotFoundException e1) {
 				// skip
@@ -271,26 +288,48 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 			if (monitor.isCanceled() || !isStillNeeded(card))
 				return Status.CANCEL_STATUS;
 
-			// Passer à l'UI thread pour créer l'Image SWT et l'appliquer
-			final ImageData finalData = remoteData;
+			// Pass to UI thread: first inform the panel about the ImageData (full + display)
+			final ImageData uiFullData = fullData;
+			final ImageData uiDisplayData = remoteData;
+
+			// UI update (run on UI thread)
 			Display.getDefault().asyncExec(() -> {
 				try {
 					if (!isStillNeeded(card))
 						return;
-					// 1) créer l'image à partir de ImageData (UI thread)
+
+					// First, inform the panel about the ImageData (full + display).
+					// The panel will keep the fullData for later resizes and can schedule the debounced apply.
+					try {
+						if (panel != null && !panel.isDisposed()) {
+							panel.onImageDataLoaded(uiFullData, uiDisplayData);
+						}
+					} catch (Throwable t) {
+						MagicUIActivator.log("Error passing ImageData to panel");
+						MagicUIActivator.log(t);
+					}
+
+					// If we have fullData (original on disk), prefer to let the panel apply it (debounced).
+					// Avoid creating and showing the smaller displayData first to prevent the "small -> big" jump.
+					if (uiFullData != null) {
+						// panel.onImageDataLoaded already stored fullData and will schedule apply.
+						// Do not create the smaller image here.
+						return;
+					}
+
+					// Otherwise (no fullData), create the SWT Image from the display ImageData (if any)
 					Image image = null;
 					try {
-						if (finalData != null) {
-							image = new Image(Display.getDefault(), finalData);
+						if (uiDisplayData != null) {
+							image = new Image(Display.getDefault(), uiDisplayData);
 						}
 					} catch (SWTException ex) {
 						MagicUIActivator.log("Failed to create Image from ImageData for: " + card);
 						image = null;
 					}
 
-					// 2) fallback "not found" si nécessaire (création dans UI)
+					// fallback "not found" if necessary (creation in UI)
 					if (image == null || image.getBounds().width < 20) {
-						// si tu as createCardNotFoundImageData, utilise-la ; sinon utilise l'ancienne méthode qui retourne Image
 						if (ImageCreator.hasCreateCardNotFoundImageData()) {
 							ImageData notFoundData = ImageCreator.createCardNotFoundImageData(card);
 							if (notFoundData != null) {
@@ -299,14 +338,13 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 								image = new Image(Display.getDefault(), notFoundData);
 							}
 						} else {
-							// createCardNotFoundImage retourne Image et doit être appelé dans UI
 							if (image != null && !image.isDisposed())
 								image.dispose();
 							image = ImageCreator.getInstance().createCardNotFoundImage(card);
 						}
 					}
 
-					// 3) rotation (doit être faite dans UI car utilise Image/GC)
+					// rotation (must be done in UI because it uses Image/GC)
 					String options = (String) card.get(MagicCardField.PART);
 					if (options != null && options.length() > 0 && image != null) {
 						int rotate = 0;
@@ -323,12 +361,12 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 						}
 					}
 
-					// 4) appliquer l'image (setImage doit gérer le remplacement / dispose de l'ancienne image)
+					// apply the image (setImage must handle replacement / dispose of the old image)
 					if (isStillNeeded(card)) {
 						MagicLogger.trace("loadCardImage set image start (UI thread)");
 						setImage(card, image);
 					} else {
-						// si plus nécessaire, disposer l'image créée
+						// if no longer needed, dispose the created image
 						if (image != null && !image.isDisposed())
 							image.dispose();
 					}
@@ -455,7 +493,7 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 
 	private void fillLocalToolBar(IToolBarManager manager) {
 		// !!! RD manager.add(open);
-		manager.add(actionAsScanned);
+		// !!! RD manager.add(actionAsScanned);
 		// !!! RD manager.add(sync);
 		// !!! RD		manager.add(edit);
 	}
@@ -486,17 +524,21 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 		 * 
 		 * @Override public void run() { LoadCardJob job = new LoadCardJob(); job.setUser(true); job.schedule(); } };
 		 */
-		this.actionAsScanned = new Action("When depressed - scanned image is not scaled", IAction.AS_CHECK_BOX) {
-			{
-				setImageDescriptor(MagicUIActivator.getImageDescriptor("icons/clcl16/zoom_original.png"));
-			}
-
-			@Override
-			public void run() {
-				asScanned = actionAsScanned.isChecked();
-				loadCardImage(new NullProgressMonitor(), panel.getCard(), false);
-			}
-		};
+		/*	this.actionAsScanned = new Action("When depressed - scanned image is not scaled", IAction.AS_CHECK_BOX) {
+				{
+					setImageDescriptor(MagicUIActivator.getImageDescriptor("icons/clcl16/zoom_original.png"));
+				}
+		
+				@Override
+				public void run() {
+					// Keep the UI state only. Do not change image loading or panel behavior.
+					asScanned = actionAsScanned.isChecked();
+		
+					// Optional: update the action state only, no reload, no panel flag changes.
+					// This makes the checkbox inert with respect to image scaling.
+				}
+			};
+		*/
 		/*
 		 * !!! RD this.open = new Action("Open card in browser", SWT.NONE) { { setImageDescriptor(MagicUIActivator.getImageDescriptor( "icons/clcl16/discovery.gif")); }
 		 * 

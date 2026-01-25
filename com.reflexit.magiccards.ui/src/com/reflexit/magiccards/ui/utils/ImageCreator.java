@@ -690,19 +690,58 @@ public class ImageCreator {
 	}
 
 	public static Image drawBorder(Image remoteImage, int border) {
+		if (remoteImage == null || remoteImage.isDisposed()) {
+			return null;
+		}
 		Rectangle bounds = remoteImage.getBounds();
 		Display display = Display.getDefault();
-		Image full = createTransparentImage(bounds.width + border * 2, bounds.height + border * 2);
-		GC gc = new GC(full);
-		// gc.setBackground(getBackground());
-		// gc.fillRectangle(0, 0, bounds.width + border * 2, bounds.height +
-		// border * 2);
-		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-		gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		gc.fillRoundRectangle(0, 0, bounds.width + border * 2, bounds.height + border * 2, border * 2, border * 2);
-		gc.drawImage(remoteImage, border, border);
-		gc.dispose();
-		return full;
+		if (display == null || display.isDisposed()) {
+			return null;
+		}
+
+		int fullW = bounds.width + border * 2;
+		int fullH = bounds.height + border * 2;
+
+		Image full = null;
+		GC gc = null;
+		try {
+			// create destination image once
+			full = new Image(display, fullW, fullH);
+			gc = new GC(full);
+			// improve quality where supported
+			try {
+				gc.setAntialias(SWT.ON);
+			} catch (Throwable ignored) {
+			}
+			try {
+				gc.setInterpolation(SWT.HIGH);
+			} catch (Throwable ignored) {
+			}
+
+			// draw background and the remote image into the destination
+			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+			gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+			gc.fillRoundRectangle(0, 0, fullW, fullH, border * 2, border * 2);
+			gc.drawImage(remoteImage, 0, 0, bounds.width, bounds.height, border, border, bounds.width, bounds.height);
+
+			return full;
+		} catch (Throwable t) {
+			// on any error, ensure we don't leak the created image
+			if (full != null && !full.isDisposed()) {
+				try {
+					full.dispose();
+				} catch (Throwable ignored) {
+				}
+			}
+			throw t;
+		} finally {
+			if (gc != null && !gc.isDisposed()) {
+				try {
+					gc.dispose();
+				} catch (Throwable ignored) {
+				}
+			}
+		}
 	}
 
 	public static Image joinImages(Collection<Image> images, int max_width, int height) {
@@ -762,12 +801,22 @@ public class ImageCreator {
 
 	public static Image createTransparentImage(int width, int height) {
 		Display display = Display.getCurrent();
-		Image tmpImage = new Image(display, width, height);
-		ImageData id2 = tmpImage.getImageData();
-		id2.alphaData = new byte[width * height];
-		Image image = new Image(display, id2);
-		tmpImage.dispose();
-		return image;
+		if (display == null || display.isDisposed())
+			display = Display.getDefault();
+		if (display == null || display.isDisposed())
+			return null;
+
+		// Use 32-bit direct palette so alpha is supported
+		PaletteData palette = new PaletteData(0xFF0000, 0xFF00, 0xFF);
+		ImageData id = new ImageData(width, height, 32, palette);
+		id.alphaData = new byte[width * height]; // zero = fully transparent
+
+		try {
+			return new Image(display, id);
+		} catch (SWTException ex) {
+			MagicUIActivator.log("createTransparentImage: failed to create Image from ImageData", ex);
+			return null;
+		}
 	}
 
 	public static void setAlphaForManaCircles(ImageData fullImageData) {

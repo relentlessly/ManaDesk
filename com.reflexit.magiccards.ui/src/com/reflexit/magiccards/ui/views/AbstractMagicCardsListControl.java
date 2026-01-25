@@ -844,7 +844,7 @@ public abstract class AbstractMagicCardsListControl extends AbstractViewPage
 			quickFilter.setPreferenceStore(store);
 		HashMap<String, String> map = storeToMap(store);
 		filter.update(map);
-// !!! RD 	filter.setOnlyLastSet(store.getBoolean(EditionsFilterPreferencePage.LAST_SET));
+		// !!! RD 	filter.setOnlyLastSet(store.getBoolean(EditionsFilterPreferencePage.LAST_SET));
 		IPersistentPreferenceStore viewSettings = getPresentaionPreferenceStore();
 		String fields = viewSettings.getString(PreferenceConstants.GROUP_FIELD);
 		GroupOrder groupOrder = new GroupOrder(fields);
@@ -975,7 +975,11 @@ public abstract class AbstractMagicCardsListControl extends AbstractViewPage
 		if (data instanceof MagicCard) {
 			switch (type) {
 			case CardEvent.UPDATE:
-				WaitUtils.asyncExec(() -> viewer.refresh());
+				WaitUtils.asyncExec(() -> {
+					if (viewer != null && viewer.getControl() != null && !viewer.getControl().isDisposed()) {
+						viewer.refresh();
+					}
+				});
 				break;
 			case CardEvent.ADD:
 				break;
@@ -987,8 +991,12 @@ public abstract class AbstractMagicCardsListControl extends AbstractViewPage
 		} else {
 			switch (type) {
 			case CardEvent.UPDATE:
-				WaitUtils.asyncExec(() -> viewer.refresh());
-				updateStatus();
+				WaitUtils.asyncExec(() -> {
+					if (viewer != null && viewer.getControl() != null && !viewer.getControl().isDisposed()) {
+						viewer.refresh();
+						updateStatus();
+					}
+				});
 				break;
 			case CardEvent.ADD:
 				setNextSelection(new StructuredSelection(data));
