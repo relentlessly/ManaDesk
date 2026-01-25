@@ -10,6 +10,7 @@
  *******************************************************************************/
 package com.reflexit.magiccards.ui.commands;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -26,17 +27,15 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.model.IMagicCard;
+import com.reflexit.magiccards.core.model.Location;
 import com.reflexit.magiccards.core.model.MagicCardPhysical;
 import com.reflexit.magiccards.core.model.nav.CardCollection;
 import com.reflexit.magiccards.core.model.nav.CardElement;
 import com.reflexit.magiccards.core.model.nav.CardOrganizer;
 import com.reflexit.magiccards.core.model.nav.ModelRoot;
 import com.reflexit.magiccards.core.model.storage.ICardStore;
+import com.reflexit.magiccards.core.model.xml.SingleFileCardStorage;
 
-/**
- * @author Alena
- *
- */
 public class DeleteHandler extends AbstractHandler {
 	/*
 	 * (non-Javadoc)
@@ -58,7 +57,7 @@ public class DeleteHandler extends AbstractHandler {
 	public static void remove(IStructuredSelection sel) {
 		if (sel.isEmpty())
 			return;
-		ArrayList<CardElement> toBeRemoved = new ArrayList<CardElement>();
+		ArrayList<CardElement> toBeRemoved = new ArrayList<>();
 		for (Iterator iterator = sel.iterator(); iterator.hasNext();) {
 			CardElement el = (CardElement) iterator.next();
 			if (isApplicable(el))
@@ -76,24 +75,16 @@ public class DeleteHandler extends AbstractHandler {
 		if (toBeRemoved.size() == 1) {
 			CardElement el = toBeRemoved.get(0);
 			if (sum > 0) {
-				MessageDialog dialog = new MessageDialog(
-						getShell(),
-						"Removal Confirmantion",
-						null,
-						"Deleting "
-								+ el.getName()
-								+ " will also PERMANENTY delete "
-								+ sum
-								+ " non virtual cards from this deck. "
-								+ "You can choose to disband this deck instead, which will move all its cards to the main collection"
-								+ " (then deck will be removed)", MessageDialog.WARNING, new String[] {
-								"Disband", "Delete", "Cancel" }, 0);
+				MessageDialog dialog = new MessageDialog(getShell(), "Removal Confirmantion", null, "Deleting "
+						+ el.getName() + " will also PERMANENTY delete " + sum + " non virtual cards from this deck. "
+						+ "You can choose to disband this deck instead, which will move all its cards to the main collection"
+						+ " (then deck will be removed)", MessageDialog.WARNING,
+						new String[] { "Disband", "Delete", "Cancel" }, 0);
 				int result = dialog.open();
 				performOperation(toBeRemoved, result);
 			} else {
-				if (!MessageDialog
-						.openQuestion(getShell(), "Removal Confirmation", "Are you sure you want to delete "
-								+ el.getName() + "?")) {
+				if (!MessageDialog.openQuestion(getShell(), "Removal Confirmation",
+						"Are you sure you want to delete " + el.getName() + "?")) {
 					return;
 				}
 				performOperation(toBeRemoved, 1); // remove
@@ -106,20 +97,13 @@ public class DeleteHandler extends AbstractHandler {
 				}
 				performOperation(toBeRemoved, 1);
 			} else {
-				MessageDialog dialog = new MessageDialog(
-						getShell(),
-						"Removal Confirmantion",
-						null,
-						"You are abount to delete "
-								+ toBeRemoved.size()
-								+ " deck/collections. "
-								+ "Deleting a deck/collection"
-								+ " will also PERMANENTY delete "
-								+ sum
+				MessageDialog dialog = new MessageDialog(getShell(), "Removal Confirmantion", null,
+						"You are abount to delete " + toBeRemoved.size() + " deck/collections. "
+								+ "Deleting a deck/collection" + " will also PERMANENTY delete " + sum
 								+ " non virtual cards from it. "
 								+ "You can choose to disband them instead, which will move all their cards to the main collection"
-								+ " (then decks will be removed)", MessageDialog.WARNING, new String[] {
-								"Disband", "Delete", "Cancel" }, 0);
+								+ " (then decks will be removed)",
+						MessageDialog.WARNING, new String[] { "Disband", "Delete", "Cancel" }, 0);
 				int result = dialog.open();
 				performOperation(toBeRemoved, result);
 			}
@@ -127,20 +111,38 @@ public class DeleteHandler extends AbstractHandler {
 	}
 
 	private static void performOperation(ArrayList<CardElement> toBeRemoved, int result) {
-		if (result == 0) { // disband
-			for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
-				CardElement el = (CardElement) iterator.next();
-				disbandle(el);
-				if (!el.getLocation().isSideboard())
-					disbandle(el.getRelated());
+		if (toBeRemoved.isEmpty())
+			return;
+
+		SingleFileCardStorage storage = null;
+		CardElement first = toBeRemoved.get(0);
+		File file = first.getFile();
+		Location loc = first.getLocation();
+
+		// On reconstruit le storage temporairement pour bloquer l'auto-save
+		if (file != null && loc != null)
+			storage = new SingleFileCardStorage(file, loc, false); // false = ne pas charger
+
+		if (storage != null)
+			storage.beginSuppressSave();
+
+		try {
+			if (result == 0) { // disband
+				for (CardElement el : toBeRemoved) {
+					disbandle(el);
+					if (!el.getLocation().isSideboard())
+						disbandle(el.getRelated());
+				}
+			} else if (result == 1) { // remove
+				for (CardElement el : toBeRemoved) {
+					remove(el);
+					if (!el.getLocation().isSideboard())
+						remove(el.getRelated());
+				}
 			}
-		} else if (result == 1) { // remove
-			for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
-				CardElement el = (CardElement) iterator.next();
-				remove(el);
-				if (!el.getLocation().isSideboard())
-					remove(el.getRelated());
-			}
+		} finally {
+			if (storage != null)
+				storage.endSuppressSave();
 		}
 	}
 
@@ -163,7 +165,7 @@ public class DeleteHandler extends AbstractHandler {
 			ModelRoot root = getModelRoot();
 			if (el != root.getDefaultLib()) {
 				ICardStore<IMagicCard> store = ((CardCollection) el).getStore();
-				ArrayList<IMagicCard> cards = new ArrayList<IMagicCard>(store.size());
+				ArrayList<IMagicCard> cards = new ArrayList<>(store.size());
 				for (IMagicCard card : store) {
 					cards.add(card);
 				}

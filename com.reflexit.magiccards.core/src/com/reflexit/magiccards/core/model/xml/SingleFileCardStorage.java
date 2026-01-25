@@ -30,6 +30,35 @@ public class SingleFileCardStorage extends MemoryCardStorage<IMagicCard> impleme
 	protected String type;
 	protected Properties properties = new Properties();
 
+	// --- Save suppression mechanism ---
+	private int suppressCount = 0;
+
+	public void beginSuppressSave() {
+
+		suppressCount++;
+
+		// System.out.println("begin suppress Save: " + suppressCount + " " + file);
+	}
+
+	public void endSuppressSave() {
+		if (suppressCount > 0)
+			suppressCount--;
+		//System.out.println("end Suppress Save: " + suppressCount + " " + file);
+	}
+
+	public boolean isSuppressSave() {
+		return suppressCount > 0;
+	}
+
+	@Override
+	public void autoSave() {
+		//System.out.println("Auto Save: " + isSuppressSave() + " " + file);
+		if (isSuppressSave())
+			return;
+
+		super.autoSave();
+	}
+
 	public SingleFileCardStorage() {
 		super();
 	}
@@ -217,6 +246,12 @@ public class SingleFileCardStorage extends MemoryCardStorage<IMagicCard> impleme
 
 	@Override
 	protected synchronized void doSave() throws IOException {
+		if (file == null || !file.exists()) {
+			//System.out.println("Skip save, file does not exist: " + file);
+			return;
+		}
+
+		// System.out.println("Saving deck to: " + file);
 		CardCollectionStoreObject obj = new CardCollectionStoreObject();
 		obj.file = this.file;
 		storeFields(obj);
