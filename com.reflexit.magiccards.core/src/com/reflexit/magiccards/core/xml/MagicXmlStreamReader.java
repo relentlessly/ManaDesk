@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -236,12 +235,13 @@ public class MagicXmlStreamReader {
 	}
 
 	public CardCollectionStoreObject load(File file) throws IOException {
-		try {
-			BufferedInputStream st = new BufferedInputStream(new FileInputStream(file), FileUtils.DEFAULT_BUFFER_SIZE);
+		try (BufferedInputStream st = new BufferedInputStream(new FileInputStream(file),
+				FileUtils.DEFAULT_BUFFER_SIZE)) {
+
 			CardCollectionStoreObject object = load(st);
 			object.file = file;
-			st.close();
 			return object;
+
 		} catch (Exception e) {
 			throw new IOException("Cannot read file: " + file, e);
 		}

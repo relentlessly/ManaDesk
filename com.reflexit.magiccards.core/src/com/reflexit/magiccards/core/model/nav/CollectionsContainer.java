@@ -113,9 +113,25 @@ public class CollectionsContainer extends CardOrganizer {
 		return d;
 	}
 
+	/* !!! RD Never used
 	public void removeDeck(CardCollection el) {
-		el.remove();
+		System.out.println("Removing Deck: " + el.getName());
+	
+		IStorageInfo info = el.getStorageInfo();
+	
+		if (info instanceof SingleFileCardStorage) {
+			SingleFileCardStorage storage = (SingleFileCardStorage) info;
+			storage.setSuppressSave(true);
+			try {
+				el.remove(); // supprime le fichier + retire du parent
+			} finally {
+				storage.setSuppressSave(false);
+			}
+		} else {
+			el.remove();
+		}
 	}
+	*/
 
 	@Override
 	public CardElement newElement(String name, CardOrganizer parent) {
