@@ -6,6 +6,7 @@ package com.reflexit.magiccards.ui.views.analyzers;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -30,6 +31,7 @@ import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.model.CardGroup;
 import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.Location;
+import com.reflexit.magiccards.core.model.MagicCardField;
 import com.reflexit.magiccards.core.model.abs.ICard;
 import com.reflexit.magiccards.core.model.storage.ICardStore;
 import com.reflexit.magiccards.core.model.storage.IStorageInfo;
@@ -60,6 +62,7 @@ public class InfoPage extends AbstractDeckPage implements IDeckPage {
 	private Label rarity;
 	private DynamicCombo protection;
 	private IStorageInfo storageInfo;
+	private static final DecimalFormat INFO_DECIMAL = new DecimalFormat("#0.00");
 
 	@Override
 	public void createPageContents(Composite parent) {
@@ -225,8 +228,34 @@ public class InfoPage extends AbstractDeckPage implements IDeckPage {
 		}
 		CardGroup group = CardStoreUtils.buildGroup(mainStore, sideboardStore);
 		loclabel.setText(location.toString());
-		String sp = new SellerPriceColumn().getText(group);
-		String up = new PriceColumn().getText(group);
+
+		String sp = computeFormattedPrice(group, new ColumnFormatter() {
+			private final SellerPriceColumn col = new SellerPriceColumn();
+
+			@Override
+			public String formatGroup(CardGroup g) {
+				return col.getText(g);
+			}
+
+			@Override
+			public Object getRawPrice(ICard card) {
+				return card.get(com.reflexit.magiccards.core.model.MagicCardField.DBPRICE);
+			}
+		});
+		String up = computeFormattedPrice(group, new ColumnFormatter() {
+			private final PriceColumn col = new PriceColumn();
+
+			@Override
+			public String formatGroup(CardGroup g) {
+				return col.getText(g);
+			}
+
+			@Override
+			public Object getRawPrice(ICard card) {
+				return card.get(com.reflexit.magiccards.core.model.MagicCardField.PRICE);
+			}
+		});
+
 		dbprice.setText(sp + " (" + up + ")");
 		colors.setImage(SymbolConverter.buildCostImage(CardStoreUtils.buildColors(mainStore)));
 		colorsSideboard.setImage(SymbolConverter.buildCostImage(CardStoreUtils.buildColors(sideboardStore)));
@@ -238,18 +267,33 @@ public class InfoPage extends AbstractDeckPage implements IDeckPage {
 		CardGroup top = (CardGroup) types.getChildAtIndex(0);
 		CardGroup ncre = (CardGroup) top.getChildAtIndex(1);
 		CardGroup cre = (CardGroup) top.getChildAtIndex(2);
-		if (ncre.getRarity().equals(cre.getRarity())) {
-			rarity.setText(ncre.getRarity());
+
+		if (ncre == null || cre == null) {
+			rarity.setText("*");
+			averagecost.setText("-");
+			getArea().layout(true);
+			return;
+		}
+
+		String r1 = ncre.getRarity();
+		String r2 = cre.getRarity();
+
+		if (Objects.equals(r1, r2)) {
+			rarity.setText(r1 != null ? r1 : "*");
 		} else {
 			rarity.setText("*");
 		}
+
 		int spellCount = ncre.getCount() + cre.getCount();
 		if (spellCount > 0) {
 			int creCost = CardStoreUtils.getManaCost(cre.expand());
 			int ncreCost = CardStoreUtils.getManaCost(ncre.expand());
 			averagecost.setText(
 					String.valueOf((creCost + ncreCost) / (float) spellCount) + " (" + spellCount + " spells)");
+		} else {
+			averagecost.setText("-");
 		}
+
 		getArea().layout(true);
 	}
 
@@ -261,6 +305,58 @@ public class InfoPage extends AbstractDeckPage implements IDeckPage {
 		} catch (Exception x) {
 			x.printStackTrace();
 		}
+	}
+
+	private String computeFormattedPrice(CardGroup group, ColumnFormatter fmt) {
+		if (group == null)
+			return "";
+
+		List<? extends ICard> children = group.getChildrenList();
+		if (children != null && children.size() > 1) {
+			return fmt.formatGroup(group);
+		}
+
+		ICard first = group.getFirstCard();
+		if (first == null)
+			return "";
+
+		Object rawPrice = fmt.getRawPrice(first);
+		if (rawPrice == null)
+			return "";
+
+		float unitPrice;
+		try {
+			if (rawPrice instanceof Number) {
+				unitPrice = ((Number) rawPrice).floatValue();
+			} else {
+				unitPrice = Float.parseFloat(rawPrice.toString());
+			}
+		} catch (NumberFormatException e) {
+			return fmt.formatGroup(group);
+		}
+
+		int count = 1;
+		try {
+			count = first.getInt(MagicCardField.COUNT);
+			if (count < 1)
+				count = 1;
+		} catch (Exception e) {
+			// keep default count = 1
+		}
+
+		float total = unitPrice * count;
+		if (total == 0f)
+			return "";
+
+		java.text.DecimalFormat df = new java.text.DecimalFormat("#0.00");
+		java.util.Currency cur = com.reflexit.magiccards.core.sync.CurrencyConvertor.getCurrency();
+		return cur.getSymbol() + " " + df.format(total);
+	}
+
+	private interface ColumnFormatter {
+		String formatGroup(CardGroup group);
+
+		Object getRawPrice(ICard card);
 	}
 
 	@Override
