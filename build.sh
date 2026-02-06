@@ -48,7 +48,6 @@ while getopts "h?v:r" opt; do
     v)  version=$OPTARG
       ;;
     r)  release=true
-		echo "got -r"
       ;;
   esac
 done
@@ -59,7 +58,7 @@ shift $((OPTIND-1))
 export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64/
 PATH=$JAVA_HOME/bin:$PATH
 mvn -f com.reflexit.magiccards.parent/pom.xml clean verify
-if [ "$release"=true ] ; then
+if [ "$release" = true ] ; then
 	# setup release files for self update
 	echo "Creating Release version ${version}"
 	datestring=$(date '+%Y%m%d')
