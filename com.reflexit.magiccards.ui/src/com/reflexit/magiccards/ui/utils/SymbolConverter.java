@@ -23,7 +23,7 @@ import com.reflexit.magiccards.core.sync.GatherHelper;
 import com.reflexit.magiccards.ui.MagicUIActivator;
 
 public class SymbolConverter {
-	private static final int SYMBOL_SIZE = 15;
+	public static final int SYMBOL_SIZE = 16;
 	private static String bundleBase;
 	static Map<String, String> manaMap = new HashMap<>();
 	static {
@@ -43,7 +43,7 @@ public class SymbolConverter {
 		manaMap.put("{05}", "icons/mana/Symbol_500_mana.gif");
 		manaMap.put("{500}", "icons/mana/Symbol_500_mana.gif");
 		manaMap.put("{R/W}", "icons/mana/Symbol_RW_mana.gif");
-		manaMap.put("{R/G}", "icons/mana/Symbol_RG_mana.gif");
+		manaMap.put("{R/G}", "icons/mana/Symbol_RG_mana.png");
 		manaMap.put("{B/R}", "icons/mana/Symbol_BR_mana.gif");
 		manaMap.put("{B/G}", "icons/mana/Symbol_BG_mana.gif");
 		manaMap.put("{G/U}", "icons/mana/Symbol_GU_mana.gif");
@@ -189,10 +189,20 @@ public class SymbolConverter {
 		return html;
 	}
 
-	public static String insertCostImages(String text, String sym, String icon) {
+	public static String insertCostImages(String text, String sym, String iconPath) {
 		if (text == null)
 			return "";
-		return text.replaceAll("\\Q" + sym, "<img src=\"" + icon + "\" alt=\"" + sym + "\">");
+
+		// Load the scaled SWT image (16x16)
+		Image img = ImageCreator.getManaSymbolImage(sym, iconPath);
+		if (img == null)
+			return text;
+
+		// Convert SWT image to a data URL the browser can render
+		String dataUrl = ImageCreator.toDataUrl(img);
+
+		return text.replace(sym, "<img src=\"" + dataUrl + "\" alt=\"" + sym
+				+ "\" style=\"vertical-align:middle; margin-bottom:2px;\">");
 	}
 
 	public static void main(String[] args) throws MalformedURLException {
