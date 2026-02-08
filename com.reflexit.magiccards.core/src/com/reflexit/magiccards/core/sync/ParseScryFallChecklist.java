@@ -82,7 +82,6 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			boolean exists = target.stream().anyMatch(s -> s.startsWith(sym + " ::"));
 			if (!exists) {
 				target.add(entry);
-				System.out.println("\nAdd " + entry + " from " + source);
 			}
 		}
 	}
