@@ -814,8 +814,12 @@ public class ImageCreator {
 			// Apply alpha adjustments for circular mana symbols (existing logic)
 			setAlphaForManaCircles(imageData);
 
-			// Scale to the target symbol size (new logic)
-			imageData = scaleImageData(imageData, SymbolConverter.SYMBOL_SIZE);
+			System.out.println("getManaSymbol: " + sym + "size" + imageData.height + " " + imageData.width);
+
+			// NEW: only scale non-txt (i.e. cc) icons
+			if (!imagePath.contains("mana_txt")) {
+				imageData = scaleImageData(imageData, SymbolConverter.SYMBOL_SIZE);
+			}
 
 			// Create the SWT image
 			Image manaImage = new Image(Display.getDefault(), imageData);
@@ -830,28 +834,38 @@ public class ImageCreator {
 	 * Scales an ImageData object to the specified size using high-quality
 	 * interpolation while preserving transparency.
 	 */
-	private static ImageData scaleImageData(ImageData src, int size) {
-		Display display = Display.getDefault();
+	private static ImageData scaleImageData(ImageData src, int targetHeight) {
+		int srcW = src.width;
+		int srcH = src.height;
 
-		// Create an ARGB image to preserve transparency
-		ImageData destData = new ImageData(size, size, 32, new PaletteData(0x00FF0000, 0x0000FF00, 0x000000FF));
-		destData.alphaData = new byte[size * size];
+		if (srcH == targetHeight) {
+			return src;
+		}
 
-		Image original = new Image(display, src);
-		Image dest = new Image(display, destData);
+		int newW = (int) Math.round((double) srcW * targetHeight / srcH);
+		int newH = targetHeight;
 
-		GC gc = new GC(dest);
+		// Force a 32‑bit ARGB palette (full alpha support)
+		PaletteData palette = new PaletteData(0xFF0000, 0x00FF00, 0x0000FF);
+		ImageData targetData = new ImageData(newW, newH, 32, palette);
+		targetData.alphaData = new byte[newW * newH];
+
+		// Create SWT images
+		Image srcImg = new Image(Display.getDefault(), src);
+		Image targetImg = new Image(Display.getDefault(), targetData);
+
+		GC gc = new GC(targetImg);
 		gc.setAntialias(SWT.ON);
 		gc.setInterpolation(SWT.HIGH);
 
-		// Draw the original image into the ARGB destination
-		gc.drawImage(original, 0, 0, src.width, src.height, 0, 0, size, size);
+		// Draw scaled
+		gc.drawImage(srcImg, 0, 0, srcW, srcH, 0, 0, newW, newH);
+
 		gc.dispose();
+		srcImg.dispose();
 
-		ImageData result = dest.getImageData();
-
-		original.dispose();
-		dest.dispose();
+		ImageData result = targetImg.getImageData();
+		targetImg.dispose();
 
 		return result;
 	}
