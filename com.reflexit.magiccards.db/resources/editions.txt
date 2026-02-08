@@ -318,6 +318,7 @@ Final Fantasy Commander|FIC||June 2025|Other|Commander||
 Final Fantasy Commander Tokens|TFIC||June 2025|Token|Final Fantasy Commander Tokens||
 Final Fantasy Promos|PFIN||June 2025|Promo|Final Fantasy Promos||
 Final Fantasy Regional Promos|RFIN||June 2025|Promo|Final Fantasy Regional Promos||
+Final Fantasy Scene Box|AFIC||December 2025|Other|Final Fantasy Scene Box||
 Final Fantasy Tokens|TFIN||June 2025|Token|Final Fantasy Tokens||
 Final Fantasy: Through the Ages|FCA||June 2025|Other|Final Fantasy: Through the Ages||
 Foreign Black Border|FBB||April 1994|Core|Core Set||
@@ -502,6 +503,11 @@ Legions Promos|PLGN||February 2003|Promo|Onslaught||
 Limited Edition Alpha|LEA|1E|August 1993|Core|Core Set||
 Limited Edition Beta|LEB|2E|October 1993|Core|Core Set||
 Lorwyn|LRW||October 2007|Expansion|Lorwyn||
+Lorwyn Eclipsed|ECL||January 2026|Expansion|Lorwyn Eclipsed||
+Lorwyn Eclipsed Commander|ECC||January 2026|Other|Lorwyn Eclipsed Commander||
+Lorwyn Eclipsed Commander Tokens|TECC||January 2026|Token|Lorwyn Eclipsed Commander Tokens||
+Lorwyn Eclipsed Promos|PECL||January 2026|Promo|Lorwyn Eclipsed Promos||
+Lorwyn Eclipsed Tokens|TECL||January 2026|Token|Lorwyn Eclipsed Tokens||
 Lorwyn Promos|PLRW||October 2007|Promo|Lorwyn||
 Lorwyn Tokens|TLRW||October 2007|Token|Lorwyn||
 Love Your LGS 2020|PLG20||May 2020|Promo|Love Your LGS 2020||
@@ -699,7 +705,7 @@ Ponies: The Galloping|PTG||October 2019|Other|Ponies: The Galloping||
 Portal|POR|PO|May 1997|Starter|Portal||
 Portal Second Age|P02|P2|June 1998|Starter|Portal||
 Portal Three Kingdoms|PTK|PK|May 1999|Starter|Portal||
-Portal: Three Kingdoms Promos|PPTK||May 1999|Promo|Portal||
+Portal Three Kingdoms Promos|PPTK||May 1999|Promo|Portal||
 Premium Deck Series: Fire and Lightning|PD2||November 2010|Other|Premium Deck Series: Fire and Lightning||
 Premium Deck Series: Graveborn|PD3||November 2011|Other|Premium Deck Series: Graveborn||
 Premium Deck Series: Slivers|H09||November 2009|Other|Premium Deck Series: Slivers||

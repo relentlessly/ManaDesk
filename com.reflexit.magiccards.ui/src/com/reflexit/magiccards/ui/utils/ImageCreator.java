@@ -4,9 +4,11 @@
  */
 package com.reflexit.magiccards.ui.utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
@@ -23,6 +25,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -135,6 +138,17 @@ public class ImageCreator {
 	 */
 	public static boolean hasCreateCardNotFoundImageData() {
 		return true;
+	}
+
+	public static String toDataUrl(Image image) {
+		ImageLoader loader = new ImageLoader();
+		loader.data = new ImageData[] { image.getImageData() };
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		loader.save(out, SWT.IMAGE_PNG);
+
+		String base64 = Base64.getEncoder().encodeToString(out.toByteArray());
+		return "data:image/png;base64," + base64;
 	}
 
 	/**
@@ -788,15 +802,67 @@ public class ImageCreator {
 		if (symImage == null) {
 			ImageDescriptor imageDescriptor = MagicUIActivator.getImageDescriptor(imagePath);
 			if (imageDescriptor == null) {
-				throw new MagicException("Cannot find images for " + imagePath + " " + sym);
+				throw new MagicException("Cannot find image for " + imagePath + " (" + sym + ")");
 			}
-			ImageData imageData = reEncodeIntoDirectPalette(imageDescriptor.getImageData());
+
+			// Load original image data
+			ImageData imageData = imageDescriptor.getImageData();
+
+			// Convert to a direct palette (existing logic)
+			imageData = reEncodeIntoDirectPalette(imageData);
+
+			// Apply alpha adjustments for circular mana symbols (existing logic)
 			setAlphaForManaCircles(imageData);
-			//
+
+			imageData = scaleImageData(imageData, SymbolConverter.SYMBOL_SIZE);
+
+			// Create the SWT image
 			Image manaImage = new Image(Display.getDefault(), imageData);
+
+			// Store in the registry
 			symImage = MagicUIActivator.getDefault().getImage(sym, manaImage);
 		}
 		return symImage;
+	}
+
+	/**
+	 * Scales an ImageData object to the specified size using high-quality
+	 * interpolation while preserving transparency.
+	 */
+	private static ImageData scaleImageData(ImageData src, int targetHeight) {
+		int srcW = src.width;
+		int srcH = src.height;
+
+		if (srcH == targetHeight) {
+			return src;
+		}
+
+		int newW = (int) Math.round((double) srcW * targetHeight / srcH);
+		int newH = targetHeight;
+
+		// Force a 32‑bit ARGB palette (full alpha support)
+		PaletteData palette = new PaletteData(0xFF0000, 0x00FF00, 0x0000FF);
+		ImageData targetData = new ImageData(newW, newH, 32, palette);
+		targetData.alphaData = new byte[newW * newH];
+
+		// Create SWT images
+		Image srcImg = new Image(Display.getDefault(), src);
+		Image targetImg = new Image(Display.getDefault(), targetData);
+
+		GC gc = new GC(targetImg);
+		gc.setAntialias(SWT.ON);
+		gc.setInterpolation(SWT.HIGH);
+
+		// Draw scaled
+		gc.drawImage(srcImg, 0, 0, srcW, srcH, 0, 0, newW, newH);
+
+		gc.dispose();
+		srcImg.dispose();
+
+		ImageData result = targetImg.getImageData();
+		targetImg.dispose();
+
+		return result;
 	}
 
 	public static Image createTransparentImage(int width, int height) {
