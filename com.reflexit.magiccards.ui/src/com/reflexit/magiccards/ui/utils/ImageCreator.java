@@ -814,12 +814,7 @@ public class ImageCreator {
 			// Apply alpha adjustments for circular mana symbols (existing logic)
 			setAlphaForManaCircles(imageData);
 
-			System.out.println("getManaSymbol: " + sym + "size" + imageData.height + " " + imageData.width);
-
-			// NEW: only scale non-txt (i.e. cc) icons
-			if (!imagePath.contains("mana_txt")) {
-				imageData = scaleImageData(imageData, SymbolConverter.SYMBOL_SIZE);
-			}
+			imageData = scaleImageData(imageData, SymbolConverter.SYMBOL_SIZE);
 
 			// Create the SWT image
 			Image manaImage = new Image(Display.getDefault(), imageData);
