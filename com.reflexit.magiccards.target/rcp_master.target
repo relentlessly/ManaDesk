@@ -69,6 +69,8 @@
   <repository location="https://download.eclipse.org/technology/swtbot/releases/latest/"/>
 </location>
 	  
+
+	  <location path="C:\Dev\salamander\plugins\" type="Directory"/>
   </locations>
 
 
