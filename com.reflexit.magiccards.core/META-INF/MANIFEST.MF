@@ -10,7 +10,7 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: 
  org.eclipse.core.runtime,
  com.reflexit.magiccards.db,
- com.reflexit.thirdparty.salamander
+ com.reflexit.magiccards.libs.salamander
 Export-Package: com.reflexit.magiccards.core;uses:="org.eclipse.core.runtime,
  org.eclipse.core.resources,
  com.reflexit.magiccards.core.model.nav,
