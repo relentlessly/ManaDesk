@@ -330,6 +330,7 @@ public class Editions implements ISearchableProperty {
 
 				editions += name + "|" + ed.getMainAbbreviation() + "|" + ed.getExtraAbbreviations() + "|" + rel + "|"
 						+ type + "|" + (ed.getBlock() == null ? "" : ed.getBlock()) + "|" + ed.getIconAbbr() + "|"
+
 						+ ed.getExtraAliases() + "\n";
 			}
 
