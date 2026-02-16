@@ -106,6 +106,7 @@ public class ImageCreator {
 						return Status.OK_STATUS;
 				}
 				try {
+					// Here, we're always looking for the local file (remote download should have been triggered by getSetImage)
 					URL url = CardCache.createSetImageURL(card, true);
 					Image image = MagicUIActivator.getDefault().getImageRegistry().get(key);
 					if (image == null && url != null) {
@@ -120,17 +121,6 @@ public class ImageCreator {
 			return Status.CANCEL_STATUS;
 		}
 	};
-
-	public static Image createSetNotFoundImage(@SuppressWarnings("unused") String rarity) {
-		Display display = Display.getDefault();
-		Image im = new Image(display, 12, 12);
-		GC gc = new GC(im);
-		gc.drawText("?", 0, 0);
-		gc.dispose();
-		ImageData im2 = scaleAndCenter(im.getImageData(), SET_IMG_WIDTH, SET_IMG_HEIGHT, false);
-		im.dispose();
-		return new Image(display, im2);
-	}
 
 	/**
 	 * Indique si createCardNotFoundImageData est disponible.
@@ -207,19 +197,21 @@ public class ImageCreator {
 	}
 
 	public static Image createNewSetImage(URL url) {
-		return null;
 
-		/*
-		 * !!! RD Not working, Gatherer icons not available anymore Disabling for now
-		 * try { ImageDescriptor imageDesc = ImageDescriptor.createFromURL(url); Display
-		 * display = Display.getDefault(); if (imageDesc.getImageData() == null) {
-		 * MagicUIActivator.log("Cannot load image: " + url + ": null imageData");
-		 * return null; } // scaleAndCenter(imageDesc.getImageData(), SET_IMG_WIDTH, //
-		 * SET_IMG_HEIGHT, false); ImageData scaleAndCenter = imageDesc.getImageData();
-		 * return new Image(display, scaleAndCenter); } catch (SWTException e) {
-		 * MagicUIActivator.log("Cannot load image: " + url + ": " + e.getMessage());
-		 * return null; }
-		 */
+		try {
+			ImageDescriptor imageDesc = ImageDescriptor.createFromURL(url);
+			Display display = Display.getDefault();
+			if (imageDesc.getImageData() == null) {
+				// Could be normal, if the image not download yet
+				return null;
+			}
+			// scaleAndCenter(imageDesc.getImageData(), SET_IMG_WIDTH, SET_IMG_HEIGHT, false); 
+			ImageData scaleAndCenter = imageDesc.getImageData();
+			return new Image(display, scaleAndCenter);
+		} catch (SWTException e) {
+			MagicUIActivator.log("Cannot load image: " + url + ": " + e.getMessage());
+			return null;
+		}
 	}
 
 	public static ImageData scaleAndCenter(ImageData imageData, int nwidth, int nheight, boolean scale) {
@@ -285,7 +277,7 @@ public class ImageCreator {
 				if (file.exists()) {
 					image = ImageCreator.createNewSetImage(url);
 					if (image == null) {
-						image = ImageCreator.createSetNotFoundImage(card.getRarity());
+						return null; // Image not downloaded yet
 					}
 					return MagicUIActivator.getDefault().getImage(key, image);
 				} else {

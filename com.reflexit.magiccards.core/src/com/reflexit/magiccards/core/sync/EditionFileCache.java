@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -7,15 +6,20 @@
 
 package com.reflexit.magiccards.core.sync;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
+
 import com.reflexit.magiccards.core.FileUtils;
-import com.reflexit.magiccards.core.OfflineException;
+import com.reflexit.magiccards.core.MagicLogger;
 import com.reflexit.magiccards.core.model.Edition;
+import com.reflexit.magiccards.core.model.Editions;
 import com.reflexit.magiccards.core.model.Rarity;
 
 public class EditionFileCache {
@@ -47,17 +51,63 @@ public class EditionFileCache {
 			String[] abbreviations = edition.getAbbreviations();
 			for (int i = 0; i < abbreviations.length; i++) {
 				String editionAbbr = abbreviations[i];
-				URL url = createSetImageRemoteURL(editionAbbr, tryRarity);
-				cachedFile = new CachedFile(url, new File(path));
-				cachedFile.recache();
-				if (cachedFile.isImage()) {
-					map.put(rarity, cachedFile);
-					return cachedFile;
+				URL url = createSetImageRemoteURL(editionAbbr);
+
+				if (url == null) {
+					// Normal if the iconAbbr is unknown
+					continue;
 				}
+
+				if (url.getPath().toLowerCase().endsWith(".svg")) {
+
+					try {
+						// Rasterize directly from URL
+						BufferedImage bi = SvgRasterizer.renderSvg(url, 19, 19);
+
+						// Apply rarity tint
+						Color tint = RarityColor.valueOf(rarity.toUpperCase()).color;
+						bi = SvgRasterizer.tint(bi, tint);
+
+						// Save PNG
+						File pngFile = new File(path);
+						File parent = pngFile.getParentFile();
+						if (!parent.exists()) {
+							parent.mkdirs();
+						}
+
+						ImageIO.write(bi, "PNG", pngFile);
+
+						cachedFile = new CachedFile(pngFile.toURI().toURL(), pngFile);
+						map.put(rarity, cachedFile);
+						return cachedFile;
+
+					} catch (Exception e) {
+						MagicLogger.log("Failed to rasterize SVG: " + url + ": " + e.getMessage());
+						return null;
+					}
+				}
+
+				cachedFile.recache();
+				map.put(rarity, cachedFile);
+				return cachedFile;
 			}
 			tryRarity = Rarity.getMoreRare(tryRarity);
 		}
 		return null;
+	}
+
+	public enum RarityColor {
+		COMMON(new Color(0x000000)), // black
+		UNCOMMON(new Color(0xC0C0C0)), // silver
+		RARE(new Color(0xD4AF37)), // gold
+		MYTHIC(new Color(0xD12A1A)), // red-leaning mythic
+		SPECIAL(new Color(0x1E7A1E)); // green
+
+		public final Color color;
+
+		RarityColor(Color c) {
+			this.color = c;
+		}
 	}
 
 	public URL getLocalURL(String rarity, boolean upload) throws IOException {
@@ -67,25 +117,6 @@ public class EditionFileCache {
 		if (onefile != null)
 			return onefile.getLocalURL(false);
 		return createSetImageLocalURL(rarity);
-	}
-
-	public URL getRemoteURL(String rarity, boolean force) throws IOException {
-		try {
-			CachedFile onefile = getImageCachedFile(rarity, false);
-			URL url = null;
-			if (onefile != null)
-				url = onefile.getRemoteURL();
-			if (url == null) {
-				onefile = getImageCachedFile(rarity, true);
-				if (onefile != null)
-					url = onefile.getRemoteURL();
-			}
-			if (url != null)
-				return url;
-		} catch (OfflineException e) {
-			// ignore return pre-defined unchecked url
-		}
-		return createSetImageRemoteURL(edition.getMainAbbreviation(), rarity);
 	}
 
 	public URL createSetImageLocalURL(String rarity) {
@@ -99,19 +130,31 @@ public class EditionFileCache {
 		return localUrl;
 	}
 
-	public static URL createSetImageRemoteURL(String editionAbbr, String rarity) {
-		return GatherHelper.createSetImageURL(editionAbbr, rarity);
+	// !!! RD Should be rework to get this from parseScryfall class but acceptable for now
+	public static URL createSetImageRemoteURL(String editionAbbr) throws MalformedURLException {
+		Editions editions = Editions.getInstance();
+		Edition ed = editions.getEditionByAbbr(editionAbbr);
+		try {
+			if (ed.getIconAbbr() != null && !ed.getIconAbbr().equals("null") && !ed.getIconAbbr().isBlank()) {
+				return new URL("https://svgs.scryfall.io/sets/" + ed.getIconAbbr() + ".svg?1770008400");
+			}
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private String createLocalSetImageFilePath(String rarity) {
 		if ("Land".equals(rarity))
 			rarity = "Common";
 		File loc = FileUtils.getStateLocationFile();
-		
+
 		// RD Modification to use the common "icon" set for special sets like Arts, Tokens, Promos, etc
 		String name = edition.getIconBaseFileName() + "-" + rarity;
 		String part = "Sets/" + name + ".png";
 		String file = new File(loc, part).getPath();
+
 		return file;
 	}
 }

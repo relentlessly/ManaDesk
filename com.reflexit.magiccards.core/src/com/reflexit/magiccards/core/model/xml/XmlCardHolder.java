@@ -200,7 +200,20 @@ public class XmlCardHolder implements ICardHandler {
 				pm1.subTask("Updating set list...");
 				try {
 					// First, refresh set list
-					new ParseScryFallSets().loadSets(false);
+					ParseScryFallSets allSets = new ParseScryFallSets();
+					allSets.loadSets(false);
+
+					// Force and full update of the edition list 
+					final Collection<Edition> sets = allSets.getAll();
+					for (Iterator iterator = sets.iterator(); iterator.hasNext();) {
+						Edition edition = (Edition) iterator.next();
+
+						// Update the edition in the official list
+						Editions.getInstance().addEdition(edition);
+					}
+
+					Editions.getInstance().save();
+
 				} catch (Exception e) {
 					MagicLogger.log(e); // move on if exception via set loading
 				}

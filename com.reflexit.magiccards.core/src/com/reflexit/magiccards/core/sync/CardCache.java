@@ -32,7 +32,6 @@ import com.reflexit.magiccards.core.model.Editions;
 import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.MagicCardField;
 
-
 public class CardCache {
 	public static URL createSetImageURL(IMagicCard card, boolean upload) throws IOException {
 		String edition = card.getSet();
@@ -45,9 +44,7 @@ public class CardCache {
 		Edition edition = Editions.getInstance().getEditionByName(editionName);
 		if (edition == null)
 			return null;
-		return null; /*
-						 * !!! RD Disable for now edition.getImageFiles().getLocalURL(rarity, upload);
-						 */
+		return edition.getImageFiles().getLocalURL(rarity, upload);
 	}
 
 	public static URL createRemoteImageURL(IMagicCard card) throws MalformedURLException {

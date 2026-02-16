@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SVG Salamander
+Bundle-SymbolicName: com.reflexit.magiccards.libs.salamander
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Reflexit
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-ClassPath: .,
+ lib/salamander.jar
+Export-Package: com.kitfox.svg,
+ com.kitfox.svg.animation,
+ com.kitfox.svg.animation.parser,
+ com.kitfox.svg.app,
+ com.kitfox.svg.app.ant,
+ com.kitfox.svg.app.beans,
+ com.kitfox.svg.app.data,
+ com.kitfox.svg.composite,
+ com.kitfox.svg.pathcmd,
+ com.kitfox.svg.pattern,
+ com.kitfox.svg.util,
+ com.kitfox.svg.xml,
+ com.kitfox.svg.xml.cpx

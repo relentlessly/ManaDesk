@@ -19,7 +19,7 @@ import com.reflexit.magiccards.db.DbActivator;
 import junit.framework.TestCase;
 
 public class EditionsTest extends TestCase {
-	private static final int EDITIONS_SIZE = 948;
+	private static final int EDITIONS_SIZE = 954;
 	private static final String EDITIONS_FILE = Editions.EDITIONS_FILE;
 	protected Editions editions;
 

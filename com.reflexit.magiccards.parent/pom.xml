@@ -48,6 +48,7 @@
 	</repositories>-->
 
 	<modules>
+		<module>../com.reflexit.magiccards.libs.salamander</module>	
 		<module>../com.reflexit.magiccards.target</module>
 		<module>../com.reflexit.magiccards.db</module>
 		
