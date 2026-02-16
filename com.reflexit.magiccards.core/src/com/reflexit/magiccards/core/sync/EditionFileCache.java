@@ -18,8 +18,8 @@ import javax.imageio.ImageIO;
 
 import com.reflexit.magiccards.core.FileUtils;
 import com.reflexit.magiccards.core.MagicLogger;
-import com.reflexit.magiccards.core.OfflineException;
 import com.reflexit.magiccards.core.model.Edition;
+import com.reflexit.magiccards.core.model.Editions;
 import com.reflexit.magiccards.core.model.Rarity;
 
 public class EditionFileCache {
@@ -51,16 +51,18 @@ public class EditionFileCache {
 			String[] abbreviations = edition.getAbbreviations();
 			for (int i = 0; i < abbreviations.length; i++) {
 				String editionAbbr = abbreviations[i];
-				URL url = createSetImageRemoteURL(editionAbbr, tryRarity);
+				URL url = createSetImageRemoteURL(editionAbbr);
 
-				// !!! RD  Temporary !!! 
-				url = new URL("https://svgs.scryfall.io/sets/woe.svg?1770008400");
+				if (url == null) {
+					// Normal if the iconAbbr is unknown
+					continue;
+				}
 
 				if (url.getPath().toLowerCase().endsWith(".svg")) {
 
 					try {
 						// Rasterize directly from URL
-						BufferedImage bi = SvgRasterizer.renderSvg(url, 16, 16);
+						BufferedImage bi = SvgRasterizer.renderSvg(url, 19, 19);
 
 						// Apply rarity tint
 						Color tint = RarityColor.valueOf(rarity.toUpperCase()).color;
@@ -68,6 +70,11 @@ public class EditionFileCache {
 
 						// Save PNG
 						File pngFile = new File(path);
+						File parent = pngFile.getParentFile();
+						if (!parent.exists()) {
+							parent.mkdirs();
+						}
+
 						ImageIO.write(bi, "PNG", pngFile);
 
 						cachedFile = new CachedFile(pngFile.toURI().toURL(), pngFile);
@@ -112,25 +119,6 @@ public class EditionFileCache {
 		return createSetImageLocalURL(rarity);
 	}
 
-	public URL getRemoteURL(String rarity, boolean force) throws IOException {
-		try {
-			CachedFile onefile = getImageCachedFile(rarity, false);
-			URL url = null;
-			if (onefile != null)
-				url = onefile.getRemoteURL();
-			if (url == null) {
-				onefile = getImageCachedFile(rarity, true);
-				if (onefile != null)
-					url = onefile.getRemoteURL();
-			}
-			if (url != null)
-				return url;
-		} catch (OfflineException e) {
-			// ignore return pre-defined unchecked url
-		}
-		return createSetImageRemoteURL(edition.getMainAbbreviation(), rarity);
-	}
-
 	public URL createSetImageLocalURL(String rarity) {
 		String path = createLocalSetImageFilePath(rarity);
 		URL localUrl = null;
@@ -142,8 +130,19 @@ public class EditionFileCache {
 		return localUrl;
 	}
 
-	public static URL createSetImageRemoteURL(String editionAbbr, String rarity) {
-		return GatherHelper.createSetImageURL(editionAbbr, rarity);
+	// !!! RD Should be rework to get this from parseScryfall class but acceptable for now
+	public static URL createSetImageRemoteURL(String editionAbbr) throws MalformedURLException {
+		Editions editions = Editions.getInstance();
+		Edition ed = editions.getEditionByAbbr(editionAbbr);
+		try {
+			if (ed.getIconAbbr() != null && !ed.getIconAbbr().equals("null") && !ed.getIconAbbr().isBlank()) {
+				return new URL("https://svgs.scryfall.io/sets/" + ed.getIconAbbr() + ".svg?1770008400");
+			}
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private String createLocalSetImageFilePath(String rarity) {
@@ -155,6 +154,7 @@ public class EditionFileCache {
 		String name = edition.getIconBaseFileName() + "-" + rarity;
 		String part = "Sets/" + name + ".png";
 		String file = new File(loc, part).getPath();
+
 		return file;
 	}
 }

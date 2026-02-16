@@ -106,13 +106,15 @@ public class SvgRasterizer {
 		return bi;
 	}
 
-	// ...
-
 	public static BufferedImage tint(BufferedImage src, Color tint) {
 		int w = src.getWidth();
 		int h = src.getHeight();
 
 		BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+
+		int tr = tint.getRed();
+		int tg = tint.getGreen();
+		int tb = tint.getBlue();
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -120,20 +122,9 @@ public class SvgRasterizer {
 
 				int alpha = (argb >> 24) & 0xFF;
 				if (alpha == 0) {
-					// keep fully transparent pixels as-is
-					out.setRGB(x, y, argb);
+					out.setRGB(x, y, 0); // fully transparent
 					continue;
 				}
-
-				int r = (argb >> 16) & 0xFF;
-				int g = (argb >> 8) & 0xFF;
-				int b = argb & 0xFF;
-
-				int gray = (r + g + b) / 3;
-
-				int tr = (tint.getRed() * gray) / 255;
-				int tg = (tint.getGreen() * gray) / 255;
-				int tb = (tint.getBlue() * gray) / 255;
 
 				int tinted = (alpha << 24) | (tr << 16) | (tg << 8) | tb;
 				out.setRGB(x, y, tinted);

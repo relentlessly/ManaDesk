@@ -22,7 +22,9 @@ import java.util.Locale;
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.FileUtils;
 import com.reflexit.magiccards.core.MagicLogger;
-import com.reflexit.magiccards.core.legality.Format;
+
+// Name|Abbr|otherAbbr|ReleaseDate|Type|Block|Legality|iconAbbr|Unused(Name aliases)
+// Limited Edition Alpha|LEA|1E|August 1993|Core|Core Set|lea|
 
 public class Editions implements ISearchableProperty {
 	public static final String EDITIONS_FILE = "editions.txt";
@@ -280,8 +282,8 @@ public class Editions implements ISearchableProperty {
 					if (attrs.length <= 6)
 						continue;
 					// Legality
-					String legality = attrs[6].trim();
-					set.setFormats(legality);
+					String iconAbbr = attrs[6].trim();
+					set.setIconAbbr(iconAbbr);
 					if (attrs.length <= 7)
 						continue;
 					// Name aliases
@@ -292,6 +294,7 @@ public class Editions implements ISearchableProperty {
 						nameAliases.put(alias, set);
 					}
 					set.setNameAliases(aliases);
+					set.setIconAbbr(iconAbbr);
 				} catch (Exception e) {
 					MagicLogger.log("bad editions record: " + line);
 					MagicLogger.log(e);
@@ -325,11 +328,8 @@ public class Editions implements ISearchableProperty {
 
 				String type = ed.getType() != null ? ed.getType() : "";
 
-				Format format = ed.getFormat();
-				String sformat = format == Format.LEGACY ? "" : format.name();
-
 				editions += name + "|" + ed.getMainAbbreviation() + "|" + ed.getExtraAbbreviations() + "|" + rel + "|"
-						+ type + "|" + (ed.getBlock() == null ? "" : ed.getBlock()) + "|" + sformat + "|"
+						+ type + "|" + (ed.getBlock() == null ? "" : ed.getBlock()) + "|" + ed.getIconAbbr() + "|"
 						+ ed.getExtraAliases() + "\n";
 			}
 

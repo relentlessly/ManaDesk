@@ -122,17 +122,6 @@ public class ImageCreator {
 		}
 	};
 
-	public static Image createSetNotFoundImage(@SuppressWarnings("unused") String rarity) {
-		Display display = Display.getDefault();
-		Image im = new Image(display, 12, 12);
-		GC gc = new GC(im);
-		gc.drawText("?", 0, 0);
-		gc.dispose();
-		ImageData im2 = scaleAndCenter(im.getImageData(), SET_IMG_WIDTH, SET_IMG_HEIGHT, false);
-		im.dispose();
-		return new Image(display, im2);
-	}
-
 	/**
 	 * Indique si createCardNotFoundImageData est disponible.
 	 * Utile si tu veux tester la présence de la méthode sans provoquer d'exception.
@@ -213,7 +202,7 @@ public class ImageCreator {
 			ImageDescriptor imageDesc = ImageDescriptor.createFromURL(url);
 			Display display = Display.getDefault();
 			if (imageDesc.getImageData() == null) {
-				MagicUIActivator.log("Cannot load image: " + url + ": null imageData");
+				// Could be normal, if the image not download yet
 				return null;
 			}
 			// scaleAndCenter(imageDesc.getImageData(), SET_IMG_WIDTH, SET_IMG_HEIGHT, false); 
@@ -288,7 +277,7 @@ public class ImageCreator {
 				if (file.exists()) {
 					image = ImageCreator.createNewSetImage(url);
 					if (image == null) {
-						image = ImageCreator.createSetNotFoundImage(card.getRarity());
+						return null; // Image not downloaded yet
 					}
 					return MagicUIActivator.getDefault().getImage(key, image);
 				} else {

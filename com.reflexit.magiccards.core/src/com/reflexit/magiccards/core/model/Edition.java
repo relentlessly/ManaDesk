@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -26,6 +25,7 @@ public class Edition {
 	private String block;
 	private int id;
 	private EditionFileCache imageFiles;
+	private String iconAbbr;
 
 	public Edition(String name, String abbr) {
 		if (name.contains("#")) {
@@ -100,21 +100,20 @@ public class Edition {
 	
 	// RD Modification to automatically remove the first letter of the SET abbreviation 
 	// for those "special" sets to be able to use standard set "icon" 
-    public String getIconAbbreviation() {
-        String iAbb = this.abbrs[0];
-        if (this.name.contains(" Promos") || 		// P
-       		this.name.contains(" Tokens") ||		// T
-        	this.name.contains(" Art Series") || 	// A
-        	this.name.contains(" Minigames") || 	// M
-        	this.name.contains(" Schemes") ||		// O
-        	this.name.contains(" Planes")  ||		// O
-         	this.name.contains(" Sheets") 			// S
-        	) {
-            iAbb = iAbb.substring(1);
-        }
-        return iAbb;
-    }
-
+	public String getIconAbbreviation() {
+		String iAbb = this.abbrs[0];
+		if (this.name.contains(" Promos") || // P
+				this.name.contains(" Tokens") || // T
+				this.name.contains(" Art Series") || // A
+				this.name.contains(" Minigames") || // M
+				this.name.contains(" Schemes") || // O
+				this.name.contains(" Planes") || // O
+				this.name.contains(" Sheets") // S
+		) {
+			iAbb = iAbb.substring(1);
+		}
+		return iAbb;
+	}
 
 	public void setMainAbbreviation(String abbr) {
 		if (abbr.contains(" ")) {
@@ -169,6 +168,14 @@ public class Edition {
 
 	public String[] getAliases() {
 		return aliases;
+	}
+
+	public String getIconAbbr() {
+		return iconAbbr;
+	}
+
+	public void setIconAbbr(String abbr) {
+		iconAbbr = abbr;
 	}
 
 	public void setType(String type) {
@@ -237,12 +244,11 @@ public class Edition {
 		return FileUtils.getAgnosticFilename(a);
 	}
 
+	public String getIconBaseFileName() {
+		String a = this.getIconAbbreviation();
+		return FileUtils.getAgnosticFilename(a);
+	}
 
-    public String getIconBaseFileName() {
-        String a = this.getIconAbbreviation();
-        return FileUtils.getAgnosticFilename(a);
-    }
-	
 	public LegalityMap getLegalityMap() {
 		return legalityMap;
 	}
