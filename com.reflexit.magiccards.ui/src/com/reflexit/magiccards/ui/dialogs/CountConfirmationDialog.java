@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -7,7 +6,6 @@
 
 package com.reflexit.magiccards.ui.dialogs;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -137,7 +135,7 @@ public class CountConfirmationDialog extends Dialog {
 				protected IStatus run(IProgressMonitor monitor) {
 					ImageData data = null;
 					// background-safe: create ImageData (no SWT Image here)
-					data = ImageCreator.createCardImageData(path, resize);
+					data = ImageCreator.getInstance().createCardImageData(path, resize);
 
 					final ImageData finalData = data;
 					Display.getDefault().asyncExec(() -> {
@@ -161,7 +159,7 @@ public class CountConfirmationDialog extends Dialog {
 						// fallback "not found" image (UI-safe)
 						if (newImg == null) {
 							try {
-								newImg = ImageCreator.getInstance().createCardNotFoundImage(card);
+								newImg = ImageCreator.getInstance().getInstance().createCardNotFoundImage(card);
 							} catch (Throwable t) {
 								MagicUIActivator
 										.log("Failed to create not-found image for: " + card + " - " + t.getMessage());
@@ -202,8 +200,6 @@ public class CountConfirmationDialog extends Dialog {
 
 		} catch (CannotDetermineSetAbbriviation e) {
 			MagicUIActivator.log("Cannot determine set abbreviation for card: " + card + " - " + e.getMessage());
-		} catch (IOException e) {
-			MagicUIActivator.log("IO error while creating card path for: " + card + " - " + e.getMessage());
 		}
 	}
 

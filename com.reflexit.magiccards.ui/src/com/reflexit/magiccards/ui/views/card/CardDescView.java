@@ -28,9 +28,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -58,7 +56,6 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
-import com.reflexit.magiccards.core.CachedImageNotFoundException;
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.MagicLogger;
 import com.reflexit.magiccards.core.model.CardGroup;
@@ -78,7 +75,6 @@ import com.reflexit.magiccards.ui.dialogs.EditMagicCardPhysicalDialog;
 import com.reflexit.magiccards.ui.preferences.PreferenceConstants;
 import com.reflexit.magiccards.ui.preferences.PreferenceInitializer;
 import com.reflexit.magiccards.ui.utils.CoreMonitorAdapter;
-import com.reflexit.magiccards.ui.utils.ImageCreator;
 import com.reflexit.magiccards.ui.utils.WaitUtils;
 import com.reflexit.magiccards.ui.views.AbstractCardsView;
 import com.reflexit.magiccards.ui.views.MagicDbView;
@@ -124,6 +120,11 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 			new UIJob("Set temp image") {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor uimonitor) {
+					// view or panel may be gone
+					if (panel == null || panel.isDisposed()) {
+						return Status.CANCEL_STATUS;
+					}
+
 					CardDescView.this.panel.setVisible(!nocard);
 					if (nocard) {
 						setMessage("Click on a card to populate the view");
@@ -131,8 +132,10 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 					}
 					if (monitor.isCanceled() || !isStillNeeded(jCard))
 						return Status.CANCEL_STATUS;
-					panel.setLoadingImage(jCard);
-					panel.setText(jCard);
+
+					if (!panel.isDisposed()) {
+						panel.setText(jCard);
+					}
 					return Status.OK_STATUS;
 				}
 			}.schedule();
@@ -140,7 +143,6 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 				monitor.worked(10);
 				if (monitor.isCanceled() || !isStillNeeded(jCard))
 					return Status.CANCEL_STATUS;
-				loadCardImage(new SubProgressMonitor(monitor, 45), jCard, forceUpdate);
 				loadCardExtraInfo(new SubProgressMonitor(monitor, 45), jCard);
 			}
 			monitor.done();
@@ -225,163 +227,6 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 		return panel.getCard() == card;
 	}
 
-	protected IStatus loadCardImage(IProgressMonitor monitor, final IMagicCard card, boolean forceUpdate) {
-		MagicLogger.traceStart("loadCardImage");
-		monitor.beginTask("Loading image for " + card.getName(), 100);
-		try {
-			if (!isStillNeeded(card))
-				return Status.CANCEL_STATUS;
-
-			ImageData remoteData = null;
-			ImageData fullData = null;
-			IOException e = null;
-
-			try {
-				if (card.getCardId() != null) {
-					String path = ImageCreator.getInstance().createCardPath(card, isLoadingOnClickEnabled(),
-							forceUpdate);
-					boolean resize = true; // !!! RD asScanned == false;
-					// background-safe: create ImageData, not Image
-					remoteData = ImageCreator.createCardImageData(path, resize);
-
-					// Try to also load the full (unresized) ImageData if possible.
-					// This is best-effort: if the resized flag was true above, we still attempt to load the original
-					// so the UI can scale up to the disk/original size later.
-					try {
-						// Only attempt if the path exists and resize was requested (otherwise remoteData already is full)
-						if (resize) {
-							fullData = ImageCreator.createCardImageData(path, false);
-						} else {
-							// remoteData already full-size
-							fullData = remoteData;
-						}
-					} catch (Throwable t) {
-						// ignore: fullData remains null and we will fallback to remoteData
-						fullData = null;
-					}
-				}
-			} catch (CachedImageNotFoundException e1) {
-				// skip
-			} catch (IOException e1) {
-				e = e1;
-			}
-
-			MagicLogger.trace("loadCardImage remote done");
-
-			if (monitor.isCanceled() || !isStillNeeded(card))
-				return Status.CANCEL_STATUS;
-
-			monitor.worked(90);
-
-			if (monitor.isCanceled() || !isStillNeeded(card))
-				return Status.CANCEL_STATUS;
-
-			if (e != null)
-				setMessage(e.getMessage());
-			else if (!isLoadingOnClickEnabled())
-				setMessage("Image loading is disabled");
-			else
-				setMessage("");
-
-			MagicLogger.trace("loadCardImage message done " + Thread.currentThread());
-
-			if (monitor.isCanceled() || !isStillNeeded(card))
-				return Status.CANCEL_STATUS;
-
-			// Pass to UI thread: first inform the panel about the ImageData (full + display)
-			final ImageData uiFullData = fullData;
-			final ImageData uiDisplayData = remoteData;
-
-			// UI update (run on UI thread)
-			Display.getDefault().asyncExec(() -> {
-				try {
-					if (!isStillNeeded(card))
-						return;
-
-					// First, inform the panel about the ImageData (full + display).
-					// The panel will keep the fullData for later resizes and can schedule the debounced apply.
-					try {
-						if (panel != null && !panel.isDisposed()) {
-							panel.onImageDataLoaded(uiFullData, uiDisplayData);
-						}
-					} catch (Throwable t) {
-						MagicUIActivator.log("Error passing ImageData to panel");
-						MagicUIActivator.log(t);
-					}
-
-					// If we have fullData (original on disk), prefer to let the panel apply it (debounced).
-					// Avoid creating and showing the smaller displayData first to prevent the "small -> big" jump.
-					if (uiFullData != null) {
-						// panel.onImageDataLoaded already stored fullData and will schedule apply.
-						// Do not create the smaller image here.
-						return;
-					}
-
-					// Otherwise (no fullData), create the SWT Image from the display ImageData (if any)
-					Image image = null;
-					try {
-						if (uiDisplayData != null) {
-							image = new Image(Display.getDefault(), uiDisplayData);
-						}
-					} catch (SWTException ex) {
-						MagicUIActivator.log("Failed to create Image from ImageData for: " + card);
-						image = null;
-					}
-
-					// fallback "not found" if necessary (creation in UI)
-					if (image == null || image.getBounds().width < 20) {
-						if (ImageCreator.hasCreateCardNotFoundImageData()) {
-							ImageData notFoundData = ImageCreator.createCardNotFoundImageData(card);
-							if (notFoundData != null) {
-								if (image != null && !image.isDisposed())
-									image.dispose();
-								image = new Image(Display.getDefault(), notFoundData);
-							}
-						} else {
-							if (image != null && !image.isDisposed())
-								image.dispose();
-							image = ImageCreator.getInstance().createCardNotFoundImage(card);
-						}
-					}
-
-					// rotation (must be done in UI because it uses Image/GC)
-					String options = (String) card.get(MagicCardField.PART);
-					if (options != null && options.length() > 0 && image != null) {
-						int rotate = 0;
-						if (options.contains("rotate180")) {
-							rotate = 180;
-						} else if (options.contains("rotate90")) {
-							rotate = 90;
-						}
-						if (rotate != 0) {
-							Image rimage = ImageCreator.getInstance().getRotated(image, rotate);
-							if (image != null && !image.isDisposed())
-								image.dispose();
-							image = rimage;
-						}
-					}
-
-					// apply the image (setImage must handle replacement / dispose of the old image)
-					if (isStillNeeded(card)) {
-						MagicLogger.trace("loadCardImage set image start (UI thread)");
-						setImage(card, image);
-					} else {
-						// if no longer needed, dispose the created image
-						if (image != null && !image.isDisposed())
-							image.dispose();
-					}
-				} catch (Throwable t) {
-					MagicUIActivator.log("Error applying image to UI for card: " + card);
-				}
-			});
-
-		} finally {
-			monitor.done();
-			MagicLogger.traceEnd("loadCardImage");
-		}
-		return Status.OK_STATUS;
-	}
-
 	public void setMessage(String text) {
 		if (Display.getCurrent() == null) {
 			// dumpUiThread();
@@ -422,21 +267,16 @@ public class CardDescView extends ViewPart implements ISelectionListener, IShowI
 	public void setImage(IMagicCard card, Image remoteImage) {
 		if (card == panel.getCard()) {
 
-			Image old = cardImage; // garder une référence locale
-			cardImage = remoteImage; // mettre à jour immédiatement la référence
+			Image old = cardImage;
+			cardImage = remoteImage;
 
 			Display.getDefault().asyncExec(() -> {
-				// si le panel est mort, on nettoie et on sort
 				if (panel == null || panel.isDisposed()) {
 					if (remoteImage != null && !remoteImage.isDisposed())
 						remoteImage.dispose();
 					return;
 				}
 
-				// 1) appliquer la nouvelle image dans le panel
-				panel.setImage(card, remoteImage);
-
-				// 2) disposer l’ancienne image APRÈS que le panel l’ait retirée
 				if (old != null && !old.isDisposed()) {
 					old.dispose();
 				}

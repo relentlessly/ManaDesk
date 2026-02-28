@@ -1,4 +1,3 @@
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -7,6 +6,7 @@
 package com.reflexit.magiccards.core.sync;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +28,68 @@ public class EditionFileCache {
 
 	public EditionFileCache(Edition ed) {
 		this.edition = ed;
+	}
+
+	/**
+	 * Ensures that the set symbol PNG exists locally.
+	 * Downloads the SVG, rasterizes at high resolution, applies rarity tint,
+	 * adds outline (except for black), downsizes to 19x19, sharpens, and saves.
+	 */
+	public File ensureSetSymbolExists(String rarity) {
+		try {
+			rarity = normalizeRarity(rarity);
+
+			String localPath = createLocalSetImageFilePath(rarity);
+			File localFile = new File(localPath);
+
+			if (localFile.exists()) {
+				return localFile;
+			}
+
+			String editionAbbr = edition.getMainAbbreviation();
+			if (editionAbbr == null || editionAbbr.isBlank()) {
+				return null;
+			}
+
+			URL svgUrl = EditionFileCache.createSetImageRemoteURL(editionAbbr);
+			if (svgUrl == null) {
+				return null;
+			}
+
+			RarityColor rc = RarityColor.valueOf(rarity.toUpperCase());
+			Color bg = rc.color;
+
+			BufferedImage bi = renderWithBackground(svgUrl, 19, bg);
+
+			localFile.getParentFile().mkdirs();
+			ImageIO.write(bi, "PNG", localFile);
+
+			return localFile;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String normalizeRarity(String rarity) {
+		if ("Land".equals(rarity))
+			return "Common";
+		return rarity;
+	}
+
+	public static BufferedImage renderWithBackground(URL svgUrl, int size, Color bg) throws Exception {
+		BufferedImage out = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g = out.createGraphics();
+		g.setColor(bg);
+		g.fillRect(0, 0, size, size);
+
+		BufferedImage symbol = SvgRasterizer.renderSvgPreserveColor(svgUrl, size, size);
+		g.drawImage(symbol, 0, 0, null);
+
+		g.dispose();
+		return out;
 	}
 
 	public CachedFile getImageCachedFile(String rarity, boolean forceRemote) throws IOException {
@@ -97,11 +159,11 @@ public class EditionFileCache {
 	}
 
 	public enum RarityColor {
-		COMMON(new Color(0x000000)), // black
-		UNCOMMON(new Color(0xC0C0C0)), // silver
-		RARE(new Color(0xD4AF37)), // gold
-		MYTHIC(new Color(0xD12A1A)), // red-leaning mythic
-		SPECIAL(new Color(0x1E7A1E)); // green
+		COMMON(new Color(0xFFFFFF)), // black
+		UNCOMMON(new Color(0xC8C8C8)), // brighter silver
+		RARE(new Color(0xF4C542)), // brighter gold
+		MYTHIC(new Color(0xE84A1A)), // vivid mythic orange
+		SPECIAL(new Color(0x9BE89B)); // brighter green
 
 		public final Color color;
 

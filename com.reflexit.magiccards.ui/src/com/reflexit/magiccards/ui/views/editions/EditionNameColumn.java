@@ -1,3 +1,7 @@
+/*
+ * Contributors:
+ *     Rémi Dutil 2026 - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
 package com.reflexit.magiccards.ui.views.editions;
 
 import org.eclipse.swt.graphics.Image;
@@ -28,14 +32,7 @@ public class EditionNameColumn extends AbstractEditionColumn {
 		Edition ed = (Edition) element;
 		MagicCard fake = new MagicCard();
 		fake.setSet(ed.getName());
-		fake.setRarity(Rarity.MYTHIC_RARE);
-		Image im = ImageCreator.getInstance().getSetImage(fake);
-		if (im != null)
-			return im;
-		fake.setRarity(Rarity.SPECIAL);
-		im = ImageCreator.getInstance().getSetImage(fake);
-		if (im != null)
-			return im;
+		// Always used Rare for edition name column	
 		fake.setRarity(Rarity.RARE);
 		fake.setCardId(1);
 		return ImageCreator.getInstance().getSetImage(fake);

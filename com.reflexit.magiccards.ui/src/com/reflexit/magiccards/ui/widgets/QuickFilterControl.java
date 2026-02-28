@@ -1,3 +1,7 @@
+/*
+ * Contributors:
+ *     Rémi Dutil 2026 - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
 package com.reflexit.magiccards.ui.widgets;
 
 import java.util.Collection;
@@ -26,7 +30,7 @@ import com.reflexit.magiccards.core.model.Colors;
 import com.reflexit.magiccards.core.model.Editions;
 import com.reflexit.magiccards.core.model.FilterField;
 import com.reflexit.magiccards.ui.MagicUIActivator;
-import com.reflexit.magiccards.ui.utils.SymbolConverter;
+import com.reflexit.magiccards.ui.utils.SymbolRenderer;
 import com.reflexit.magiccards.ui.utils.WaitUtils;
 
 public class QuickFilterControl extends Composite {
@@ -292,7 +296,7 @@ public class QuickFilterControl extends Composite {
 		String abbr = Colors.getInstance().getEncodeByName(name);
 		//
 		final ToolItem button = new ToolItem(toolbar, SWT.CHECK);
-		button.setImage(SymbolConverter.buildCostImage("{" + abbr + "}"));
+		button.setImage(SymbolRenderer.buildCostImage("{" + abbr + "}"));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

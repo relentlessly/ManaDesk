@@ -1,8 +1,5 @@
 package com.reflexit.magiccards.ui.gallery;
 
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PartInitException;
-
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.model.events.CardEvent;
 import com.reflexit.magiccards.core.model.storage.IFilteredCardStore;
@@ -58,11 +55,14 @@ public class GalleryView extends MagicDbView {
 	@Override
 	protected void runDoubleClick() {
 		super.runDoubleClick();
+		/* !!! RD Disable for now		
 		try {
+		
 			IViewPart showView = getViewSite().getWorkbenchWindow().getActivePage().showView(GallerySelectionView.ID);
 			((GallerySelectionView) showView).setDetails(getSelection());
 		} catch (PartInitException e) {
 			MagicUIActivator.log(e);
 		}
+		*/
 	}
 }

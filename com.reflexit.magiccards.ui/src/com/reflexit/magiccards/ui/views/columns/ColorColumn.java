@@ -1,3 +1,7 @@
+/*
+ * Contributors:
+ *     Rémi Dutil 2026 - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
 package com.reflexit.magiccards.ui.views.columns;
 
 import org.eclipse.swt.graphics.Image;
@@ -6,7 +10,7 @@ import org.eclipse.swt.widgets.Listener;
 import com.reflexit.magiccards.core.model.Colors;
 import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.MagicCardField;
-import com.reflexit.magiccards.ui.utils.SymbolConverter;
+import com.reflexit.magiccards.ui.utils.SymbolRenderer;
 
 public class ColorColumn extends AbstractImageColumn implements Listener {
 	public ColorColumn() {
@@ -25,7 +29,7 @@ public class ColorColumn extends AbstractImageColumn implements Listener {
 	public Image getActualImage(Object element) {
 		if (element instanceof IMagicCard) {
 			String icost = Colors.getInstance().getColorAsCost((IMagicCard) element);
-			return SymbolConverter.buildCostImage(icost);
+			return SymbolRenderer.buildCostImage(icost);
 		}
 		return null;
 	}
