@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -128,7 +127,7 @@ public class EditMagicCardDialog extends MagicDialog {
 				ImageData data = null;
 
 				try {
-					data = ImageCreator.createCardImageData(path, true);
+					data = ImageCreator.getInstance().createCardImageData(path, true);
 				} catch (Exception ex) {
 					StringWriter sw = new StringWriter();
 					ex.printStackTrace(new PrintWriter(sw));

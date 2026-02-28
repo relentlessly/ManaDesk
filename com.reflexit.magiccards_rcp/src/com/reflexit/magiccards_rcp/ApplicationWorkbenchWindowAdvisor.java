@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -19,6 +18,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -55,12 +57,22 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	@Override
 	public void postWindowOpen() {
 		try {
-			// RD Don't check for software update at this moment, still pointing to
-			// SourceForge
 			installSoftwareUpdate();
 			checkForCardUpdates();
 		} catch (Throwable e) {
 			Activator.log(e);
+		}
+
+		// --- Hide the Selection view automatically ---
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IViewReference ref = page.findViewReference("com.reflexit.magiccards.ui.gallery.GallerySelectionView");
+				if (ref != null) {
+					page.hideView(ref);
+				}
+			}
 		}
 	}
 

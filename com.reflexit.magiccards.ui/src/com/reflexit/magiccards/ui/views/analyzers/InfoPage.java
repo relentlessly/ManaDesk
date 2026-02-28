@@ -37,7 +37,7 @@ import com.reflexit.magiccards.core.model.storage.ICardStore;
 import com.reflexit.magiccards.core.model.storage.IStorageInfo;
 import com.reflexit.magiccards.core.model.utils.CardStoreUtils;
 import com.reflexit.magiccards.ui.dialogs.EditDeckPropertiesDialog;
-import com.reflexit.magiccards.ui.utils.SymbolConverter;
+import com.reflexit.magiccards.ui.utils.SymbolRenderer;
 import com.reflexit.magiccards.ui.views.columns.PriceColumn;
 import com.reflexit.magiccards.ui.views.columns.SellerPriceColumn;
 import com.reflexit.magiccards.ui.views.lib.IDeckPage;
@@ -257,8 +257,8 @@ public class InfoPage extends AbstractDeckPage implements IDeckPage {
 		});
 
 		dbprice.setText(sp + " (" + up + ")");
-		colors.setImage(SymbolConverter.buildCostImage(CardStoreUtils.buildColors(mainStore)));
-		colorsSideboard.setImage(SymbolConverter.buildCostImage(CardStoreUtils.buildColors(sideboardStore)));
+		colors.setImage(SymbolRenderer.buildCostImage(CardStoreUtils.buildColors(mainStore)));
+		colorsSideboard.setImage(SymbolRenderer.buildCostImage(CardStoreUtils.buildColors(sideboardStore)));
 		ownership.setText(store.isVirtual() ? "Virtual" : "Own");
 		decktype.setText(prefix);
 		List<? extends ICard> childrenList = group.getChildrenList();

@@ -18,11 +18,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
-import com.reflexit.magiccards.core.CachedImageNotFoundException;
 import com.reflexit.magiccards.core.model.IMagicCard;
 import com.reflexit.magiccards.core.model.abs.ICardGroup;
 import com.reflexit.magiccards.core.model.utils.MRUCache;
-import com.reflexit.magiccards.core.sync.WebUtils;
 import com.reflexit.magiccards.ui.MagicUIActivator;
 
 public class ImageCache {
@@ -98,12 +96,8 @@ public class ImageCache {
 						boolean resize = false;
 
 						// background-safe : création de l’ImageData
-						data = ImageCreator.createCardImageData(path, resize);
+						data = ImageCreator.getInstance().createCardImageData(path, resize);
 
-					} catch (CachedImageNotFoundException e) {
-						if (!WebUtils.isWorkOffline()) {
-							MagicUIActivator.log("Cached image not found for: " + card + " - " + e.getMessage());
-						}
 					} catch (Exception ex) {
 						StringWriter sw = new StringWriter();
 						ex.printStackTrace(new PrintWriter(sw));
