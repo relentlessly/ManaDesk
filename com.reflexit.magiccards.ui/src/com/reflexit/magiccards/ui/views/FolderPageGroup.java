@@ -59,6 +59,7 @@ public class FolderPageGroup extends ViewPageGroup {
 		final IViewPage page = vc.getViewPage();
 		final CTabItem item = new CTabItem(folder, SWT.CLOSE);
 		item.setText(vc.getName());
+		item.setShowClose(false);
 		page.init(getViewPart());
 		page.createContents(folder);
 		item.setControl(page.getControl());

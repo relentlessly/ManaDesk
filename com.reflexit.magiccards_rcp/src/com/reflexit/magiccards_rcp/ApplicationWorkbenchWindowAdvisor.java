@@ -1,11 +1,13 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
  */
 
 package com.reflexit.magiccards_rcp;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -17,8 +19,18 @@ import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -61,6 +73,175 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			checkForCardUpdates();
 		} catch (Throwable e) {
 			Activator.log(e);
+		}
+
+		hookWorkbenchFolderPatching();
+
+		// existing logic: hide selection view
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IViewReference ref = page.findViewReference("com.reflexit.magiccards.ui.gallery.GallerySelectionView");
+				if (ref != null) {
+					page.hideView(ref);
+				}
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	// Hook: patch all Workbench CTabFolders (top stacks only)
+	// ------------------------------------------------------------------------
+
+	private void hookWorkbenchFolderPatching() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			return;
+		}
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return;
+		}
+
+		// Listen to part lifecycle so we catch new/changed stacks
+		page.addPartListener(new IPartListener2() {
+			@Override
+			public void partOpened(IWorkbenchPartReference ref) {
+				scheduleScanAndPatch();
+			}
+
+			@Override
+			public void partActivated(IWorkbenchPartReference ref) {
+				scheduleScanAndPatch();
+			}
+
+			@Override
+			public void partVisible(IWorkbenchPartReference ref) {
+				scheduleScanAndPatch();
+			}
+
+			@Override
+			public void partBroughtToTop(IWorkbenchPartReference ref) {
+				scheduleScanAndPatch();
+			}
+
+			@Override
+			public void partClosed(IWorkbenchPartReference ref) {
+				/* no-op */ }
+
+			@Override
+			public void partDeactivated(IWorkbenchPartReference ref) {
+				/* no-op */ }
+
+			@Override
+			public void partHidden(IWorkbenchPartReference ref) {
+				/* no-op */ }
+
+			@Override
+			public void partInputChanged(IWorkbenchPartReference ref) {
+				/* no-op */ }
+		});
+
+		// Initial scan after window is open
+		scheduleScanAndPatch();
+	}
+
+	private void scheduleScanAndPatch() {
+		Display display = Display.getDefault();
+		if (display == null || display.isDisposed()) {
+			return;
+		}
+
+		display.asyncExec(() -> {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (window == null) {
+				return;
+			}
+			Shell shell = window.getShell();
+			if (shell == null || shell.isDisposed()) {
+				return;
+			}
+
+			List<CTabFolder> folders = new ArrayList<>();
+			findCTabFolders(shell, folders);
+
+			for (CTabFolder folder : folders) {
+				if (isWorkbenchFolder(folder)) {
+					patchFolder(folder);
+				}
+			}
+		});
+	}
+
+	// ------------------------------------------------------------------------
+	// Detection: is this CTabFolder a Workbench stack?
+	// ------------------------------------------------------------------------
+
+	/**
+	 * A CTabFolder is considered a Workbench stack if somewhere in its subtree
+	 * there is a ContributedPartRenderer$1 composite (E4 compatibility renderer).
+	 */
+	private boolean isWorkbenchFolder(CTabFolder folder) {
+		return containsContributedPartRenderer(folder);
+	}
+
+	private boolean containsContributedPartRenderer(Composite root) {
+		for (Control child : root.getChildren()) {
+			String name = child.getClass().getName();
+			if (name.contains("ContributedPartRenderer")) {
+				return true;
+			}
+			if (child instanceof Composite) {
+				if (containsContributedPartRenderer((Composite) child)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	// ------------------------------------------------------------------------
+	// Patch: enforce DPI-scaled tab height on this folder instance
+	// ------------------------------------------------------------------------
+
+	private void patchFolder(CTabFolder folder) {
+		if (folder == null || folder.isDisposed())
+			return;
+		if (folder.getData("md_patchedHeight") != null)
+			return;
+
+		folder.setData("md_patchedHeight", Boolean.TRUE);
+
+		Display display = folder.getDisplay();
+		int dpiY = display.getDPI().y;
+		int minHeight = Math.max(48, dpiY / 5); // DPI-scaled // !!! RD 28  
+
+		folder.setTabHeight(minHeight);
+		folder.setSimple(false);
+
+		// Re-apply on every paint of this folder so new tabs also get the height
+		folder.addListener(SWT.Paint, e -> {
+			if (!folder.isDisposed()) {
+				if (folder.getTabHeight() != minHeight) {
+					folder.setTabHeight(minHeight);
+				}
+			}
+		});
+	}
+
+	// ------------------------------------------------------------------------
+	// Utility: find all CTabFolders under the Workbench shell
+	// ------------------------------------------------------------------------
+
+	private void findCTabFolders(Control control, List<CTabFolder> result) {
+		if (control instanceof CTabFolder) {
+			result.add((CTabFolder) control);
+		}
+		if (control instanceof Composite) {
+			for (Control child : ((Composite) control).getChildren()) {
+				findCTabFolders(child, result);
+			}
 		}
 	}
 
