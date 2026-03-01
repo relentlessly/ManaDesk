@@ -1,3 +1,7 @@
+/*
+ * Contributors:
+ *     Rémi Dutil 2026 - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
 package com.reflexit.magiccards.ui.views.columns;
 
 import org.eclipse.jface.viewers.CellEditor;
@@ -21,7 +25,7 @@ import com.reflexit.magiccards.core.model.MagicCardPhysical;
 import com.reflexit.magiccards.core.model.abs.ICardField;
 import com.reflexit.magiccards.core.model.abs.ICardGroup;
 import com.reflexit.magiccards.core.model.storage.IFilteredCardStore;
-import com.reflexit.magiccards.ui.utils.SymbolConverter;
+import com.reflexit.magiccards.ui.utils.SymbolRenderer;
 
 public class GroupColumn extends AbstractImageColumn implements Listener {
 	public static final String COL_NAME = "Name";
@@ -65,7 +69,7 @@ public class GroupColumn extends AbstractImageColumn implements Listener {
 						return null;
 					} else {
 						String icost = Colors.getInstance().getCostByName(cardGroup.getName());
-						return SymbolConverter.buildCostImage(icost);
+						return SymbolRenderer.buildCostImage(icost);
 					}
 				}
 			} else

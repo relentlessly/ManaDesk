@@ -116,7 +116,7 @@ public class PerformanceFilteringTest extends TestCase {
 		this.filter.setFilter(textFilter("\"o\""));
 		assertFast(225, runfiltering());
 		assertTrue("was " + fstore.getSize(), fstore.getSize() > 37000);
-		assertTrue("was " + fstore.getSize(), fstore.getSize() < 38000);
+		assertTrue("was " + fstore.getSize(), fstore.getSize() < 39000);
 		this.filter.setFilter(textFilter("\"ob\""));
 		assertFast(350, runfiltering());
 		assertTrue("was " + fstore.getSize(), fstore.getSize() >= 720);

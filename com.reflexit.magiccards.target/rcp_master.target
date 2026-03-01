@@ -68,7 +68,7 @@
   <unit id="org.eclipse.swtbot.eclipse.finder" version="0.0.0"/>
   <repository location="https://download.eclipse.org/technology/swtbot/releases/latest/"/>
 </location>
-	  
+
   </locations>
 
 

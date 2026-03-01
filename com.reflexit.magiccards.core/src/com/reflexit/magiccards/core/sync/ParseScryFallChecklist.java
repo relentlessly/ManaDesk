@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -49,6 +53,38 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 	// Set to try when generating flat files. This is required to remove some fields
 	public boolean generateFlat = false;
 	public ICardStore store = DataManager.getInstance().getMagicDBStore();
+
+	private final Set<String> costSymbols = new TreeSet<>();
+	private final Set<String> textSymbols = new TreeSet<>();
+
+	private static final Pattern SYMBOL_PATTERN = Pattern.compile("\\{[^}]+\\}");
+
+	private String normalizeText(String s) {
+		if (s == null)
+			return null;
+		return s.replace("\r", "") // remove CR
+				.replace("\n", " ") // flatten lines
+				.replace("\t", " ") // tabs → spaces
+				.trim();
+	}
+
+	private void collectSymbols(String source, String cardName, Set<String> target) {
+		if (source == null || source.isEmpty())
+			return;
+
+		source = normalizeText(source);
+
+		Matcher m = SYMBOL_PATTERN.matcher(source);
+		while (m.find()) {
+			String sym = m.group();
+			String entry = sym + " :: first seen in " + cardName;
+
+			boolean exists = target.stream().anyMatch(s -> s.startsWith(sym + " ::"));
+			if (!exists) {
+				target.add(entry);
+			}
+		}
+	}
 
 	@Override
 	public String processFromReader(BufferedReader st, ILoadCardHander handler) throws IOException {
@@ -441,7 +477,7 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			frontCard.setName(elem.get("name").toString());
 			frontCard.setLanguage(languageString);
 			frontCard.setSet(elem.get("set_name").toString());
-			frontCard.setCost(elem.get("mana_cost").toString().replace("/P", "P"));
+			frontCard.setCost(elem.get("mana_cost").toString());
 			frontCard.setType(elem.get("type_line").toString().replace("—", "-"));
 			frontCard.setRarity(elem.get("rarity").toString());
 			frontCard.setPower(elem.get("power") != null ? elem.get("power").toString() : "");
@@ -516,8 +552,8 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			frontCard.setSet(elem.get("set_name").toString());
 			backCard.setSet(frontCard.getSet());
 
-			frontCard.setCost(frontFace.get("mana_cost").toString().replace("/P", "P"));
-			backCard.setCost(backFace.get("mana_cost").toString().replace("/P", "P"));
+			frontCard.setCost(frontFace.get("mana_cost").toString());
+			backCard.setCost(backFace.get("mana_cost").toString());
 
 			frontCard.setType(frontFace.get("type_line").toString().replace("—", "-"));
 			backCard.setType(
@@ -634,6 +670,11 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 			handler.handleCard(backCard);
 			break;
 		}
+
+		collectSymbols(frontCard.getCost(), frontCard.getName(), costSymbols);
+		collectSymbols(backCard.getCost(), backCard.getName(), costSymbols);
+		collectSymbols(frontCard.getOracleText(), frontCard.getName(), textSymbols);
+		collectSymbols(backCard.getOracleText(), backCard.getName(), textSymbols);
 
 	}
 
@@ -779,10 +820,24 @@ public class ParseScryFallChecklist extends AbstractParseJson {
 		}
 	}
 
+	public void printCollectedSymbols() {
+		System.out.println("=== Mana Cost Symbols ===");
+		costSymbols.forEach(System.out::println);
+
+		System.out.println("\n=== Text Symbols ===");
+		textSymbols.forEach(System.out::println);
+	}
+
 	public static void main(String[] args) throws MalformedURLException, IOException {
 		// Important! Run this to create the flat files required to update the Db
 		// resource
 		// Files will be located under TEXT_EXPORT_DIR
-		new ParseScryFallChecklist().saveAllFlat(new File(TEXT_EXPORT_DIR));
+		// Build the database from Scryfall and export flat files
+		ParseScryFallChecklist db = new ParseScryFallChecklist();
+
+		db.saveAllFlat(new File(TEXT_EXPORT_DIR));
+
+		// Print all collected mana/text symbols
+		db.printCollectedSymbols();
 	}
 }

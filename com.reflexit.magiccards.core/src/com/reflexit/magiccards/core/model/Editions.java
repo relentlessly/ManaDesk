@@ -11,18 +11,20 @@ import java.io.PrintStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 
 import com.reflexit.magiccards.core.DataManager;
 import com.reflexit.magiccards.core.FileUtils;
 import com.reflexit.magiccards.core.MagicLogger;
-import com.reflexit.magiccards.core.legality.Format;
+
+// Name|Abbr|otherAbbr|ReleaseDate|Type|Block|Legality|iconAbbr|Unused(Name aliases)
+// Limited Edition Alpha|LEA|1E|August 1993|Core|Core Set|lea|
 
 public class Editions implements ISearchableProperty {
 	public static final String EDITIONS_FILE = "editions.txt";
@@ -92,7 +94,7 @@ public class Editions implements ISearchableProperty {
 	}
 
 	public Collection<Edition> getEditions() {
-		return this.name2ed.values();
+		return new ArrayList<>(this.name2ed.values());
 	}
 
 	public String getNameByAbbr(String abbr) {
@@ -105,7 +107,7 @@ public class Editions implements ISearchableProperty {
 	public Edition getEditionByAbbr(String abbr) {
 		if (abbr == null)
 			return null;
-		for (Edition value : name2ed.values()) {
+		for (Edition value : new ArrayList<>(name2ed.values())) {
 			if (value != null && value.abbreviationOf(abbr)) {
 				return value;
 			}
@@ -280,8 +282,8 @@ public class Editions implements ISearchableProperty {
 					if (attrs.length <= 6)
 						continue;
 					// Legality
-					String legality = attrs[6].trim();
-					set.setFormats(legality);
+					String iconAbbr = attrs[6].trim();
+					set.setIconAbbr(iconAbbr);
 					if (attrs.length <= 7)
 						continue;
 					// Name aliases
@@ -292,6 +294,7 @@ public class Editions implements ISearchableProperty {
 						nameAliases.put(alias, set);
 					}
 					set.setNameAliases(aliases);
+					set.setIconAbbr(iconAbbr);
 				} catch (Exception e) {
 					MagicLogger.log("bad editions record: " + line);
 					MagicLogger.log(e);
@@ -306,38 +309,30 @@ public class Editions implements ISearchableProperty {
 
 	public synchronized void save(File file) throws FileNotFoundException {
 		try (PrintStream st = new PrintStream(file)) {
+
+			// Sort editions by release date (oldest first) then by name (case-insensitive)
+			List<Edition> sorted = new ArrayList<>(this.name2ed.values());
+
+			sorted.sort(Comparator.comparing(Edition::getReleaseDate, Comparator.nullsLast(Comparator.naturalOrder()))
+					.thenComparing(Edition::getName, String.CASE_INSENSITIVE_ORDER));
+
 			String editions = "";
 
-			for (String name : this.name2ed.keySet()) {
-				Edition ed = getEditionByName(name);
-				String rel = "";
-				if (ed.getReleaseDate() != null)
-					rel = formatter.format(ed.getReleaseDate());
-				String type = "";
-				if (ed.getType() != null) {
-					type = ed.getType();
-				}
-				Format format = ed.getFormat();
-				String sformat = format == Format.LEGACY ? "" : format.name();
+			for (Edition ed : sorted) {
+				String name = ed.getName();
 
-				editions += name + "\u0001|" + ed.getMainAbbreviation() + "|" + ed.getExtraAbbreviations() + "|" + rel
-						+ "|" + type + "|" + (ed.getBlock() == null ? "" : ed.getBlock()) + "|" + sformat + "|"
+				String rel = "";
+				if (ed.getReleaseDate() != null) {
+					rel = formatter.format(ed.getReleaseDate());
+				}
+
+				String type = ed.getType() != null ? ed.getType() : "";
+
+				editions += name + "|" + ed.getMainAbbreviation() + "|" + ed.getExtraAbbreviations() + "|" + rel + "|"
+						+ type + "|" + (ed.getBlock() == null ? "" : ed.getBlock()) + "|" + ed.getIconAbbr() + "|"
+
 						+ ed.getExtraAliases() + "\n";
 			}
-
-			// Sort them just to make it easier to manage
-			String[] tableEd = editions.split("\n");
-			Arrays.sort(tableEd, new Comparator<String>() {
-				@Override
-				public int compare(String a, String b) {
-					return a.toLowerCase().compareTo(b.toLowerCase()); // Sorting in descending order
-				}
-			});
-
-			editions = String.join("\n", tableEd);
-
-			// u0001 added just to provide the right sorting, we can remove it now
-			editions = editions.replace("\u0001", "");
 
 			st.print(editions);
 
@@ -377,10 +372,13 @@ public class Editions implements ISearchableProperty {
 	@Override
 	public String getNameById(String id) {
 		HashMap<String, String> idToName = new HashMap<>();
-		for (String name : this.name2ed.keySet()) {
+
+		// Snapshot avoids ConcurrentModificationException
+		for (String name : new ArrayList<>(this.name2ed.keySet())) {
 			String id1 = getPrefConstantByName(name);
 			idToName.put(id1, name);
 		}
+
 		return idToName.get(id);
 	}
 

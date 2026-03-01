@@ -97,7 +97,6 @@ public class CheckForUpdateDbHandler extends AbstractHandler {
 							}
 						}
 					} else {
-
 						Display.getDefault().syncExec(new Runnable() {
 							@Override
 							public void run() {
@@ -108,6 +107,18 @@ public class CheckForUpdateDbHandler extends AbstractHandler {
 					}
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
+
+					// Force and full update of the edition list 
+					final Collection<Edition> allSets = sets.getAll();
+					for (Iterator iterator = allSets.iterator(); iterator.hasNext();) {
+						Edition edition = (Edition) iterator.next();
+
+						// Update the edition in the official list
+						Editions.getInstance().addEdition(edition);
+					}
+
+					Editions.getInstance().save();
+
 					CurrencyConvertor.update();
 				} catch (Exception e) {
 					MagicUIActivator.log(e); // move on if exception via set

@@ -9,6 +9,10 @@
  *    Tym The Enchanter - initial API and implementation
  *    Alena Laskavaia - ui re-design
  *******************************************************************************/
+/*
+ * Contributors:
+ *     Rémi Dutil 2026 - updated for ManaDesk creation and Eclipse 2.0 migration
+ */
 package com.reflexit.magiccards.ui.views.analyzers;
 
 import java.util.List;
@@ -63,7 +67,7 @@ import com.reflexit.magiccards.ui.MagicUIActivator;
 import com.reflexit.magiccards.ui.actions.ImageAction;
 import com.reflexit.magiccards.ui.actions.RefreshAction;
 import com.reflexit.magiccards.ui.utils.CoreMonitorAdapter;
-import com.reflexit.magiccards.ui.utils.SymbolConverter;
+import com.reflexit.magiccards.ui.utils.SymbolRenderer;
 import com.reflexit.magiccards.ui.utils.WaitUtils;
 import com.reflexit.magiccards.ui.views.IMagicColumnViewer;
 import com.reflexit.magiccards.ui.views.analyzers.GroupListControl.GroupTreeViewer;
@@ -252,8 +256,8 @@ public class DeckLegalityPage2 extends AbstractDeckListPage {
 		stats = new CardStoreUtils.CardStats(getCardStore());
 		totalSideboard.setText(String.valueOf(stats.sideboardCount));
 		total.setText(String.valueOf(stats.mainCount));
-		colors.setImage(SymbolConverter.buildCostImage(stats.mainColors));
-		colorsSideboard.setImage(SymbolConverter.buildCostImage(stats.sideboardColors));
+		colors.setImage(SymbolRenderer.buildCostImage(stats.mainColors));
+		colorsSideboard.setImage(SymbolRenderer.buildCostImage(stats.sideboardColors));
 		maxRepeats.setText(String.valueOf(stats.maxRepeats));
 		CardGroup types = CardStoreUtils.buildTypeGroups(getCardStore());
 		CardGroup top = (CardGroup) types.getChildAtIndex(0);

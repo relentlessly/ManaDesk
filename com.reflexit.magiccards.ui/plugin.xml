@@ -948,21 +948,11 @@ id="org.eclipse.ui.views.ProgressView">
             name="Gallery"
             restorable="true">
       </view>
-      <view
-            allowMultiple="false"
-            category="com.reflexit.magiccards"
-            class="com.reflexit.magiccards.ui.gallery.GallerySelectionView"
-            icon="icons/selection_view.png"
-            id="com.reflexit.magiccards.ui.gallery.GallerySelectionView"
-            name="Selection"
-            restorable="true">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="com.reflexit.magiccards.ui.perspective.magic">
-            <showInPart id="com.reflexit.magiccards.ui.gallery.GallerySelectionView"/>
             <showInPart id="com.reflexit.magiccards.ui.gallery.GalleryView"/>
             <view
                   id="com.reflexit.magiccards.ui.gallery.GalleryView"
@@ -973,18 +963,6 @@ id="org.eclipse.ui.views.ProgressView">
             </view>
             <viewShortcut
                   id="com.reflexit.magiccards.ui.gallery.GalleryView">
-            </viewShortcut>
-            <view
-                  closeable="true"
-                  id="com.reflexit.magiccards.ui.gallery.GallerySelectionView"
-                  minimized="false"
-                  moveable="true"
-                  relationship="stack"
-                  relative="com.reflexit.magiccards.ui.views.card.CardDescView"
-                  visible="true">
-            </view>
-            <viewShortcut
-                  id="com.reflexit.magiccards.ui.gallery.GallerySelectionView">
             </viewShortcut>
       </perspectiveExtension>
    </extension>

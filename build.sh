@@ -1,6 +1,41 @@
 # Contributors:
 #     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+# 	  Jason Grammenos (2026) - merged in change_version.sh
 #!/bin/bash
+show_help(){
+	echo "This script builds ManaDesk, and optional a new release of ManaDesk"
+	echo "standard usage: bash build.sh -v (new_version_number) -r"
+	echo "with new_version_number being a semantic version number" 
+	echo "------"
+	echo "-v set new version number"
+	echo "-r create a new release"
+}
+change_version (){
+	local OLD_VERSION=$1
+	local NEW_VERSION=$2
+	find . -name "*.xml" -not \( -path "./updates/*" -prune \) | xargs sed -i -e "s/$OLD_VERSION-SNAPSHOT/$NEW_VERSION-SNAPSHOT/" -e "s/$OLD_VERSION.qualifier/$NEW_VERSION.qualifier/"
+	find . -name "*.MF" | xargs sed -i -e "s/$OLD_VERSION.qualifier/$NEW_VERSION.qualifier/"
+	find . -name "*.properties" | xargs sed -i -e "s/$OLD_VERSION/$NEW_VERSION/"
+	find . -type f -name "*.product" | xargs sed -i -e "s/$OLD_VERSION/$NEW_VERSION/"
+}
+
+get_current_version (){
+	local filename="./version.ini"
+	local version_number=0
+	while IFS= read -r line
+	do
+	echo "$line"
+	version_number=$(echo "$line" | cut -d "=" -f 2)
+	done < "$filename"
+
+	echo "$version_number"
+	return "$version_number"
+}
+
+write_current_version(){
+	local new_current_version=$1
+	printf "current_version=${new_current_version}" > "./version.ini"
+}
 
 version=0.9.0
 release=false
@@ -23,13 +58,16 @@ shift $((OPTIND-1))
 export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64/
 PATH=$JAVA_HOME/bin:$PATH
 mvn -f com.reflexit.magiccards.parent/pom.xml clean verify
-if [ "$release"=true ] ; then
+if [ "$release" = true ] ; then
 	# setup release files for self update
 	echo "Creating Release version ${version}"
 	datestring=$(date '+%Y%m%d')
 	time=$(date '+%H%M')
 	targetdir=./updates/releases/${version}v${datestring}-${time}
 	mkdir $targetdir
+	# update the version
+
+	change_version get_current_version "${version}"
 	# insert line into updates/0.x/compositeArtifacts.xml, and compositeContent.xml
 	# create and destroy a venv, to install lxml and do the xml modifications
 	python3 -m venv venv_buildscript
@@ -50,6 +88,8 @@ if [ "$release"=true ] ; then
 	(cd ./com.reflexit.magiccards.product/target/repository && jar -xf content.jar)
 	cp ./com.reflexit.magiccards.product/target/repository/artifacts.xml $targetdir/ 
 	cp ./com.reflexit.magiccards.product/target/repository/content.xml $targetdir/ 
+	# set current version
+	write_current_version "${version}"
 fi
 #This adds java to bundles, java runtime (1.8 +) has to be downloaded and extracted in $JAVADIR using this convention
 # linux.gtk.x86_64/MagicAssistant/jre/

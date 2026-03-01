@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -58,6 +57,25 @@ public class ParseScryFallSets extends AbstractParseJson {
 		return null;
 	}
 
+	private static String extractSetIconToken(String iconSvgUri) {
+		if (iconSvgUri == null)
+			return null;
+
+		// Remove query parameters
+		int q = iconSvgUri.indexOf('?');
+		String clean = (q >= 0) ? iconSvgUri.substring(0, q) : iconSvgUri;
+
+		// Extract filename
+		int lastSlash = clean.lastIndexOf('/');
+		int dot = clean.lastIndexOf(".svg");
+
+		if (lastSlash < 0 || dot < 0 || dot <= lastSlash) {
+			return null; // unexpected format
+		}
+
+		return clean.substring(lastSlash + 1, dot);
+	}
+
 	private void parseRecord(JSONObject elem, ILoadCardHander handler) {
 		if (elem == null)
 			return;
@@ -83,6 +101,7 @@ public class ParseScryFallSets extends AbstractParseJson {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		ed.setIconAbbr(extractSetIconToken(getString(elem, "icon_svg_uri")));
 
 		Boolean digital = getBool(elem, "digital");
 		int cardCount = getInt(elem, "card_count");
