@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -86,62 +87,11 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		}
 	}
 
-	// ------------------------------------------------------------------------
-	// Hook: patch all Workbench CTabFolders (top stacks only)
-	// ------------------------------------------------------------------------
-
 	private void hookWorkbenchFolderPatching() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window == null) {
-			return;
-		}
-		IWorkbenchPage page = window.getActivePage();
-		if (page == null) {
-			return;
-		}
-
-		// Listen to part lifecycle so we catch new/changed stacks
-		page.addPartListener(new IPartListener2() {
-			@Override
-			public void partOpened(IWorkbenchPartReference ref) {
-				scheduleScanAndPatch();
-			}
-
-			@Override
-			public void partActivated(IWorkbenchPartReference ref) {
-				scheduleScanAndPatch();
-			}
-
-			@Override
-			public void partVisible(IWorkbenchPartReference ref) {
-				scheduleScanAndPatch();
-			}
-
-			@Override
-			public void partBroughtToTop(IWorkbenchPartReference ref) {
-				scheduleScanAndPatch();
-			}
-
-			@Override
-			public void partClosed(IWorkbenchPartReference ref) {
-				/* no-op */ }
-
-			@Override
-			public void partDeactivated(IWorkbenchPartReference ref) {
-				/* no-op */ }
-
-			@Override
-			public void partHidden(IWorkbenchPartReference ref) {
-				/* no-op */ }
-
-			@Override
-			public void partInputChanged(IWorkbenchPartReference ref) {
-				/* no-op */ }
-		});
-
-		// Initial scan after window is open
-		scheduleScanAndPatch();
+	    // Just run one async scan after the window is open
+	    scheduleScanAndPatch();
 	}
+	
 
 	private void scheduleScanAndPatch() {
 		Display display = Display.getDefault();
@@ -211,7 +161,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 		Display display = folder.getDisplay();
 		int dpiY = display.getDPI().y;
-		int minHeight = Math.max(48, dpiY / 5); // DPI-scaled // !!! RD 28  
+		int minHeight = Math.max(28, dpiY / 5);  
 
 		folder.setTabHeight(minHeight);
 		folder.setSimple(false);
