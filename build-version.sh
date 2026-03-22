@@ -22,18 +22,14 @@ change_version (){
 
 get_current_version (){
 	local filename="./version.ini"
-	if [ ! -f "${filename}" ]; then
-		echo "File does not exists"
-	fi
 	if [ -f "${filename}" ]; then
 		echo "File exists"
 	fi
 	local version_number=0
-	while IFS= read -r line
-	do
-	echo "the line is ${line}"
-	version_number=$(echo "$line" | cut -d "=" -f 2)
-	done < "$filename"
+	while IFS='' read -r line;do
+		echo "the line is ${line}"
+		version_number=$(echo "$line" | cut -d "=" -f 2)
+	done < "${filename}"
 	echo "$version_number"
 }
 
