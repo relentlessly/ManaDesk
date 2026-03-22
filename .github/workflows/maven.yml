@@ -45,6 +45,8 @@ jobs:
           git push origin v${{ github.event.inputs.version }}
     - name: Create Release with build files
       run: gh release create v${{ github.event.inputs.version }} --generate-notes --latest com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-linux.gtk.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-macosx.cocoa.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-macosx.cocoa.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-win32.win32.x86_64.zip
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create pull request for ManaDesk self update
       run: gh pr create -B main -H feature/v${{ github.event.inputs.version }} --title 'Merge feature/v${{ github.event.inputs.version }} into main for release ${{ github.event.inputs.version }}' --body 'Created by Github action'
       env:
