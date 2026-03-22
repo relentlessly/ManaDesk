@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ManaDesk Card Organizer UI Test
 Bundle-SymbolicName: com.reflexit.magiccards.ui.tests
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0.10.6.qualifier
 Bundle-Vendor: REFLEXIT
 Fragment-Host: com.reflexit.magiccards.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-17
