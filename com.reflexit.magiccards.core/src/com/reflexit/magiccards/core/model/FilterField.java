@@ -22,34 +22,26 @@ import com.reflexit.magiccards.core.model.expr.Value;
 public enum FilterField {
 	COLOR(MagicCardField.COST, "colors", Postfix.ENUM_POSTFIX),
 	CARD_TYPE(MagicCardField.TYPE, "types", Postfix.ENUM_POSTFIX),
-	GROUP_FIELD(null, "group_field", Postfix.TEXT_POSTFIX),
-	TYPE_LINE(MagicCardField.TYPE, Postfix.TEXT_POSTFIX),
-	TEXT_LINE(MagicCardField.TEXT, Postfix.TEXT_POSTFIX),
-	NAME_LINE(MagicCardField.NAME, Postfix.TEXT_POSTFIX),
-	POWER(MagicCardField.POWER, Postfix.NUMERIC_POSTFIX),
-	TOUGHNESS(MagicCardField.TOUGHNESS, Postfix.NUMERIC_POSTFIX),
-	CCC(MagicCardField.CMC, Postfix.NUMERIC_POSTFIX),
-	EDITION(MagicCardField.SET, Postfix.ENUM_POSTFIX),
-	RARITY(MagicCardField.RARITY, Postfix.ENUM_POSTFIX),
-	LOCATION(MagicCardField.LOCATION, Postfix.ENUM_POSTFIX),
-	PRICE(MagicCardField.PRICE, Postfix.NUMERIC_POSTFIX),
-	DBPRICE(MagicCardField.DBPRICE, Postfix.NUMERIC_POSTFIX),
+	GROUP_FIELD(null, "group_field", Postfix.TEXT_POSTFIX), TYPE_LINE(MagicCardField.TYPE, Postfix.TEXT_POSTFIX),
+	TEXT_LINE(MagicCardField.ORACLE, Postfix.TEXT_POSTFIX), NAME_LINE(MagicCardField.NAME, Postfix.TEXT_POSTFIX),
+	POWER(MagicCardField.POWER, Postfix.NUMERIC_POSTFIX), TOUGHNESS(MagicCardField.TOUGHNESS, Postfix.NUMERIC_POSTFIX),
+	CCC(MagicCardField.CMC, Postfix.NUMERIC_POSTFIX), EDITION(MagicCardField.SET, Postfix.ENUM_POSTFIX),
+	RARITY(MagicCardField.RARITY, Postfix.ENUM_POSTFIX), LOCATION(MagicCardField.LOCATION, Postfix.ENUM_POSTFIX),
+	PRICE(MagicCardField.PRICE, Postfix.NUMERIC_POSTFIX), DBPRICE(MagicCardField.DBPRICE, Postfix.NUMERIC_POSTFIX),
 	COMMUNITYRATING(MagicCardField.RATING, Postfix.NUMERIC_POSTFIX),
-	ARTIST(MagicCardField.ARTIST, Postfix.TEXT_POSTFIX),
-	COUNT(MagicCardField.COUNT, Postfix.NUMERIC_POSTFIX),
-	COMMENT(MagicCardField.COMMENT, Postfix.TEXT_POSTFIX),
-	OWNERSHIP(MagicCardField.OWNERSHIP, Postfix.TEXT_POSTFIX),
+	ARTIST(MagicCardField.ARTIST, Postfix.TEXT_POSTFIX), COUNT(MagicCardField.COUNT, Postfix.NUMERIC_POSTFIX),
+	COMMENT(MagicCardField.COMMENT, Postfix.TEXT_POSTFIX), OWNERSHIP(MagicCardField.OWNERSHIP, Postfix.TEXT_POSTFIX),
 	LANG(MagicCardField.LANG, Postfix.TEXT_POSTFIX),
-	TEXT_LINE_2(MagicCardField.TEXT, TEXT_LINE + "_2", Postfix.TEXT_POSTFIX),
-	TEXT_LINE_3(MagicCardField.TEXT, TEXT_LINE + "_3", Postfix.TEXT_POSTFIX),
-	TEXT_NOT_1(MagicCardField.TEXT, TEXT_LINE + "_exclude_1", Postfix.TEXT_POSTFIX),
-	TEXT_NOT_2(MagicCardField.TEXT, TEXT_LINE + "_exclude_2", Postfix.TEXT_POSTFIX),
-	TEXT_NOT_3(MagicCardField.TEXT, TEXT_LINE + "_exclude_3", Postfix.TEXT_POSTFIX),
-	COLLNUM(MagicCardField.COLLNUM, Postfix.NUMERIC_POSTFIX),
-	SPECIAL(MagicCardField.SPECIAL, Postfix.TEXT_POSTFIX),
+	TEXT_LINE_2(MagicCardField.ORACLE, TEXT_LINE + "_2", Postfix.TEXT_POSTFIX),
+	TEXT_LINE_3(MagicCardField.ORACLE, TEXT_LINE + "_3", Postfix.TEXT_POSTFIX),
+	TEXT_NOT_1(MagicCardField.ORACLE, TEXT_LINE + "_exclude_1", Postfix.TEXT_POSTFIX),
+	TEXT_NOT_2(MagicCardField.ORACLE, TEXT_LINE + "_exclude_2", Postfix.TEXT_POSTFIX),
+	TEXT_NOT_3(MagicCardField.ORACLE, TEXT_LINE + "_exclude_3", Postfix.TEXT_POSTFIX),
+	COLLNUM(MagicCardField.COLLNUM, Postfix.NUMERIC_POSTFIX), SPECIAL(MagicCardField.SPECIAL, Postfix.TEXT_POSTFIX),
 	FORTRADECOUNT(MagicCardField.FORTRADECOUNT, Postfix.NUMERIC_POSTFIX),
 	FORMAT(MagicCardField.LEGALITY, Postfix.TEXT_POSTFIX),
-	COLOR_IDENITY(MagicCardField.COST, "identity", Postfix.ENUM_POSTFIX), ;
+	COLOR_IDENTITY(MagicCardField.COST, "identity", Postfix.ENUM_POSTFIX),;
+
 	// fields
 	private ICardField field;
 	private String id;
@@ -181,17 +173,20 @@ public enum FilterField {
 				String en;
 				// RD Review the logic to support correctly colorless, hybrid and variations 
 				if (value.equals("Multi-Color")) {
-					return fieldEquals(MagicCardField.CTYPE, "multi").or(fieldEquals(MagicCardField.CTYPE, "multi-hybrid"));
+					return fieldEquals(MagicCardField.CTYPE, "multi")
+							.or(fieldEquals(MagicCardField.CTYPE, "multi-hybrid"));
 				} else if (value.equals("Mono-Color")) {
-					return fieldEquals(MagicCardField.CTYPE, "colorless").or(fieldEquals(MagicCardField.CTYPE, "mono")).or(fieldEquals(MagicCardField.CTYPE, "mono-hybrid"));
+					return fieldEquals(MagicCardField.CTYPE, "colorless").or(fieldEquals(MagicCardField.CTYPE, "mono"))
+							.or(fieldEquals(MagicCardField.CTYPE, "mono-hybrid"));
 				} else if ((value.equals("Hybrid"))) {
-					return fieldEquals(MagicCardField.CTYPE, "multi-hybrid").or(fieldEquals(MagicCardField.CTYPE, "mono-hybrid"));
+					return fieldEquals(MagicCardField.CTYPE, "multi-hybrid")
+							.or(fieldEquals(MagicCardField.CTYPE, "mono-hybrid"));
 				} else if ((en = Colors.getInstance().getEncodeByName(value)) != null) {
 					return BinaryExpr.fieldMatches(MagicCardField.COLOR, en);
 				}
 				break;
 			}
-			case COLOR_IDENITY: {
+			case COLOR_IDENTITY: {
 				String en;
 				// RD Filter the Identity using directly the IDENTITY value
 				if ((en = Colors.getInstance().getEncodeByName(value)) != null) {
