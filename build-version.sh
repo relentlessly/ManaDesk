@@ -25,11 +25,14 @@ get_current_version (){
 	if [ ! -f "${filename}" ]; then
 		echo "File does not exists"
 	fi
+	if [ -f "${filename}" ]; then
+		echo "File exists"
+	fi
 	local version_number=0
 	while IFS= read -r line
 	do
-		echo "$line"
-		version_number=$(echo "$line" | cut -d "=" -f 2)
+	echo "$line"
+	version_number=$(echo "$line" | cut -d "=" -f 2)
 	done < "$filename"
 	echo "$version_number"
 }
