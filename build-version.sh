@@ -25,6 +25,8 @@ get_current_version (){
 	if [ -f "${filename}" ]; then
 		echo "File exists"
 	fi
+	value=$(cat "${filename}")
+	echo "content of file are ${value}"
 	local version_number=0
 	while IFS='' read -r line;do
 		echo "the line is ${line}"
