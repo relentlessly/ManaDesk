@@ -22,6 +22,9 @@ change_version (){
 
 get_current_version (){
 	local filename="./version.ini"
+	if [ ! -f "${filename}" ]; then
+		echo "File does not exists"
+	fi
 	local version_number=0
 	while IFS= read -r line
 	do
@@ -58,8 +61,8 @@ PATH=$JAVA_HOME/bin:$PATH
 if [ "$release" = true ] ; then
 	# update the version
 	current_version="$(get_current_version)"
-  echo "the current version is ${current_version}"
-  echo "the desired version is ${version}"
+ 	echo "the current version is ${current_version}"
+	echo "the desired version is ${version}"
 	change_version "${current_version}" "${version}"
 fi
 
