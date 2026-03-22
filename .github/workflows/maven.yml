@@ -12,6 +12,10 @@ name: Java CI with Maven
 
 on:
   workflow_dispatch:
+   inputs:
+        version:
+          type: string
+          description: version number to release
   #push:
   #  branches: [ "main" ]
   #pull_request:
@@ -19,9 +23,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -30,8 +32,23 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file com.reflexit.magiccards.parent/pom.xml
+    - name: Build with Via Script
+      run: ./build.sh -r -v ${{ github.event.inputs.version }}
+    - name: Create Branch with build results
+      run: |
+          git config --global user.name 'github-automation'
+          git config --global user.email 'github-automation@users.noreply.github.com'
+          git checkout -b feature/v${{ github.event.inputs.version }}
+          git commit -am "Release ${{ github.event.inputs.version }}"
+          git push
+          git tag v${{ github.event.inputs.version }}
+          git push origin v${{ github.event.inputs.version }}
+    - name: Create Release with build files
+      run: gh release create v${{ github.event.inputs.version }} --generate-notes --latest com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-linux.gtk.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-macosx.cocoa.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-macosx.cocoa.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-win32.win32.x86_64.zip
+    - name: Create pull request for ManaDesk self update
+      run: gh pr create -B main -H feature/v${{ github.event.inputs.version }} --title 'Merge feature/v${{ github.event.inputs.version }} into main for release ${{ github.event.inputs.version }}' --body 'Created by Github action'
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
