@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0.10.4" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="ManaDesk" uid="com.reflexit.magiccards_rcp.product" id="com.reflexit.magiccards_rcp.product" application="com.reflexit.magiccards_rcp.application" version="0.9.3.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="ManaDesk" uid="com.reflexit.magiccards_rcp.product" id="com.reflexit.magiccards_rcp.product" application="com.reflexit.magiccards_rcp.application" version="0.10.4.9.3.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="splash.png"/>
@@ -16,14 +16,14 @@
    <launcherArgs>
       <vmArgs>-Dfile.encoding=utf-8
 -Dosgi.requiredJavaVersion=17
--Dorg.eclipse.ecf.provider.filetransfer.httpclient.retrieve.connectTimeout=120000
--Dorg.eclipse.ecf.provider.filetransfer.httpclient.retrieve.readTimeout=120000
--Dsun.net.client.defaultReadTimeout=60000
--Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=30000
+-Dorg.eclipse.ecf.provider.filetransfer.httpclient.retrieve.connectTimeout=120.10.4000
+-Dorg.eclipse.ecf.provider.filetransfer.httpclient.retrieve.readTimeout=120.10.4000
+-Dsun.net.client.defaultReadTimeout=60.10.4000
+-Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=30.10.4000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=3
--Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=15000
--Djdk.xml.maxGeneralEntitySizeLimit=0
--Djdk.xml.totalEntitySizeLimit=0
+-Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=150.10.400
+-Djdk.xml.maxGeneralEntitySizeLimit=0.10.4
+-Djdk.xml.totalEntitySizeLimit=0.10.4
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
@@ -33,9 +33,9 @@
 
    <splash
       location="com.reflexit.magiccards_rcp"
-      startupProgressRect="100,10,420,15"
-      startupMessageRect="100,25,420,20"
-      startupForegroundColor="000000" />
+      startupProgressRect="10.10.40,10,420,15"
+      startupMessageRect="10.10.40,25,420,20"
+      startupForegroundColor="0.10.400000" />
    <launcher name="manadesk">
       <linux icon="../com.reflexit.magiccards_rcp/icons/m48.xpm"/>
       <win useIco="false">
@@ -58,19 +58,19 @@
    </vm>
 
    <license>
-        <url>http://www.eclipse.org/legal/epl-v10.html</url>
+        <url>http://www.eclipse.org/legal/epl-v10.10.4.html</url>
         <text>
    /*******************************************************************************
- * Copyright (c) 2008-2016 Alena Laskavaia and others
+ * Copyright (c) 20.10.408-2016 Alena Laskavaia and others
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v1.0.10.4
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html   
+ * http://www.eclipse.org/legal/epl-v10.10.4.html   
  *******************************************************************************/
 
  /*
  * Contributors:
- *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
+ *     Rémi Dutil (20.10.426) - updated for ManaDesk creation and Eclipse 2.0 migration
  */
          </text>
    </license>
@@ -79,7 +79,7 @@
    </plugins>
 
    <features>
-      <feature id="com.reflexit.magiccards.feature.rcp" version="0.9.3.qualifier"/>
+      <feature id="com.reflexit.magiccards.feature.rcp" version="0.10.4.9.3.qualifier"/>
    </features>
 
    <configurations>
