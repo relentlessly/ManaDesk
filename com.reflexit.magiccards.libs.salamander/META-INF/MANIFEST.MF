@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: SVG Salamander
 Bundle-SymbolicName: com.reflexit.magiccards.libs.salamander
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0.10.5.qualifier
 Bundle-Vendor: Reflexit
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ClassPath: .,

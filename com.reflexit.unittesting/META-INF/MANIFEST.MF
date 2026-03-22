@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Automatic-Module-Name: com.reflexit.unittesting
 Bundle-Name: Unit Testing Dependencies
 Bundle-SymbolicName: com.reflexit.unittesting;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0.10.5.qualifier
 Bundle-Vendor: Alena Laskavaia
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy

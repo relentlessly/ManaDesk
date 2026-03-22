@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Automatic-Module-Name: com.reflexit.magicassistant.swtbot.tests
 Bundle-Name: Swt Bot Tests
 Bundle-SymbolicName: com.reflexit.magicassistant.swtbot.tests;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0.10.5.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Reflex IT
 Bundle-RequiredExecutionEnvironment: JavaSE-17
