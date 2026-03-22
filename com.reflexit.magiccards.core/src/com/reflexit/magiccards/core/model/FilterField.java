@@ -1,5 +1,4 @@
 
-
 /*
  * Contributors:
  *     Rémi Dutil (2026) - updated for ManaDesk creation and Eclipse 2.0 migration
@@ -232,8 +231,7 @@ public enum FilterField {
 			case TEXT_NOT_1:
 			case TEXT_NOT_2:
 			case TEXT_NOT_3:
-				return BinaryExpr.textSearch(MagicCardField.TEXT, value)
-						.or(BinaryExpr.textSearch(MagicCardField.ORACLE, value));
+				return BinaryExpr.textSearch(MagicCardField.ORACLE, value);
 			case GROUP_FIELD:
 				return Expr.EMPTY;
 			default:
