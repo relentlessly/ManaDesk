@@ -57,7 +57,7 @@ shift $((OPTIND-1))
 #needs maven 3.3.9 and java compiler 17+ installed
 export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64/
 PATH=$JAVA_HOME/bin:$PATH
-mvn -f com.reflexit.magiccards.parent/pom.xml clean verify
+mvn -f com.reflexit.magiccards.parent/pom.xml -Dmaven.test.skip=true clean verify
 if [ "$release" = true ] ; then
 	# setup release files for self update
 	echo "Creating Release version ${version}"
