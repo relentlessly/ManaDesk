@@ -32,6 +32,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Set Release Date and Time
+      run: |
+        echo "RELEASE_DATE=$(date +%Y-%m-%d)" >> "$GITHUB_ENV"
+        echo "RELEASE_TIME=$(date +%H-%M)" >> "$GITHUB_ENV"
     - name: Build with Via Script
       run: ./build.sh -r -v ${{ github.event.inputs.version }}
     - name: Create Branch with build results
@@ -44,7 +48,7 @@ jobs:
           git tag v${{ github.event.inputs.version }}
           git push origin v${{ github.event.inputs.version }}
     - name: Create Release with build files
-      run: gh release create v${{ github.event.inputs.version }} --generate-notes --latest com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-linux.gtk.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-macosx.cocoa.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-macosx.cocoa.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-win32.win32.x86_64.zip
+      run: gh release create v${{ github.event.inputs.version }} --generate-notes --latest com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.${{env.RELEASE_DATE}}${{env.RELEASE_TIME}}-linux.gtk.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-macosx.cocoa.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-macosx.cocoa.x86_64.tar.gz com.reflexit.magiccards.product/target/products/manadesk-${{ github.event.inputs.version }}.yearmonthdayhourminute-win32.win32.x86_64.zip
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create pull request for ManaDesk self update
