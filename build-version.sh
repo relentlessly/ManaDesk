@@ -31,7 +31,7 @@ get_current_version (){
 	local version_number=0
 	while IFS= read -r line
 	do
-	echo "$line"
+	echo "the line is ${line}"
 	version_number=$(echo "$line" | cut -d "=" -f 2)
 	done < "$filename"
 	echo "$version_number"
