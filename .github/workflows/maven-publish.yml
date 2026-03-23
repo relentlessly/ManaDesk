@@ -38,9 +38,7 @@ jobs:
         echo "RELEASE_TIME=$(date +%H%M)" >> "$GITHUB_ENV"
     - name: inline script
       run: |
-        while IFS='' read -r line;do
-        echo "the line is ${line}"
-        version_number=$(echo "$line" | cut -d "=" -f 2)
-        done < ./version.ini
+        version_number=$(cat "./version.ini" | cut -d "=" -f 2)
+        echo $version_number
     - name: Build with Via Script
       run: ./build-version.sh -r -v ${{ github.event.inputs.version }}
