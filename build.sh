@@ -23,10 +23,7 @@ change_version (){
 get_current_version (){
 	local filename="./version.ini"
 	local version_number=0
-	while IFS= read -r line
-	do
-	version_number=$(echo "$line" | cut -d "=" -f 2)
-	done < "$filename"
+	version_number=$(cat "$filename" | cut -d "=" -f 2)
 	echo "$version_number"
 }
 
